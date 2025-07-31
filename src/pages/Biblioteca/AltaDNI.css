@@ -1,0 +1,62 @@
+.alta-dni__contenedor {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.alta-dni__titulo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.alta-dni__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #fefefe;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.alta-dni__campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.alta-dni__campo label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #2d2644;
+}
+
+.alta-dni__campo input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.alta-dni__boton {
+    align-self: center;
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.alta-dni__boton:hover {
+    background-color: #1a252f;
+}

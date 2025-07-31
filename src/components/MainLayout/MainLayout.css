@@ -1,0 +1,28 @@
+/* src/components/MainLayout/MainLayout.css */
+.main-layout {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.main-content {
+  margin-left: 250px; /* ancho por defecto sidebar */
+  padding: 24px;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 1920px) {
+  .main-content {
+    margin-left: 320px; /* coincide con sidebar 2K */
+  }
+}
+
+@media (min-width: 3840px) {
+  .main-content {
+    margin-left: 400px; /* coincide con sidebar 4K */
+  }
+}

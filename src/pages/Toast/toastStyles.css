@@ -1,0 +1,12 @@
+.toast-personalizado {
+    background-color: #223c61 !important;
+    color: white !important;
+    font-weight: 500;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.toast-personalizado .Toastify__progress-bar {
+    background-color: white !important;
+}

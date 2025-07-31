@@ -1,0 +1,181 @@
+/* Base (mobile y tablets) */
+.inicio-glass-page {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  background-size: 300% 300%;
+  animation: login-bg-shift 10s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  padding: 20px;
+}
+
+.inicio-glass-container {
+  text-align: center;
+  color: #cadff3;
+  animation: fadeIn 0.8s ease-in-out;
+  max-width: 100%;
+}
+
+.inicio-logo-grande {
+  width: 180px;
+  padding-top: 20px;
+  margin-bottom: 0;
+}
+
+.inicio-nombre-cuartel {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  color: #cadff3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.inicio-tarjetas-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.inicio-tarjeta {
+  width: 280px;
+  height: 130px;
+  padding: 15px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cadff3;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.inicio-tarjeta:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.inicio-tarjeta svg {
+  font-size: 70px;
+  margin-bottom: 5px;
+}
+
+.inicio-tarjeta h2 {
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+/* Bordes */
+.inicio-tarjeta.biblioteca,
+.inicio-tarjeta.control {
+  border-left: 8px solid #7cb5ffa8;
+  border-right: 8px solid #7cb5ffa8;
+}
+
+
+/* Media Queries */
+
+/* HD - 1280px */
+@media (min-width: 1280px) {
+  .inicio-logo-grande {
+    width: 200px;
+  }
+  .inicio-nombre-cuartel {
+    font-size: 44px;
+  }
+  .inicio-tarjeta {
+    width: 320px;
+    height: 140px;
+    padding: 18px;
+  }
+  .inicio-tarjeta svg {
+    font-size: 80px;
+  }
+  .inicio-tarjeta h2 {
+    font-size: 32px;
+  }
+  .inicio-tarjetas-container {
+    gap: 60px;
+  }
+}
+
+/* FullHD - 1920px */
+@media (min-width: 1920px) {
+  .inicio-logo-grande {
+    width: 300px;
+  }
+  .inicio-nombre-cuartel {
+    font-size: 54px;
+  }
+  .inicio-tarjeta {
+    width: 350px;
+    height: 150px;
+    padding: 20px;
+  }
+  .inicio-tarjeta svg {
+    font-size: 90px;
+  }
+  .inicio-tarjeta h2 {
+    font-size: 34px;
+  }
+  .inicio-tarjetas-container {
+    gap: 80px;
+  }
+}
+
+/* 2K - 2560px */
+@media (min-width: 2560px) {
+  .inicio-logo-grande {
+    width: 350px;
+  }
+  .inicio-nombre-cuartel {
+    font-size: 64px;
+  }
+  .inicio-tarjeta {
+    width: 400px;
+    height: 170px;
+    padding: 25px;
+  }
+  .inicio-tarjeta svg {
+    font-size: 105px;
+  }
+  .inicio-tarjeta h2 {
+    font-size: 38px;
+  }
+  .inicio-tarjetas-container {
+    gap: 100px;
+  }
+}
+
+/* 4K - 3840px */
+@media (min-width: 3840px) {
+  .inicio-logo-grande {
+    width: 400px;
+  }
+  .inicio-nombre-cuartel {
+    font-size: 74px;
+  }
+  .inicio-tarjeta {
+    width: 450px;
+    height: 190px;
+    padding: 30px;
+  }
+  .inicio-tarjeta svg {
+    font-size: 120px;
+  }
+  .inicio-tarjeta h2 {
+    font-size: 42px;
+  }
+  .inicio-tarjetas-container {
+    gap: 120px;
+  }
+}

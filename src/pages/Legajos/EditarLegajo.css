@@ -1,0 +1,240 @@
+/* =============== CONTAINER PRINCIPAL =============== */
+.editar-legajo-container {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.editar-legajo-container h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+/* =============== FORMULARIO =============== */
+.form-legajo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.form-seccion {
+  background-color: #fff;
+  border-left: 4px solid #2c3e50;
+  border: 1px solid #2c3e50;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.form-seccion legend {
+  font-weight: bold;
+  font-size: 1.3rem;
+  padding: 0 0.5rem;
+  color: #2c3e50;
+}
+
+/* =============== GRUPOS DE INPUTS =============== */
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.form-grupo label {
+  font-weight: 600;
+  margin-bottom: 0rem;
+  color: #34495e;
+}
+
+.form-grupo input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 98%;
+}
+
+/* GRUPO HORIZONTAL: DOMICILIO + LUGAR + LABORAL */
+.grupo-domicilio-completo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.grupo-domicilio-completo .form-grupo {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* =============== FOTO =============== */
+.foto-carnet {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.foto-carnet img,
+.foto-placeholder {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.foto-placeholder {
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* =============== BOTONES =============== */
+.botones-acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  height: 48px;
+  min-width: 160px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.btn-guardar1 {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.btn-guardar1:hover {
+  background-color: #1a242f;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: #2c3e50;
+}
+
+.btn-cancel:hover {
+  background-color: #eee;
+}
+
+/* =============== GRUPO DE HIJOS =============== */
+.grupo-hijo {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background-color: #fff;
+  border-left: 4px solid #2c3e50;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.checkbox-seleccion {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.grupo-hijo .form-grupo {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* BOTONES DE HIJOS */
+.botones-hijos-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.btn-agregar-hijo,
+.btn-eliminar-hijo {
+  justify-content: center;
+  min-height: 5px;
+  min-width: 5px; /* centramos ícono */
+}
+
+.btn-agregar-hijo {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.btn-agregar-hijo:hover {
+  background-color: #1a242f;
+}
+
+.btn-eliminar-hijo {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-eliminar-hijo:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.btn-eliminar-hijo:disabled {
+  background-color: #999999;
+  color: #eee;
+  cursor: not-allowed;
+}
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 768px) {
+  .form-grupo input {
+    max-width: 100%;
+  }
+
+  .foto-carnet {
+    align-items: center;
+  }
+
+  .grupo-domicilio-completo {
+    flex-direction: column;
+  }
+}
+
+.foto-con-boton {
+  position: relative;
+  display: inline-block;
+}
+
+.foto-con-boton img {
+  width: 150px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.btn-borrar-foto {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}

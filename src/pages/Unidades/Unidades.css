@@ -1,0 +1,384 @@
+/* src/pages/Unidades.css */
+
+.unidades {
+  width: 100%;
+  max-width: 1200px; /* ancho máximo para pantallas chicas/medianas */
+  min-height: 100vh;
+  font-family: 'Poppins';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Para pantallas muy grandes que quieras que ocupen todo el ancho */
+@media (min-width: 1600px) {
+  .unidades {
+    max-width: 100%;
+    padding: 0 40px; /* más espacio lateral para que respire el contenido */
+  }
+
+  .cards-container {
+    justify-content: space-between; /* reparte tarjetas en todo el ancho */
+  }
+}
+
+
+/* Header de página */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.header-title-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.header-title {
+    font-size: 3.7rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    letter-spacing: 1px;
+}
+
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    justify-content: center; /* centra el grid si sobra espacio lateral */
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.card-link {
+    text-decoration: none;
+}
+
+/* Tarjeta refinada */
+.card {
+    background: rgba(255, 255, 255, 0.5); /* Transparencia más baja */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border: 1px solid rgba(200, 200, 200, 0.4); /* Borde más suave */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    border-left: 8px solid #ccc;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-link h3 {
+    margin-top: 0;
+    margin-bottom: 0rem;
+    font-size: 30px;
+    font-weight: bold;
+    color: #203142;
+}
+
+.card p {
+    font-size: 15px;
+    color: #585858;
+    margin: 6px 0;
+}
+
+.card .tipo {
+    font-size: 14px;
+    background-color: #394d61;
+    padding: 5px 15px;
+    border-radius: 4px;
+    color: #fff;
+    margin-top: 0px;
+    display: inline-block;
+}
+
+.card .estado {
+    margin-top: 8px;
+    font-size: 18px;
+    padding: 8px 16px; /* Espacio para hacerlo más prominente */
+    border-radius: 25px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Colores de estado + borde izquierdo */
+.card.estado-operativa {
+    border-left-color: #2e8b57;
+}
+
+.card.estado-fuera-de-servicio {
+    border-left-color: #b32e2e;
+}
+
+.card.estado-en-reparacion {
+    border-left-color: #f1c100;
+}
+
+.card.estado-desconocido {
+    border-left-color: #999;
+}
+
+/* Estados modernos */
+.card .estado-operativa {
+    background-color: rgba(46, 139, 87, 0.2);
+    color: #2e8b57;
+    border: 1px solid #2e8b57;
+}
+
+.card .estado-fuera-de-servicio {
+    background-color: rgba(179, 46, 46, 0.2);
+    color: #b32e2e;
+    border: 1px solid #b32e2e;
+}
+
+.card .estado-en-reparacion {
+    background-color: rgba(241, 193, 0, 0.2);
+    color: #f1c100;
+    border: 1px solid #f1c100;
+}
+
+.card .estado-desconocido {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #bbb;
+}
+
+.btn-eliminar-tarjeta {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #2C3E50;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.btn-eliminar-tarjeta:hover {
+    color: #861408;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #f1f1f1;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-eliminar-modal {
+    background-color: transparent;
+    color: #555555;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 50px;
+}
+
+.btn-eliminar-modal::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #e63946;
+    transition: width 0.3s ease;
+    margin: auto;
+}
+
+.btn-eliminar-modal:hover {
+    color: #c92c38;
+    transform: scale(1.05);
+}
+
+.btn-eliminar-modal:hover::after {
+    width: 100%;
+}
+
+.btn-cancelar {
+    background-color: transparent;
+    color: #555555;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancelar::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #505050;
+    transition: width 0.3s ease;
+    margin: auto;
+}
+
+.btn-cancelar:hover {
+    color: #505050;
+    transform: scale(1.05);
+}
+
+.btn-cancelar:hover::after {
+    width: 100%;
+}
+
+/* Header de página */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.header-title {
+    text-align: center;
+    flex-grow: 1;
+}
+
+/* Filtro */
+.filter-container {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.filter-icon {
+    font-size: 16px;
+    cursor: pointer;
+    color: rgb(245, 245, 245);
+    background-color: #2C3E50;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+}
+
+.filter-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: rgb(231, 231, 231);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 200px;
+}
+
+.filter-menu label {
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.filter-menu select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Toast centrado */
+.toast-style {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: fit-content !important;
+}
+
+/* Espaciado más amplio para tarjetas en 2K */
+@media (min-width: 2000px) {
+  .cards-container {
+    gap: 65px; /* más separación entre tarjetas */
+    padding: 0 40px;
+  }
+
+  .card {
+    max-width: 300px; /* tarjetas un poquito más anchas si querés */
+  }
+}
+
+/* Más respiro todavía en 4K */
+@media (min-width: 2560px) {
+  .cards-container {
+    gap: 100px;
+    padding: 0 60px;
+  }
+
+  .card {
+    max-width: 320px; /* tarjetas un poquito más anchas si querés */
+  }
+
+  .header-title {
+    font-size: 4.2rem; /* título más grande en pantallas grandes */
+  }
+
+  .card-link h3 {
+    font-size: 34px;
+  }
+
+  .card p {
+    font-size: 17px;
+  }
+}

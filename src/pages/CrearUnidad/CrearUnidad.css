@@ -1,0 +1,220 @@
+/* Contenedor principal - centrado */
+.crear-unidad__contenedor-principal {
+    max-width: 1000px;
+    margin: 20px auto;
+    font-family: 'Poppins', sans-serif;
+}
+
+.crear-unidad__encabezado {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #dcdde1;
+    padding-bottom: 20px;
+}
+
+.crear-unidad__titulo {
+    grid-column: 2;
+    justify-self: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.crear-unidad__btn-volver {
+    justify-self: start;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 15px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.crear-unidad__btn-volver:hover {
+    color: #e63946;
+    transform: scale(1.05);
+}
+
+/* Formulario */
+.crear-unidad__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Tarjetas */
+.crear-unidad__tarjeta {
+    background: #fefefe;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.crear-unidad__seccion-titulo {
+    font-size: 22px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #2d2644;
+    display: inline-block;
+    border-bottom: 3px solid #2d2644;
+}
+
+/* Grid de campos */
+.crear-unidad__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+}
+
+.crear-unidad__campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.crear-unidad__campo label {
+    font-size: 15px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #131444;
+}
+
+.crear-unidad__campo input,
+.crear-unidad__campo select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+/* Ubicaciones y elementos */
+.crear-unidad__bloque-ubicacion {
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.crear-unidad__fila-ubicacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.crear-unidad__input-ubicacion {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #e7e7e7;
+    border: 1px solid #ccc;
+}
+
+.crear-unidad__fila-elemento {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.crear-unidad__input-elemento,
+.crear-unidad__input-cantidad {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.crear-unidad__input-elemento {
+    flex: 1.5;
+}
+
+.crear-unidad__input-cantidad {
+    width: 50px;
+}
+
+/* Botones */
+.crear-unidad__btn-icono {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: #202d3a;
+    transition: transform 0.2s;
+}
+
+.crear-unidad__btn-icono:hover {
+    color: #e63946;
+    transform: scale(1.2);
+}
+
+/* Botones principales */
+.crear-unidad__btn-principal,
+.crear-unidad__btn-secundario {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.crear-unidad__btn-principal {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.crear-unidad__btn-principal:hover {
+    background-color: #1a252f;
+}
+
+.crear-unidad__btn-secundario {
+    background-color: #dfe6e9;
+    color: #2c3e50;
+}
+
+.crear-unidad__btn-secundario:hover {
+    background-color: #b2bec3;
+}
+
+/* Footer y guardar */
+.crear-unidad__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.crear-unidad__btn-guardar {
+    font-size: 25px;
+    font-weight: bold;
+    color: #202d3a;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    position: relative;
+    display: inline-block;
+    border: none;
+    background: none;
+}
+
+.crear-unidad__btn-guardar:hover {
+    color: #158828;
+    transform: scale(1.2);
+}
+
+/* Volver */
+.crear-unidad__btn-volver-edicion {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 15px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+}

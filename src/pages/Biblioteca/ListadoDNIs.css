@@ -1,0 +1,84 @@
+.listado-dnis__contenedor {
+  max-width: 900px;
+  margin: 30px auto;
+  font-family: 'Poppins', sans-serif;
+  background: #fefefe;
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+}
+
+.listado-dnis__titulo {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2d2644;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #2d2644;
+  padding-bottom: 8px;
+}
+
+.listado-dnis__buscador {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 1.5px solid #ccc;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease;
+}
+
+.listado-dnis__buscador:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
+.listado-dnis__tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listado-dnis__tabla th,
+.listado-dnis__tabla td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  color: #333;
+}
+
+.listado-dnis__tabla thead {
+  background: #6366f1;
+  color: white;
+  font-weight: 600;
+}
+
+.listado-dnis__tabla tbody tr:hover {
+  background-color: #f3f4ff;
+}
+
+.listado-dnis__btn-eliminar {
+  background: #e63946;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.25s ease;
+}
+
+.listado-dnis__btn-eliminar:hover {
+  background: #b0232f;
+}
+
+.listado-dnis__mensaje {
+  color: #158828;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.listado-dnis__error {
+  color: #e63946;
+  margin-bottom: 15px;
+  font-weight: 600;
+}

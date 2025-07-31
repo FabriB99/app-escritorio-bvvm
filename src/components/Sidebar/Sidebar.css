@@ -1,0 +1,218 @@
+/* src/components/Sidebar.css */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #2C3E50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s ease;
+}
+
+/* Para pantallas 2K en adelante */
+@media (min-width: 1920px) {
+  .sidebar {
+    width: 320px; /* un poco más ancho */
+  }
+
+  .logo {
+    width: 200px !important; /* que el logo escale un poco */
+  }
+
+  .nav-button {
+    font-size: 18px !important; /* botones un poco más grandes */
+    padding: 12px 0 !important;
+  }
+
+  .logout-button {
+    font-size: 18px !important;
+    padding: 12px 24px !important;
+  }
+}
+
+/* Para pantallas 4K */
+@media (min-width: 3840px) {
+  .sidebar {
+    width: 400px; /* ancho respetable para 4k */
+  }
+
+  .logo {
+    width: 250px !important;
+  }
+
+  .nav-button {
+    font-size: 20px !important;
+    padding: 15px 0 !important;
+  }
+
+  .logout-button {
+    font-size: 20px !important;
+    padding: 15px 30px !important;
+  }
+}
+
+
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 160px;
+    height: auto;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.sidebar-greeting-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #ecf0f1;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    opacity: 0.9;
+}
+
+.sidebar-greeting-role {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.divider {
+    width: 80%;
+    height: 1.5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 10px 0;
+}
+
+.nav-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    padding: 0 15px;
+    align-items: center;
+}
+
+.nav-button {
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+    color: white;
+    padding: 10px 0;
+    transition: color 0.3s ease, transform 0.2s ease;
+    position: relative;
+}
+
+.nav-button::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #e63946;
+    transition: width 0.3s ease;
+    margin: auto;
+}
+
+.nav-button:hover {
+    color: #e63946;
+    transform: scale(1.05);
+}
+
+.nav-button:hover::after {
+    width: 100%;
+}
+
+.bottom-buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* espacio entre botones */
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px; /* lo mismo que antes */
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: #bdc3c7;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    transition: color 0.3s ease, transform 0.2s ease;
+    width: auto;
+    text-decoration: none; /* 👈 muy importante: no se estira */
+}
+
+.logout-button:hover {
+    color: #e74c3c;
+    transform: scale(1.03);
+}
+
+.logout-icon {
+    font-size: 18px;
+}
+
+/* === MEDIA QUERIES para pantallas chicas === */
+
+/* Pantallas con altura menor o igual a 768px o ancho menor o igual a 1366px */
+@media (max-height: 768px), (max-width: 1366px) {
+    .logo {
+        width: 140px; /* logo más pequeño */
+    }
+    .sidebar-greeting-inline {
+        font-size: 18px;
+        margin: 1px 0;
+    }
+    .nav-button {
+        font-size: 16px;
+        padding: 8px 0;
+    }
+    .logout-button {
+        font-size: 14px;
+        padding: 8px 16px;
+        gap: 6px;
+    }
+}
+
+/* Para pantallas más chicas aún (ejemplo 1024x600) */
+@media (max-height: 600px), (max-width: 1024px) {
+    .logo {
+        width: 100px;
+    }
+    .sidebar-greeting-inline {
+        font-size: 14px;
+    }
+    .nav-button {
+        font-size: 12px;
+        padding: 6px 0;
+    }
+    .logout-button {
+        font-size: 12px;
+        padding: 6px 14px;
+        gap: 4px;
+    }
+}

@@ -1,0 +1,151 @@
+.login-libro-page {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  background-size: 300% 300%;
+  animation: login-bg-shift 10s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+  padding: 20px;
+}
+
+@keyframes login-bg-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-libro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-libro-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.login-libro-home-icon {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 22px;
+  color: #ecf0f1;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.login-libro-home-icon:hover {
+  color: #e63946;
+  transform: scale(1.1);
+}
+
+.login-libro-logo {
+  width: 200px;
+  margin-bottom: 5px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-libro-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  color: #8897ec;
+}
+
+.login-libro-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #8897ec;
+}
+
+.login-libro-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.login-libro-input-wrapper:focus-within {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.login-libro-icon-input {
+  margin-right: 10px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.login-libro-input-wrapper input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 100%;
+  font-size: 15px;
+}
+
+.login-libro-input-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-libro-button {
+  background: linear-gradient(to right, #6366f1, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-libro-button:hover:not(:disabled) {
+  background: linear-gradient(to right, #4f46e5, #4338ca);
+}
+
+.login-libro-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.login-libro-error {
+  color: #ffcdd2;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.login-libro-mensaje {
+  color: #8897ec;
+  font-size: 15px;
+  margin-top: 12px;
+  font-weight: 600;
+}

@@ -1,0 +1,364 @@
+.legajo-detalle-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ================= ENCABEZADO ================= */
+.legajo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.legajo-info-principal {
+  flex: 1;
+}
+
+.legajo-info-principal h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.legajo-subinfo {
+  font-size: 1rem;
+  color: #133a3d;
+  margin: 0;
+}
+
+/* ================= FOTO ================= */
+.foto-legajo {
+  width: 110px;
+  height: 110px;
+  margin-left: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+.foto-legajo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+/* ================= BOTONES ================= */
+.btn-editar,
+.btn-generar-pdf {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  margin-left: 10px;
+  cursor: pointer;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-editar {
+  width: 40px;
+}
+
+.btn-generar-pdf {
+  min-width: 80px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-editar:hover,
+.btn-generar-pdf:hover {
+  background-color: #1f2d3a;
+}
+
+/* ================= CUADROS DE DATOS ================= */
+.datos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.datos-seccion {
+  flex: 1;
+  background-color: #fff;
+  border-left: 4px solid #2c3e50;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(44, 62, 80, 0.1);
+  color: #242424;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 2;
+}
+
+.datos-seccion h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.datos-seccion h4 {
+  margin: 0 0 0.6rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.datos-seccion p {
+  margin: 0.2rem 0;
+}
+
+.datos-seccion p strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* ================= HIJOS ================= */
+.hijos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.hijo-item {
+  background-color: #f9fbfd;
+  border-left: 3px solid #2c3e50;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(44, 62, 80, 0.1);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  /* Cambiamos a flex vertical para forzar los bloques en columnas */
+  display: flex;
+  flex-direction: column;  /* esto obliga a que los hijos estén en columna, no en fila */
+  gap: 0.4rem;
+  color: #2c3e50;
+}
+
+.campo-fijo,
+.campo-editable {
+  color: #242424;
+  font-weight: 400;
+  /* Para que ocupe línea completa y no se mezcle */
+  width: 100%;
+  display: flex; /* para controlar el contenido interno */
+  gap: 0.5rem;   /* separación interna entre etiquetas y datos */
+  flex-wrap: wrap; /* por si el contenido es muy largo */
+}
+
+.campo-fijo strong,
+.campo-editable strong {
+  color: #2c3e50;
+}
+
+.separador-datos {
+  display: inline-block;
+  width: 20px; /* o el espacio que quieras */
+}
+
+/* ================= TABS ================= */
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  border-bottom: 2px solid #eee;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  transition: border-bottom 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #f2f2f2;
+}
+
+.tab-btn.active {
+  border-bottom: 3px solid #2c3e50;
+}
+
+.tab-content {
+  margin-bottom: 3rem;
+}
+
+.lugar-info {
+  margin-left: 1rem;
+  display: inline-block;
+}
+
+/* ================= IMPRESIÓN ================= */
+@media print {
+  .ocultar-en-pdf {
+    display: none !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: white !important;
+  }
+
+  .datos-seccion {
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .tab-btn {
+    display: none;
+  }
+
+  .legajo-detalle-container {
+    padding: 0 !important;
+  }
+}
+
+/* ================= AJUSTES PARA PDF ================= */
+@media print {
+  /* Oculta TODO lo que no sea parte del contenido */
+  .ocultar-en-pdf,
+  button,
+  .btn-editar,
+  .btn-generar-pdf,
+  .tab-btn,
+  .agregar-btn,
+  .editar-btn,
+  .eliminar-btn {
+    display: none !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: white !important;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  .legajo-detalle-container {
+    max-width: 100%;
+    padding: 20px 30px;
+    box-shadow: none !important;
+  }
+
+  .legajo-header {
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .legajo-info-principal h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .legajo-subinfo {
+    font-size: 0.9rem;
+  }
+
+  .foto-legajo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .datos-grid {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .datos-seccion {
+    padding: 1rem;
+    font-size: 0.9rem;
+    border-left: 3px solid #444;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .datos-seccion h3,
+  .datos-seccion h4 {
+    font-size: 1.1rem;
+  }
+
+  .hijo-item {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .tabs-container {
+    display: none !important;
+  }
+
+  .tab-content {
+    margin: 0;
+  }
+
+  .campo-fijo,
+  .campo-editable {
+    min-width: 180px;
+  }
+
+  /* Evita que se corte algo entre páginas */
+  .datos-seccion,
+  .tab-content,
+  .hijo-item {
+    break-inside: avoid;
+  }
+}
+
+/* Clase para dar margen solo cuando generamos PDF */
+.legajo-detalle-container.margin-pdf {
+  padding: 20px 40px !important;
+}
+
+/* ================= ASEGURAR OCULTAMIENTO TOTAL EN PDF ================= */
+@media print {
+  /* Oculta cualquier botón o componente interactivo */
+  .btn-accion,
+  .btn-acciones,
+  .modal-overlay,
+  .tab-btn,
+  .tabs-container,
+  .btn-editar,
+  .btn-generar-pdf,
+  .ocultar-en-pdf,
+  input[type="file"],
+  button {
+    display: none !important;
+  }
+
+  /* Evita que se impriman sombras o márgenes extraños */
+  * {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}
