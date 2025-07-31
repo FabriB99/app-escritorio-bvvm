@@ -1,0 +1,11 @@
+{
+  "version": "0.1.2",
+  "notes": "Actualización automática funcionando.",
+  "pub_date": "2025-07-31T20:00:00Z",
+  "platforms": {
+    "windows": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUSmxKNCtUYjh5dHBsVEJ0N2h5QUZEcHFwcFVONnR2emtEcUhyV3JiOW45Y3U0M1puUVd4cjFDUGdyNmdsTDZmQWZIM0dlLzRlSmNIWEs5Zmx4RnZheXVrbVlieDU1SmdJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzU0MDAxODk5CWZpbGU6Q29udHJvbC1CVlZNXzAuMS4yX3g2NF9lbi1VUy5tc2kKVWcwMWVpcHZlWEwyL0JieUJiWHVnV05vQVN0aEZTMG1LMDM5cThqMDAyZ1E0ZmF3WjFDTFNLWENLMWtKWVp3RVN0Z1ZkUFpHL09hYkY2M0NyVHNJQkE9PQo=",
+      "url": "https://github.com/fabriB99/app-escritorio-bvvm/releases/download/v0.1.2/Control-BVVM_0.1.2_x64_en-US.msi"
+    }
+  }
+}
