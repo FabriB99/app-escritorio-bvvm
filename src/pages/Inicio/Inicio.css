@@ -179,3 +179,38 @@
     gap: 120px;
   }
 }
+
+.version-info {
+  position: fixed;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.85rem;
+  color: #ccc;
+  opacity: 0.8;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.update-banner {
+  position: fixed;
+  bottom: 10px;
+  left: 15px;
+  background-color: rgba(100, 130, 180, 0.2); /* azul grisáceo translúcido */
+  color: #cadff3; /* color texto claro, que usás en el resto */
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(100, 130, 180, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.update-banner:hover {
+  background-color: rgba(100, 130, 180, 0.35);
+  transform: scale(1.05);
+}

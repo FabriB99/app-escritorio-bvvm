@@ -12,5 +12,8 @@ export default defineConfig({
     alias: {
       // Por ahora no alias compartidos para evitar quilombos
     }
+  },
+  build: {
+  target: 'es2021',
   }
 });
