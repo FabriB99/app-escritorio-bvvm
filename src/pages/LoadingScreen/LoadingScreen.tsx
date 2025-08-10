@@ -7,7 +7,7 @@ const LoadingScreen: React.FC = () => {
     <div className="loading-screen">
       <div className="loading-logo-wrapper">
         <img
-          src="/public/logo-bomberos.png" // Cambia esta ruta por la real
+          src="/logo-bomberos.png" // Cambia esta ruta por la real
           alt="Logo"
           className="loading-logo"
         />

@@ -1,47 +1,90 @@
-.editar-biblioteca__contenedor {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
+/* 🌐 Contenedor general */
+.panel-biblioteca__contenedor-principal {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-.editar-biblioteca__titulo {
-    font-size: 32px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-    width: 100%;
+/* 📌 Header */
+.panel-biblioteca__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 40px;
+  min-height: 70px;
+  border-bottom: 2px solid #ccc;
 }
 
-.editar-biblioteca__botones {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+.panel-biblioteca__titulo {
+  font-size: 3.7rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  user-select: none;
+  letter-spacing: 1px;
 }
 
-.editar-biblioteca__boton {
-    padding: 18px 20px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: #2c3e50;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100%;
+/* 🧩 Grid de tarjetas */
+.panel-biblioteca__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px 60px;
+  justify-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 30px auto 0;
+  padding: 0 20px 40px;
+  box-sizing: border-box;
 }
 
-.editar-biblioteca__boton:hover {
-    background-color: #1a252f;
-    transform: scale(1.02);
+/* 🪟 Tarjeta estilo glass */
+.panel-biblioteca__card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 20px;
+  width: 280px;
+  border: 1px solid rgba(200, 200, 200, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-left: 8px solid #2c3e50;
+  text-align: center;
+}
+
+.panel-biblioteca__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 🧠 Título */
+.panel-biblioteca__card h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #203142;
+  margin: 0 0 6px 0;
+}
+
+/* 📎 Descripción */
+.panel-biblioteca__card p {
+  font-size: 14px;
+  color: #394d61;
+  margin: 0;
+}
+
+/* ✨ Ícono */
+.panel-biblioteca__icono {
+  font-size: 54px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  text-shadow: 0 0 4px rgba(44, 62, 80, 0.3);
 }

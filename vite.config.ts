@@ -5,15 +5,15 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    strictPort: true,  // para que no arranque en otro puerto
-    host: true // para acceso desde LAN (opcional)
+    strictPort: true,
+    host: 'localhost' // Cambiado para evitar la URL inválida http://:::5173
   },
   resolve: {
     alias: {
-      // Por ahora no alias compartidos para evitar quilombos
+      // Sin alias por ahora
     }
   },
   build: {
-  target: 'es2021',
+    target: 'es2021',
   }
 });

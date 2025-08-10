@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from "../../app/firebase-config";
 import { deleteDoc, doc, collection, onSnapshot } from 'firebase/firestore';
-import { FaFilter } from 'react-icons/fa';
+import { FaFilter, FaPlus } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';  
 import { mostrarToast } from '../../utils/toast';  
@@ -109,6 +109,12 @@ const Unidades: React.FC = () => {
                         <button className="filter-icon" onClick={() => setIsFilterOpen(!isFilterOpen)}>
                             <FaFilter />
                         </button>
+
+                    {user?.rol === 'admin' && (
+                        <Link to="/crear-unidad" className="btn-crear-unidad" title="Agregar unidad">
+                            <FaPlus size={16} />
+                        </Link>
+                    )}
 
                         {isFilterOpen && (
                             <div className="filter-menu">

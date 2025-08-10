@@ -13,13 +13,20 @@ import HistorialRevisiones from '../pages/HistorialRevisiones/HistorialRevisione
 import SeleccionarUnidadRevision from '../pages/SeleccionarUnidadRevision/SeleccionarUnidadRevision';
 import CombustibleLista from '../pages/CombustibleLista/CombustibleLista';
 import GeneradorInforme from '../pages/GeneradorInforme/GeneradorInforme';
+import Vencimientos from '../pages/Vencimientos/Vencimientos';
+import Choferes from '../pages/Choferes/VistaChoferes';
 
 import Biblioteca from '../pages/Biblioteca/Biblioteca';
 import EditarBiblioteca from '../pages/Biblioteca/EditarBiblioteca';
 import AltaDNI from '../pages/Biblioteca/AltaDNI';
 import ListadoDNIs from '../pages/Biblioteca/ListadoDNIs';
+import NuevaSeccion from '../pages/Biblioteca/NuevaSeccion';
+import EditarSeccion from '../pages/Biblioteca/EditarSeccion';
+import ListadoSecciones from '../pages/Biblioteca/ListadoSecciones';
+import GruposBiblioteca from '../pages/Biblioteca/GruposBiblioteca';
 import VistaSeccion from '../pages/Biblioteca/Secciones/VistaSeccion';
-
+import VistaPreviaArchivo from '../pages/Biblioteca/Secciones/VistaPreviaArchivo';
+import Metricas from '../pages/Biblioteca/Metricas';
 
 import Legajos from '../pages/Legajos/LegajosLista';
 import AgregarLegajo from '../pages/Legajos/AgregarLegajo';
@@ -32,6 +39,8 @@ import AuthRedirect from '../routes/AuthRedirect';
 
 import { useUser } from '../context/UserContext';
 import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
+
+import { UsuarioBibliotecaProvider } from '../context/UsuarioBibliotecaContext';
 
 import './App.css';
 
@@ -48,8 +57,42 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/biblioteca-login" element={<LoginBiblioteca />} />
 
+          {/* Biblioteca Virtual: login y rutas protegidas por dni, con contexto propio */}
+          <Route
+            path="/biblioteca-login"
+            element={
+              <UsuarioBibliotecaProvider>
+                <LoginBiblioteca />
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca"
+            element={
+              <UsuarioBibliotecaProvider>
+                <Biblioteca />
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca/seccion/:ruta"
+            element={
+              <UsuarioBibliotecaProvider>
+                <VistaSeccion />
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca/previsualizar/:rutaSeccion/:archivoIndex"
+            element={
+              <UsuarioBibliotecaProvider>
+                <VistaPreviaArchivo />
+              </UsuarioBibliotecaProvider>
+            }
+          />
+
+          {/* Rutas unidades con auth */}
           <Route
             path="/unidades"
             element={
@@ -131,7 +174,7 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Rutas para Legajos */}
+          {/* Rutas Legajos con auth */}
           <Route
             path="/legajos"
             element={
@@ -183,48 +226,107 @@ const App: React.FC = () => {
             }
           />
 
-        {/* 📚 Biblioteca Virtual (solo admin y jefatura para editar) */}
-        <Route
-          path="/editar-biblioteca"
-          element={
-            <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
-              <MainLayout>
-                <EditarBiblioteca />
-              </MainLayout>
-            </RutaProtegida>
-          }
-        />
-        <Route
-          path="/editar-biblioteca/dnis"
-          element={
-            <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
-              <MainLayout>
-                <AltaDNI />
-              </MainLayout>
-            </RutaProtegida>
-          }
-        />
-        <Route
-          path="/editar-biblioteca/dnis/listado"
-          element={
-            <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
-              <MainLayout>
-                <ListadoDNIs />
-              </MainLayout>
-            </RutaProtegida>
-          }
-        />
-
-        {/* Acceso general de bomberos a la Biblioteca Virtual */}
-        <Route
-          path="/biblioteca"
-          element={
-              <Biblioteca />
-          }
-        />
-        <Route path="/biblioteca/seccion/:seccionId" element={<VistaSeccion />} />
-
-
+          {/* Biblioteca Virtual administración (solo admin/jefatura) */}
+          <Route
+            path="/editar-biblioteca"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <EditarBiblioteca />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/dnis"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <AltaDNI />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/dnis/listado"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <ListadoDNIs />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/secciones/nueva"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <NuevaSeccion />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-seccion/:id"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <EditarSeccion />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/secciones"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <ListadoSecciones />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/grupos"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <GruposBiblioteca />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/editar-biblioteca/metricas"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <Metricas />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/vencimientos"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+                <MainLayout>
+                  <Vencimientos />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/choferes"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <Choferes />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
           {/* Ruta fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,23 +1,22 @@
 /* Contenedor principal: ocupa todo el ancho, con padding para no pegarse a bordes */
 .combustible-lista {
-    padding: 0 1.5rem;
-    font-family: 'Poppins', sans-serif;
-    width: 100%;       /* Ocupa todo el ancho */
-    margin: 0 auto;
-    box-sizing: border-box;
-    background: none;
-    max-width: none;   /* Quitar límite máximo */
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Header y resto igual */
 
 .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    min-height: 60px;
-    margin-bottom: 24px;
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  user-select: none;
 }
 
 .header-title-container {
@@ -26,11 +25,14 @@
 }
 
 .header-title {
-    font-size: 3.7rem;
-    font-weight: 700;
-    color: #333;
-    margin: 5px 0 0 0;
-    letter-spacing: 1px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
 }
 
 .actualizar-container {

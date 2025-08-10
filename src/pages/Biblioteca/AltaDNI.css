@@ -1,62 +1,205 @@
+/* Contenedor principal */
 .alta-dni__contenedor {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Header superior */
+.alta-dni__header {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Botón volver */
+.alta-dni__btn-volver {
+  position: absolute;
+  left: 0;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 15px;
+  cursor: pointer;
+  background: none;
+  color: #2c3e50;
+  border: none;
+  outline: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.alta-dni__btn-volver:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+/* Título */
 .alta-dni__titulo {
-    font-size: 30px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-    text-align: center;
+  font-size: 3.7rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  user-select: none;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Formulario principal */
 .alta-dni__formulario {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background-color: #fefefe;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  margin: 0 auto;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+/* Tarjeta blanca */
+.alta-dni__tarjeta {
+  background-color: #ffffff;
+  padding: 0px 25px 25px 25px;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Título de la sección */
+.alta-dni__seccion-titulo {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #2c3e50;
+}
+
+/* Grid de campos */
+.alta-dni__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Campo individual */
 .alta-dni__campo {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .alta-dni__campo label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #2d2644;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 1rem;
 }
 
 .alta-dni__campo input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
 }
 
-.alta-dni__boton {
-    align-self: center;
-    margin-top: 20px;
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #2c3e50;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.alta-dni__campo input:focus {
+  outline: none;
+  border-color: #2c3e50;
 }
 
-.alta-dni__boton:hover {
-    background-color: #1a252f;
+.alta-dni__fila-doble {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.alta-dni__fila-doble .alta-dni__campo {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Footer del formulario */
+.alta-dni__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Botón principal */
+.alta-dni__btn-principal {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.alta-dni__btn-principal:hover {
+  background-color: #1f2d3a;
+  transform: scale(1.1);
+}
+
+/* Mensajes */
+.alta-dni__mensaje-exito {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 10px;
+  color: #2c3e50;
+}
+
+.alta-dni__mensaje-error {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 10px;
+  color: #e74c3c;
+}
+
+/* Ajuste HD+ */
+@media screen and (min-width: 1920px) {
+  .alta-dni__contenedor {
+    padding: 0 4rem;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+}
+
+/* -------------------------- */
+/*      Toast Personalizado   */
+/* -------------------------- */
+
+.custom-toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  border-radius: 10px;
+  padding: 7px;
+  background-color: #2c3e50;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.Toastify__toast--info {
+  background-color: #3498db;
+}
+
+.Toastify__progress-bar {
+  background-color: #fff;
 }

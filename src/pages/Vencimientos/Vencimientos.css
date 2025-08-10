@@ -1,0 +1,341 @@
+.vencimientos {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Header principal, flex con espacio entre */
+.header-titulo {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+/* Contenedor para centrar el título */
+.header-titulo h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Botón agregar alineado a la derecha, con posición absoluta */
+.btn-agregar {
+  position: absolute;
+  right: 0;
+  background-color: #2c3e50;
+  font-size: 20px;
+  color: #edf6ff;
+  padding: 8px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #1e2a3d;
+}
+
+/* Tabs */
+.tabs {
+  position: relative;
+  display: flex;
+  margin-bottom: 1.1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 0 0 #2c3e50;
+  user-select: none;
+}
+
+.tabs button {
+  position: relative;
+  padding: 8px 30px;
+  cursor: pointer;
+  border-radius: 12px 12px 0 0.5rem;
+  background-color: transparent;
+  font-weight: 600;
+  color: #506680;
+  border: none;
+  outline: none;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+  z-index: 2;
+  font-size: 18px;
+}
+
+.tabs button.activo {
+  color: #edf6ff;
+  font-weight: 700;
+}
+
+/* Slider animado */
+.vista-tab-slider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 38px;
+  background-color: #2c3e50;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
+  color: #2c3e50;
+  user-select: none;
+}
+
+thead tr {
+  background-color: #2c3e50;
+  color: #edf6ff;
+  user-select: none;
+}
+
+thead th {
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 2px solid #506680;
+  padding: 8px 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+thead th:last-child {
+  border-top-right-radius: 12px;
+  width: 90px;
+  padding: 12px 5px;
+}
+
+/* Última columna (acciones) sin texto en header y ancho fijo */
+thead th:last-child {
+  width: 90px;
+  padding: 12px 5px;
+}
+
+tbody tr {
+  border-bottom: 1.5px solid #ccc;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #dddddd;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.15);
+  cursor: default;
+}
+
+td {
+  padding: 6px 10px;
+  vertical-align: middle;
+}
+
+/* Estado con colores */
+.estado {
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  user-select: none;
+  width: max-content;
+}
+
+.estado-vencido {
+  background-color: #faaaaa;
+  color: #d32f2f;
+}
+
+.estado-proximo {
+  background-color: #fde89d;
+  color: #f8b600;
+}
+
+.estado-vigente {
+  background-color: #b2f8a2;
+  color: #388e3c;
+}
+
+/* Acciones (botones) */
+.acciones {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.acciones button {
+  background-color: none;
+  color: #2c3e50;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.acciones button:hover {
+  color: #1e2a3d;
+  box-shadow: 0 4px 14px rgba(30, 42, 61, 0.6);
+  transform: scale(1.1);
+}
+
+/* Modal fondo */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  user-select: none;
+}
+
+/* Modal contenido */
+.modal-content {
+  background-color: rgb(253, 253, 253);
+  padding: 2rem 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  color: #2c3e50;
+}
+
+/* Modal título */
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+/* Modal inputs */
+.modal-content label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #506680;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"] {
+  margin-top: 5px;
+  padding: 0.5rem;
+  border: 1px solid #2c3e50;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #1e1e1e;
+}
+
+/* Checkbox label */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #506680;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Fieldset unidades chofer */
+.fieldset-unidades {
+  border: 1px solid #2c3e50;
+  border-radius: 8px;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.fieldset-unidades legend {
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0 0.5rem;
+  user-select: none;
+  grid-column: 1 / -1;
+}
+
+.fieldset-unidades label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #2c3e50;
+  user-select: none;
+  cursor: pointer;
+}
+
+.fieldset-unidades input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Botones modal */
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-botones button {
+  background-color: #2c3e50;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #edf6ff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-botones button:hover {
+  background-color: #1e2a3d;
+}

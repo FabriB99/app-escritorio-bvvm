@@ -55,14 +55,26 @@ const Sidebar: React.FC = () => {
                             <Link to="/combustible" className="nav-button">Control Combustible</Link>
                             <Link to="/generador-informe" className="nav-button">Informe Unidades</Link>
                             <Link to="/seleccionar-unidad-historial" className="nav-button">Historial Revisiones</Link>
-                            {user?.rol === 'admin' && (
-                                <Link to="/crear-unidad" className="nav-button">Crear Unidad</Link>
-                            )}
+
                         </>
                     )}
                     {/* Link para admin y jefatura */}
                         {['admin', 'jefatura'].includes(user?.rol || '') && (
+                        <>
                             <Link to="/editar-biblioteca" className="nav-button">Biblioteca Virtual</Link>
+                        </>
+                    )}
+                    {/* Links para admin, jefatura y guardia */}
+                    {(user?.rol === 'admin' || user?.rol === 'jefatura' || user?.rol === 'guardia') && (
+                        <>
+                            <Link to="/choferes" className="nav-button">Choferes</Link>
+                        </>
+                    )}
+                    {/* Link para admin y jefatura */}
+                        {['admin', 'jefatura'].includes(user?.rol || '') && (
+                        <>
+                            <Link to="/vencimientos" className="nav-button">Vencimientos</Link>
+                        </>
                     )}
                     {/* Link para admin, legajo y jefatura */}
                         {['admin', 'legajo', 'jefatura'].includes(user?.rol || '') && (

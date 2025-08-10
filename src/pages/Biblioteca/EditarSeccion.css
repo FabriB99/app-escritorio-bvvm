@@ -1,0 +1,313 @@
+/* 🌐 Contenedor principal */
+.editar-seccion__contenedor-principal {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 📌 Header */
+.editar-seccion__header {
+  position: relative;
+  padding: 5px 0px 15px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Contenedor del título para centrarlo */
+.editar-seccion__titulo-contenedor {
+  width: 100%;
+  text-align: center;
+}
+
+.editar-seccion__titulo {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Botón volver */
+.editar-seccion__btn-volver {
+  position: absolute;
+  left: 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 15px;
+  cursor: pointer;
+  background: none;
+  color: #2c3e50;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.editar-seccion__btn-volver:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+/* ... resto de tu CSS ... */
+
+.editar-seccion__form-dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 20px;
+  margin-bottom: 15px;
+}
+
+/* 📄 Main y Formulario */
+.editar-seccion__main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.editar-seccion__form {
+  width: 100%;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* 🧾 Inputs */
+.editar-seccion__label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #2c3e50;
+}
+
+.editar-seccion__input,
+.editar-seccion__select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.editar-seccion__error {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+/* 📂 Tabs */
+.editar-seccion__fieldset {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.editar-seccion__legend {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.editar-seccion__tab-card {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.editar-seccion__tab-input {
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  background-color: transparent;
+  border-bottom: 1px solid #ccc;
+  padding: 5px 5px;
+  width: 100%;
+  outline: none;
+}
+
+.editar-seccion__tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.editar-seccion__archivos-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editar-seccion__archivos-titulo {
+  font-size: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 25px;
+  margin-bottom: 0px;
+}
+
+/* 📁 Archivos */
+.editar-seccion__archivo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editar-seccion__archivo-input {
+  flex: 1;
+  padding: 5px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.editar-seccion__upload-progress {
+  height: 6px;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+
+/* 🧷 Botones */
+.editar-seccion__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editar-seccion__btn:hover {
+  transform: scale(1.05);
+}
+
+/* ❌ Botón eliminar tab más sutil */
+.editar-seccion__btn--quitar-tab {
+  align-self: flex-end;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.editar-seccion__btn--quitar-tab:hover {
+  transform: scale(1.08);
+  color: #c0392b;
+}
+
+/* ❌ Botón eliminar archivo */
+.editar-seccion__btn--quitar-archivo {
+  color: #2c3e50;
+  padding: 4px;
+}
+
+.editar-seccion__btn--quitar-archivo:hover {
+  transform: scale(1.2);
+  color: #c0392b;
+}
+
+/* ➕ Agregar tab / archivo */
+.editar-seccion__btn--agregar {
+  align-self: flex-start;
+}
+
+/* 💾 Botón guardar */
+.editar-seccion__btn--guardar {
+  align-self: center;
+  padding: 12px 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  border: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 5px;
+}
+
+.editar-seccion__btn--guardar:hover:not(:disabled) {
+  color: #1b8045;
+  transform: scale(1.2);
+}
+
+/* 🔼🔽 Flechas para mover tabs */
+.editar-seccion__tab-controles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.editar-seccion__btn--mover-tab {
+  background: none;
+  border: none;
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.editar-seccion__btn--mover-tab:hover {
+  color: #2980b9;
+  transform: scale(1.2);
+}
+
+.editar-seccion__btn--mover-tab:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.editar-seccion__tab-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.editar-seccion__btn-tab-mover {
+  padding: 6px;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  background: none;
+  border: none;
+}
+
+.editar-seccion__btn-tab-mover:hover {
+  transform: scale(1.2);
+  color: #2980b9;
+}

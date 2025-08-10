@@ -1,0 +1,213 @@
+.vista-choferes {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 🔵 HEADER PRINCIPAL */
+.vista-choferes-header {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+
+.vista-choferes-header h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* 🔵 CONTENEDOR TABS + BUSCADOR */
+.vista-choferes-tabs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 0 0 #2c3e50;
+  user-select: none;
+}
+
+/* 🔵 BOTONES DE TABS */
+.vista-choferes-tabs .tabs-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: nowrap;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.vista-choferes-tabs .tabs-buttons button {
+  flex: 1; /* Cada botón ocupa el mismo ancho */
+  text-align: center;
+  justify-content: center;
+}
+
+.vista-choferes-tabs button {
+  position: relative;
+  padding: 10px 24px;
+  cursor: pointer;
+  border-radius: 12px 12px 0 0.5rem;
+  background-color: transparent;
+  font-weight: 600;
+  color: #506680;
+  border: none;
+  outline: none;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+  font-size: 18px;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.vista-choferes-tabs button.activo {
+  color: #edf6ff;
+  font-weight: 700;
+}
+
+/* 🔵 SLIDER ANIMADO */
+.vista-tab-slider {
+  position: absolute;
+  bottom: 0;
+  height: 38px;
+  background-color: #2c3e50;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 🔵 BUSCADOR ARRIBA */
+.buscador-top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buscador-container {
+  display: flex;
+  align-items: center;
+  width: 250px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.buscador-container input {
+  width: 100%;
+  padding: 6px 30px 6px 10px;
+  border-radius: 12px;
+  border: 1.5px solid #2c3e50;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  color: #2c3e50;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.buscador-container input:focus {
+  border-color: #506680;
+}
+
+.icono-lupa {
+  position: absolute;
+  right: 8px;
+  color: #2c3e50;
+  pointer-events: none;
+  font-size: 0.9rem;
+}
+
+/* 🔵 TEXTO CARGANDO */
+.vista-choferes-loading {
+  font-style: italic;
+  color: #999;
+}
+
+/* 🔵 TABLA ESTILIZADA OPTIMIZADA */
+.vista-choferes-tabla {
+  width: 100%;
+  background-color: transparent;
+  color: #2c3e50;
+  user-select: none;
+  border-radius: 12px;
+  overflow: hidden;
+  border-spacing: 0;
+  border-collapse: separate;
+  border-bottom: 2px solid #999;
+}
+
+.vista-choferes-tabla thead {
+  background-color: #2c3e50;
+  color: #edf6ff;
+}
+
+.vista-choferes-tabla th {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 18px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.vista-choferes-tabla th:nth-child(1) {
+  min-width: 250px;
+}
+
+.vista-choferes-tabla th:nth-child(2) {
+  min-width: 350px;
+  text-align: center;
+}
+
+/* 🔵 FILAS MÁS BAJAS Y UNIFORMES */
+.vista-choferes-tabla td {
+  padding: 8px 18px;
+  vertical-align: middle;
+  background-color: #f9f9f9;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #999;
+}
+
+/* 🔵 HOVER DE FILAS UNIFICADO */
+.vista-choferes-tabla tbody tr:hover td {
+  background-color: #e9e9e9;
+  cursor: default;
+}
+
+/* 🔵 ICONOS DE UNIDADES */
+.unidades-iconos {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  padding-left: 8px;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.unidad-icon {
+  font-size: 0.95rem;
+  padding: 6px;
+  border-radius: 40%;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔵 COLORES PERSONALIZADOS */
+.unidad-maestranza { background-color: #f1c40f; color: white; }
+.unidad-ambulancias { background-color: #238628; color: white; }
+.unidad-livianas { background-color: #2c3e50; color: white; }
+.unidad-pesadas { background-color: #c91f1f; color: white; }
+.unidad-escalera { background-color: #703b0f; color: white; }

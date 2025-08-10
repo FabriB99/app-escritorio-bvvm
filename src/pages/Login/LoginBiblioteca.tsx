@@ -1,4 +1,3 @@
-// src/pages/Login/LoginBiblioteca.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, getDoc, collection, addDoc, Timestamp } from 'firebase/firestore';
@@ -6,8 +5,11 @@ import { db } from '../../app/firebase-config';
 import './LoginBiblioteca.css';
 import { FaIdCard, FaHome } from 'react-icons/fa';
 
+import { useUsuarioBiblioteca } from '../../context/UsuarioBibliotecaContext';
+
 const LoginBiblioteca: React.FC = () => {
   const navigate = useNavigate();
+  const { setUsuario } = useUsuarioBiblioteca();
 
   const [dni, setDni] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,6 @@ const LoginBiblioteca: React.FC = () => {
     setCargando(true);
 
     try {
-      // Buscar usuario por DNI en usuariosBiblioteca
       const userRef = doc(db, 'usuariosBiblioteca', dni);
       const userSnap = await getDoc(userRef);
 
@@ -34,7 +35,9 @@ const LoginBiblioteca: React.FC = () => {
       const userData = userSnap.data();
       const nombre = userData?.nombre || 'Bombero';
 
-      // Registrar acceso con timestamp en colección separada accesosBiblioteca
+      // Guardar usuario en contexto
+      setUsuario({ dni, nombre });
+
       await addDoc(collection(db, 'accesosBiblioteca'), {
         dni,
         nombre,
@@ -43,7 +46,6 @@ const LoginBiblioteca: React.FC = () => {
 
       setMensaje(`Bienvenido/a, ${nombre}!`);
 
-      // Redirigir a la biblioteca después de 1.5 segundos para que vea el mensaje
       setTimeout(() => {
         navigate('/biblioteca');
       }, 1500);

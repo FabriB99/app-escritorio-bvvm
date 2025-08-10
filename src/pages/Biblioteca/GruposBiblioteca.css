@@ -1,0 +1,207 @@
+/* 🌐 Contenedor principal */
+.grupos-biblioteca__contenedor {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 📌 Header */
+.grupos-biblioteca__header {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  padding: 5px 0px 15px;
+  align-items: center;
+}
+
+/* Título centrado */
+.grupos-biblioteca__titulo-contenedor {
+  width: 100%;
+  text-align: center;
+}
+
+.grupos-biblioteca__titulo {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Botón volver */
+.grupos-biblioteca__btn-volver {
+  position: absolute;
+  left: 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 15px;
+  cursor: pointer;
+  background: none;
+  color: #2c3e50;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.grupos-biblioteca__btn-volver:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+.grupos-biblioteca__contenedor-lista {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.grupos-biblioteca__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 100vw;
+  margin-left: -2.4rem;
+}
+
+/* 🧩 Cada grupo */
+.grupos-biblioteca__grupo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  gap: 12px;
+  border-left: 4px solid #2c3e50;
+}
+
+/* Nombre del grupo */
+.grupos-biblioteca__grupo-nombre {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+/* 🔘 Botones de acción */
+.grupos-biblioteca__grupo-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grupos-biblioteca__grupo-acciones button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.grupos-biblioteca__grupo-acciones button:hover {
+  transform: scale(1.15);
+}
+
+.grupos-biblioteca__btn-editar:hover {
+  color: #1f2d3b;
+}
+
+.grupos-biblioteca__btn-eliminar:hover {
+  color: #c0392b;
+}
+
+.grupos-biblioteca__btn-subir:hover,
+.grupos-biblioteca__btn-bajar:hover {
+  color: #1f2d3b;
+}
+
+.grupos-biblioteca__grupo-acciones button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ➕ Botón para agregar nuevo grupo */
+.grupos-biblioteca__input-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.grupos-biblioteca__input-nuevo input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.grupos-biblioteca__input-nuevo input:focus {
+  border-color: #2c3e50;
+}
+
+.grupos-biblioteca__btn-agregar {
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #fff;
+  background-color: #2c3e50;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.grupos-biblioteca__btn-agregar:hover {
+  background-color: #1f2d3b;
+}
+
+/* 📥 Input al editar nombre */
+.grupos-biblioteca__grupo input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
+  margin-right: 12px;
+}
+
+.grupos-biblioteca__grupo input[type="text"]:focus {
+  border-color: #2c3e50;
+}
+
+/* 🧯 Error */
+.grupos-biblioteca__error {
+  color: #c0392b;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 10px;
+  text-align: center;
+}

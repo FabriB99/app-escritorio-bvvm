@@ -1,231 +1,273 @@
-/* ======== Página general ======== */
+/* Contenedor principal */
 .vista-seccion {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f4f5f7;
+  color: #1e1e1e;
   font-family: 'Segoe UI', sans-serif;
-  background: #f4f4f4;
-  height: 100vh; /* toda la pantalla */
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* evitar scroll general */
 }
 
-/* ======== Header (encabezado) ======== */
-.vista-header {
-  background-color: #2C3E50;
-  color: #edf6ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 2rem;
-  flex-shrink: 0; /* que no se achique */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-}
-
-/* Izquierda del header: logo + textos */
-.vista-header-left {
-  display: flex;
-  align-items: center;
-  gap: 1.8rem;
-}
-
-.vista-logo {
-  width: 110px;
-  height: auto;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.vista-logo:hover {
-  transform: scale(1.05);
-}
-
-.vista-header-texto {
-  display: flex;
-  flex-direction: column;
-}
-
-.vista-header-texto h1 {
-  font-size: 2.8rem;
-  margin: 0;
-}
-
-.vista-header-texto span {
-  font-size: 1.1rem;
-  margin-top: 0.1rem;
-  margin-left: 2px;
-}
-
-/* Botón volver */
-.vista-volver {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: #edf6ff;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  transition: transform 0.2s ease;
-  transform-origin: center;
-}
-
-.vista-volver:hover {
-  transform: scale(1.1);
-}
-
-/* ======== Contenedor principal ======== */
+/* Contenedor del contenido */
 .vista-container {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px 8px 0 0;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  
-  max-width: 100%; 
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* controla scroll solo dentro */
+  flex: 1;
+  padding: 20px 40px;
+  overflow-y: auto;
+  background-color: #f4f5f7;
 }
 
-/* ======== Título y descripción ======== */
-.vista-titulo {
-  margin-bottom: 1rem;
-  flex-shrink: 0;
-}
-
+/* Título de sección */
 .vista-titulo h2 {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.2rem;
+  font-weight: 700;
   color: #2c3e50;
-  margin: 0;
-  line-height: 1;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .vista-titulo p {
-  font-size: 1rem;
-  color: #555;
-  margin-top: 0.3rem;
-  margin-bottom: 0;
+  font-size: 1.1rem;
+  color: #4a5a6a;
+  font-weight: 600;
+  margin-top: 0;
+  letter-spacing: 0.02em;
+  font-style: italic;
 }
 
-/* ======== Tabs ======== */
+/* 🧭 Tabs */
 .vista-tabs {
+  position: relative;
   display: flex;
-  gap: 1rem;
-  border-bottom: 2px solid #ccc;
-  margin-bottom: 1rem;
-  flex-shrink: 0;
-  user-select: none;
+  margin: 2px 0 15px;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 0 0 #2c3e50;
 }
 
+/* Tab individual */
 .vista-tab {
-  padding: 0.5rem 1rem;
+  position: relative;
+  padding: 10px 20px;
   cursor: pointer;
-  font-weight: 500;
-  border-radius: 4px 4px 0 0;
-  background-color: #eaeaea;
-  transition: background-color 0.2s ease;
+  border-radius: 12px 12px 0 0.5rem;
+  background-color: transparent;
+  font-weight: 600;
+  color: #506680;
+  user-select: none;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+  z-index: 2;
 }
 
-.vista-tab:hover {
-  background-color: #d5d5d5;
+/* Tab activa */
+.vista-tab-activo {
+  color: #edf6ff;
+  font-weight: 700;
 }
 
-.vista-tab.activo {
-  background-color: #2C3E50;
-  color: white;
-  font-weight: bold;
-  border-bottom: 3px solid transparent;
+/* 🌊 Slider animado tipo tarjeta con fondo completo */
+.vista-tab-slider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 38px;
+  background-color: #2c3e50;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* ======== Contenido del tab ======== */
+/* ✨ Animaciones de contenido */
+.fade-in {
+  animation: fadeIn 0.1s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.1s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Contenido del tab */
 .vista-tab-content {
-  flex-grow: 1; /* ocupa todo lo que queda debajo de tabs */
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 1rem 1.5rem;
-  min-height: 0; /* para que flex-grow funcione bien */
+  background-color: transparent;
+  padding: 0;
+  margin-top: 8px;
+  color: #2c3e50;
 }
 
-/* ======== Listado de archivos ======== */
+/* 📁 Lista de archivos */
 .archivos-lista {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
+/* Fila de archivo */
 .archivos-lista li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
+  padding: 5px 10px;
+  margin-bottom: 12px;
+  border-left: 4px solid #2c3e50;
+  border-bottom: 1px solid #2c3e50;
+  background-color: transparent;
+  color: #4a5a6a;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+  user-select: none;
+  border-radius: 8px;
 }
 
 .archivos-lista li:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
+.archivos-lista li:hover {
+  background-color: #dddddd;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.15);
+}
+
+/* 📄 Nombre del archivo */
 .archivos-nombre {
-  flex: 1;
+  flex: 2;
   font-weight: 600;
-  color: #333;
+  font-size: 1rem;
+  color: #2c3e50;
   word-break: break-word;
 }
 
+/* 🗂️ Contenedor para fecha + acciones */
+.archivos-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 130px;
+  justify-content: flex-end;
+}
+
+/* 🗓 Fecha */
 .archivos-fecha {
-  width: 130px;
-  font-size: 0.85rem;
-  color: #666;
-  text-align: center;
+  font-size: 0.95rem;
+  color: #506680;
+  font-weight: 500;
+  user-select: none;
   white-space: nowrap;
 }
 
+/* 🎯 Acciones */
+.archivos-acciones {
+  margin: 0;
+  display: flex;
+  gap: 8px;
+}
+
+/* Botones de acción (vista previa y descarga) */
 .archivos-acciones button {
-  margin-left: 0.6rem;
-  padding: 0.3rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2c3e50; /* COLOR BASE que usás */
   border: none;
-  background-color: #2c3e50;
-  color: white;
-  border-radius: 4px;
+  color: #edf6ff;
+  padding: 0 8px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 2rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.4);
+  width: 30px;
+  height: 30px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .archivos-acciones button:hover {
-  background-color: #1b2735;
+  background-color: #1e2a3d; /* Hover más oscuro */
+  box-shadow: 0 4px 14px rgba(30, 42, 61, 0.6);
 }
 
-/* ======== Ajustes para pantallas grandes ======== */
-@media (min-width: 1920px) {
-  .vista-container {
-    padding: 2rem 4rem;
-    max-width: 900px;
-  }
-  
-  .vista-titulo h2 {
-    font-size: 2.5rem;
-  }
+.archivos-acciones button svg {
+  font-size: 2rem;
+  user-select: none;
+  pointer-events: none;
+  color: #edf6ff;
 }
-@media (min-width: 2560px) {
-  .vista-container {
-    padding: 3rem 6rem;
-  }
-  .vista-titulo h2 {
-    font-size: 3rem;
-  }
+
+/* 🔄 Spinner */
+.vista-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4rem;
 }
-@media (min-width: 3840px) {
-  .vista-container {
-    padding: 4rem 8rem;
-  }
-  .vista-titulo h2 {
-    font-size: 3.5rem;
-  }
+
+.vista-spinner {
+  border: 5px solid #ddd;
+  border-top: 5px solid #2c3e50;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==== Paginación ==== */
+.vista-tab-content > div:last-child {
+  margin-top: 10px;
+  user-select: none;
+}
+
+.vista-paginacion {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.vista-paginacion button {
+  background-color: #2c3e50;
+  color: #edf6ff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.4);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.vista-paginacion button:hover:not(:disabled) {
+  background-color: #1e2a3d;
+  box-shadow: 0 4px 14px rgba(30, 42, 61, 0.6);
+}
+
+.vista-paginacion button:disabled {
+  background-color: #8a9aac;
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #e0e6ef;
+}
+
+.vista-paginacion span {
+  align-self: center;
+  font-weight: 600;
+  color: #2c3e50;
+  user-select: none;
 }

@@ -1,0 +1,221 @@
+/* 🌐 Contenedor principal */
+.nueva-seccion__contenedor {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 📌 Header */
+.nueva-seccion__header {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+/* Contenedor del título para centrarlo */
+.nueva-seccion__titulo-contenedor {
+  width: 100%;
+  text-align: center;
+}
+
+.nueva-seccion__titulo {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Botón volver */
+.nueva-seccion__btn-volver {
+  position: absolute;
+  left: 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 15px;
+  cursor: pointer;
+  background: none;
+  color: #2c3e50;
+  border: none;
+  outline: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nueva-seccion__btn-volver:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+/* Formulario */
+.nueva-seccion__form {
+  width: 100%;
+  max-width: 100vw;
+  margin: 2rem auto 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* Grid para inputs principales */
+.nueva-seccion__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 15px;
+}
+
+/* Labels */
+.nueva-seccion__grid label,
+.nueva-seccion__descripcion {
+  display: flex;
+  flex-direction: column;
+  font-weight: 800;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+/* Inputs y select */
+.nueva-seccion__grid input,
+.nueva-seccion__grid select,
+.nueva-seccion__descripcion input {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.nueva-seccion__grid input:focus,
+.nueva-seccion__grid select:focus,
+.nueva-seccion__descripcion input:focus {
+  border-color: #2c3e50;
+}
+
+/* Fieldset para Tabs */
+fieldset {
+  border: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+legend {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  border-bottom: 2px #2c3e50;
+}
+
+/* Fila de cada tab */
+.tab-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tab-row input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.tab-row input:focus {
+  border-color: #2c3e50;
+}
+
+/* Botón para quitar tab */
+.tab-row button {
+  padding: 6px 12px;
+  font-size: 1.3rem;
+  background: none;
+  border: none;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+.tab-row button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.tab-row button:hover:not(:disabled) {
+  color: #c0392b;
+  transform: scale(1.2);
+}
+
+/* Botón agregar tab */
+fieldset > button {
+  align-self: flex-start;
+  padding: 6px 8px;
+  font-size: 1rem;
+  font-weight: 400;
+  background-color: #2c3e50;
+  color: #fff;
+  border: 1px solid #2c3e50;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+fieldset > button:hover {
+  background-color: #1f2d3b;
+  color: #fff;
+}
+
+/* Mensaje de error */
+.error {
+  color: #c0392b;
+  font-weight: 700;
+  margin-top: 10px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Botón submit */
+.nueva-seccion__form > button[type="submit"] {
+  margin-top: 20px;
+  align-self: center;
+  padding: 12px 25px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 180px;
+}
+
+.nueva-seccion__form > button[type="submit"]:hover:not(:disabled) {
+  color: #1b8045;
+  transform: scale(1.1);
+}
+
+.nueva-seccion__form > button[type="submit"]:disabled {
+  color: #888;
+  cursor: not-allowed;
+  transform: none;
+}

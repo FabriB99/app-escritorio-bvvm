@@ -1,84 +1,273 @@
+/* Contenedor general de toda la pantalla */
 .listado-dnis__contenedor {
-  max-width: 900px;
-  margin: 30px auto;
-  font-family: 'Poppins', sans-serif;
-  background: #fefefe;
-  padding: 25px 30px;
-  border-radius: 16px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
-}
-
-.listado-dnis__titulo {
-  font-size: 26px;
-  font-weight: 700;
-  color: #2d2644;
-  margin-bottom: 20px;
-  border-bottom: 3px solid #2d2644;
-  padding-bottom: 8px;
-}
-
-.listado-dnis__buscador {
   width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header superior: botón volver + título centrado */
+.listado-dnis__header {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Título principal grande y claro */
+.listado-dnis__titulo {
+  font-size: 3.7rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  user-select: none;
+  flex-grow: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botón volver: arriba a la izquierda, simple y con hover */
+.listado-dnis__btn-volver {
+  position: absolute;
+  left: 0;
+  font-size: 18px;
+  font-weight: bold;
   padding: 10px 15px;
-  font-size: 15px;
-  border-radius: 12px;
-  border: 1.5px solid #ccc;
-  margin-bottom: 20px;
-  transition: border-color 0.3s ease;
+  cursor: pointer;
+  background: none;
+  color: #2c3e50;
+  border: none;
+  outline: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.listado-dnis__btn-volver:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+/* Contenedor buscador + botón agregar */
+.listado-dnis__buscador-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+/* Wrapper input + icono de lupa */
+.listado-dnis__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Icono lupa sobre el input */
+.listado-dnis__icono-buscar {
+  position: absolute;
+  left: 12px;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* Input del buscador con padding para icono */
+.listado-dnis__buscador {
+  padding: 8px 12px 8px 34px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  width: 320px;
+  transition: border-color 0.2s ease;
 }
 
 .listado-dnis__buscador:focus {
-  border-color: #6366f1;
-  outline: none;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+  border-color: #2c3e50;
 }
 
-.listado-dnis__tabla {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.listado-dnis__tabla th,
-.listado-dnis__tabla td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-  color: #333;
-}
-
-.listado-dnis__tabla thead {
-  background: #6366f1;
+/* Botón agregar DNI, azul oscuro con hover */
+.listado-dnis__btn-agregar {
+  background-color: #2c3e50;
   color: white;
-  font-weight: 600;
-}
-
-.listado-dnis__tabla tbody tr:hover {
-  background-color: #f3f4ff;
-}
-
-.listado-dnis__btn-eliminar {
-  background: #e63946;
   border: none;
-  padding: 6px 10px;
   border-radius: 8px;
-  color: white;
+  padding: 8px 14px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 18px;
-  transition: background 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
-.listado-dnis__btn-eliminar:hover {
-  background: #b0232f;
+.listado-dnis__btn-agregar:hover {
+  background-color: #1f2d3a;
 }
 
-.listado-dnis__mensaje {
-  color: #158828;
-  margin-bottom: 15px;
-  font-weight: 600;
+/* Mensajes y errores centrados */
+.listado-dnis__mensaje,
+.listado-dnis__error {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 20px;
+  color: #7f8c8d;
 }
 
 .listado-dnis__error {
-  color: #e63946;
-  margin-bottom: 15px;
-  font-weight: 600;
+  color: #e74c3c;
 }
+
+/* CONTENEDOR DE TARJETAS
+   Usa grid para distribuir tarjetas responsive */
+.listado-dnis__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 15px;
+}
+
+/* Cada tarjeta individual con efecto glass + sombra + bordes redondeados */
+.listado-dnis__tarjeta {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  text-align: center;
+  cursor: default;
+  border-left: 6px solid #2c3e50;
+  color: #2c3e50;
+}
+
+.listado-dnis__tarjeta:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-left: 6px solid #1f2d3a;
+}
+
+/* Nombre en la tarjeta, claro y con buen tamaño */
+.listado-dnis__nombre {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.6rem;
+  word-break: break-word;
+}
+
+/* Línea separadora entre nombre y DNI */
+.listado-dnis__separador {
+  width: 60%;
+  height: 1px;
+  background-color: #b1b1b1;
+  opacity: 0.7;
+  margin: 0.5rem auto 0.8rem auto;
+  border: none;
+  border-radius: 4px;
+}
+
+/* Contenedor del DNI y botón eliminar en línea */
+.listado-dnis__dni-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 1.1rem;
+  color: #34495e;
+  word-break: break-word;
+}
+
+/* Botón eliminar tipo icono, arriba a la derecha */
+.listado-dnis__btn-eliminar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #2c3e50;
+  font-size: 1rem;
+  padding: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.listado-dnis__btn-eliminar:hover {
+  color: #c0392b;
+  transform: scale(1.2);
+}
+
+
+/* Modal confirmación (igual que antes) */
+.listado-dnis__modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.listado-dnis__modal-contenido {
+  background-color: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.listado-dnis__modal-botones {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+}
+
+.listado-dnis__modal-botones .cancelar {
+  background-color: #bdc3c7;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.listado-dnis__modal-botones .confirmar {
+  background-color: #e74c3c;
+  border: none;
+  padding: 0.5rem 1rem;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Toast (mensaje flotante) */
+.listado-dnis__toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2ecc71;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+

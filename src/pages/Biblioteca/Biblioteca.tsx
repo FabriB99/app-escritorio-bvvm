@@ -3,41 +3,59 @@ import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import './Biblioteca.css';
 import logo from '/logo-bomberos.png';
+import { db } from '../../app/firebase-config';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
-type General = {
+type Grupo = {
+  id: string;
   nombre: string;
-  descripcion: string;
-  ruta: string;
+  orden?: number;
 };
 
-type Departamento = {
+type Seccion = {
+  id: string;          // <--- agregamos id aquí
   nombre: string;
+  descripcion?: string;
   ruta: string;
+  grupo: string;
 };
-
-const generales: General[] = [
-  { nombre: 'Procedimientos Operativos', descripcion: 'Manuales y protocolos internos', ruta: 'procedimientos' },
-  { nombre: 'Protocolos de Actuación', descripcion: 'Accionar ante diferentes situaciones', ruta: 'protocolos' },
-  { nombre: 'Reglamentos, Normas y Leyes', descripcion: 'Marco legal y reglamentario', ruta: 'reglamentos' }
-];
-
-const departamentos: Departamento[] = [
-  { nombre: 'Departamento Incendio Estructural', ruta: 'incendio-estructural' },
-  { nombre: 'Departamento Socorrismo', ruta: 'socorrismo' },
-  { nombre: 'Departamento Rescate Vehicular', ruta: 'rescate-vehicular' },
-  { nombre: 'Departamento Rescate con Cuerdas', ruta: 'rescate-cuerdas' },
-  { nombre: 'Departamento Rescate Acuático', ruta: 'rescate-acuatico' },
-  { nombre: 'Departamento Drones/VANT', ruta: 'drones' },
-  { nombre: 'Departamento Materiales Peligrosos', ruta: 'matpeligrosos' },
-  { nombre: 'Departamento Incendio Forestal', ruta: 'incendio-forestal' },
-  { nombre: 'Departamento Psicología', ruta: 'psicologia' }
-];
 
 const Biblioteca = () => {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
   const [busquedaAbierta, setBusquedaAbierta] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [secciones, setSecciones] = useState<Seccion[]>([]);
+
+  useEffect(() => {
+    const unsubGrupos = onSnapshot(
+      query(collection(db, 'grupos_biblioteca'), orderBy('orden')),
+      (snapshot) => {
+        const lista = snapshot.docs.map(doc => {
+          const grupo = { id: doc.id, ...doc.data() } as Grupo;
+          return grupo;
+        });
+        setGrupos(lista);
+      }
+    );
+
+    const unsubSecciones = onSnapshot(
+      query(collection(db, 'secciones'), orderBy('orden')),
+      (snapshot) => {
+        const lista = snapshot.docs.map(doc => ({
+          id: doc.id,            // <--- traemos el id desde firestore
+          ...doc.data()
+        } as Seccion));
+        setSecciones(lista);
+      }
+    );
+
+    return () => {
+      unsubGrupos();
+      unsubSecciones();
+    };
+  }, []);
 
   useEffect(() => {
     if (busquedaAbierta && inputRef.current) {
@@ -45,11 +63,10 @@ const Biblioteca = () => {
     }
   }, [busquedaAbierta]);
 
-  const filtrarGenerales = (lista: General[]) =>
-    lista.filter(d => d.nombre.toLowerCase().includes(busqueda.toLowerCase()));
-
-  const filtrarDepartamentos = (lista: Departamento[]) =>
-    lista.filter(d => d.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+  const filtrarPorGrupo = (grupo: string) =>
+    secciones
+      .filter(s => s.grupo === grupo)
+      .filter(s => s.nombre.toLowerCase().includes(busqueda.toLowerCase()));
 
   const handleClick = (ruta: string) => {
     navigate(`/biblioteca/seccion/${ruta}`);
@@ -57,7 +74,7 @@ const Biblioteca = () => {
 
   const toggleBusqueda = () => {
     setBusquedaAbierta(open => !open);
-    if (busquedaAbierta) setBusqueda(''); // si cerrás el input, limpia texto
+    if (busquedaAbierta) setBusqueda('');
   };
 
   return (
@@ -78,13 +95,13 @@ const Biblioteca = () => {
         </div>
 
         <div className="biblioteca-busqueda">
-        <FaSearch
+          <FaSearch
             className="biblioteca-icono-busqueda"
             onClick={toggleBusqueda}
             title="Buscar"
             style={{ cursor: 'pointer' }}
-        />
-        <input
+          />
+          <input
             ref={inputRef}
             type="text"
             placeholder="Buscar..."
@@ -92,43 +109,41 @@ const Biblioteca = () => {
             onChange={e => setBusqueda(e.target.value)}
             className={`biblioteca-busqueda-input ${busquedaAbierta ? 'abierto' : ''}`}
             onBlur={() => setBusquedaAbierta(false)}
-        />
+          />
         </div>
       </header>
 
       <section className="biblioteca-seccion">
-        <div className="biblioteca-seccion-header">
-          <h2 className="biblioteca-seccion-titulo">Generales</h2>
-          <div className="biblioteca-seccion-linea" />
-        </div>
-        <div className="biblioteca-cards-container">
-          {filtrarGenerales(generales).map((item, idx) => (
-            <div
-              key={idx}
-              className="biblioteca-carpeta biblioteca-carpeta-azul"
-              onClick={() => handleClick(item.ruta)}
-            >
-              <h3 className="biblioteca-carpeta-titulo">{item.nombre}</h3>
-              <p className="biblioteca-carpeta-desc">{item.descripcion}</p>
-            </div>
-          ))}
-        </div>
+        {grupos.map((grupo) => {
+          const seccionesFiltradas = filtrarPorGrupo(grupo.nombre);
 
-        <div className="biblioteca-seccion-header">
-          <h2 className="biblioteca-seccion-titulo">Departamentos</h2>
-          <div className="biblioteca-seccion-linea" />
-        </div>
-        <div className="biblioteca-cards-container">
-          {filtrarDepartamentos(departamentos).map((item, idx) => (
-            <div
-              key={idx}
-              className="biblioteca-carpeta biblioteca-carpeta-azul"
-              onClick={() => handleClick(item.ruta)}
-            >
-              <h3 className="biblioteca-carpeta-titulo">{item.nombre}</h3>
+          return (
+            <div key={grupo.id}>
+              <div className="biblioteca-seccion-header">
+                <h2 className="biblioteca-seccion-titulo">{grupo.nombre}</h2>
+                <div className="biblioteca-seccion-linea" />
+              </div>
+              <div className="biblioteca-cards-container">
+                {seccionesFiltradas.length === 0 ? (
+                  <p className="biblioteca-carpeta-vacio">Sin secciones aún.</p>
+                ) : (
+                  seccionesFiltradas.map((item) => (
+                    <div
+                      key={item.id}  // mejor usar id como key
+                      className="biblioteca-carpeta biblioteca-carpeta-azul"
+                      onClick={() => handleClick(item.ruta)} 
+                    >
+                      <h3 className="biblioteca-carpeta-titulo">{item.nombre}</h3>
+                      {item.descripcion && (
+                        <p className="biblioteca-carpeta-desc">{item.descripcion}</p>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </section>
     </div>
   );

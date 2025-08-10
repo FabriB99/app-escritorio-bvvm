@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
+import { FaTrash, FaPlus, FaSearch, FaIdCard } from 'react-icons/fa';
 import './ListadoDNIs.css';
 
 type UsuarioBiblioteca = {
@@ -9,11 +11,14 @@ type UsuarioBiblioteca = {
 };
 
 const ListadoDNIs: React.FC = () => {
+  const navigate = useNavigate();
+
   const [usuarios, setUsuarios] = useState<UsuarioBiblioteca[]>([]);
   const [filtro, setFiltro] = useState('');
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-  const [mensaje, setMensaje] = useState('');
+  const [toast, setToast] = useState('');
+  const [dniAEliminar, setDniAEliminar] = useState<string | null>(null);
 
   useEffect(() => {
     const q = query(collection(db, 'usuariosBiblioteca'), orderBy('nombre'));
@@ -23,7 +28,7 @@ const ListadoDNIs: React.FC = () => {
         const docs = snapshot.docs.map((doc) => ({
           dni: doc.id,
           nombre: doc.data().nombre,
-        })) as UsuarioBiblioteca[];
+        }));
         setUsuarios(docs);
         setCargando(false);
       },
@@ -35,15 +40,16 @@ const ListadoDNIs: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleEliminar = async (dni: string) => {
-    if (!window.confirm(`¿Eliminar el acceso para DNI ${dni}?`)) return;
+  const confirmarEliminacion = async () => {
+    if (!dniAEliminar) return;
     try {
-      await deleteDoc(doc(db, 'usuariosBiblioteca', dni));
-      setMensaje(`DNI ${dni} eliminado correctamente.`);
-      setTimeout(() => setMensaje(''), 4000);
+      await deleteDoc(doc(db, 'usuariosBiblioteca', dniAEliminar));
+      setToast(`DNI ${dniAEliminar} eliminado correctamente.`);
+      setDniAEliminar(null);
+      setTimeout(() => setToast(''), 2500);
     } catch {
       setError('Error al eliminar el DNI.');
-      setTimeout(() => setError(''), 4000);
+      setTimeout(() => setError(''), 2500);
     }
   };
 
@@ -55,59 +61,77 @@ const ListadoDNIs: React.FC = () => {
 
   return (
     <div className="listado-dnis__contenedor">
-      <h2 className="listado-dnis__titulo">DNIs autorizados</h2>
+      <div className="listado-dnis__header">
+        <button className="listado-dnis__btn-volver" onClick={() => navigate('/editar-biblioteca')}>
+          ↩ Regresar
+        </button>
+        <h2 className="listado-dnis__titulo">DNIs autorizados</h2>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Buscar por nombre o DNI..."
-        className="listado-dnis__buscador"
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-      />
+      <div className="listado-dnis__buscador-contenedor">
+        <div className="listado-dnis__input-wrapper">
+          <FaSearch className="listado-dnis__icono-buscar" />
+          <input
+            type="text"
+            placeholder="Buscar por nombre o DNI..."
+            className="listado-dnis__buscador"
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          />
+        </div>
+
+        <button className="listado-dnis__btn-agregar" onClick={() => navigate('/editar-biblioteca/dnis')}>
+          <FaPlus /> Agregar DNI
+        </button>
+      </div>
 
       {cargando ? (
         <p>Cargando DNIs...</p>
       ) : error ? (
         <p className="listado-dnis__error">{error}</p>
+      ) : usuariosFiltrados.length === 0 ? (
+        <p className="listado-dnis__sin-resultados">No se encontraron resultados.</p>
       ) : (
-        <>
-          {mensaje && <p className="listado-dnis__mensaje">{mensaje}</p>}
+        <div className="listado-dnis__tarjetas">
+          {usuariosFiltrados.map(({ dni, nombre }) => (
+            <div key={dni} className="listado-dnis__tarjeta">
+            <div className="listado-dnis__info">
+              <div className="listado-dnis__info-inner">
+                <p className="listado-dnis__nombre">{nombre}</p>
+                <div className="listado-dnis__separador"></div>
+                <p className="listado-dnis__dni"><FaIdCard /> - {dni}</p>
+              </div>
+            </div>
+              <button
+                className="listado-dnis__btn-eliminar"
+                onClick={() => setDniAEliminar(dni)}
+                title="Eliminar DNI"
+                aria-label={`Eliminar acceso DNI ${dni}`}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-          <table className="listado-dnis__tabla">
-            <thead>
-              <tr>
-                <th>Nombre Completo</th>
-                <th>DNI</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuariosFiltrados.length === 0 ? (
-                <tr>
-                  <td colSpan={3} style={{ textAlign: 'center' }}>
-                    No se encontraron resultados
-                  </td>
-                </tr>
-              ) : (
-                usuariosFiltrados.map(({ dni, nombre }) => (
-                  <tr key={dni}>
-                    <td>{nombre}</td>
-                    <td>{dni}</td>
-                    <td>
-                      <button
-                        className="listado-dnis__btn-eliminar"
-                        onClick={() => handleEliminar(dni)}
-                        title="Eliminar DNI"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </>
+      {/* Modal de confirmación */}
+      {dniAEliminar && (
+        <div className="listado-dnis__modal">
+          <div className="listado-dnis__modal-contenido">
+            <p>¿Seguro que querés eliminar el acceso para el DNI <strong>{dniAEliminar}</strong>?</p>
+            <div className="listado-dnis__modal-botones">
+              <button onClick={() => setDniAEliminar(null)} className="cancelar">Cancelar</button>
+              <button onClick={confirmarEliminacion} className="confirmar">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className="listado-dnis__toast">
+          {toast}
+        </div>
       )}
     </div>
   );
