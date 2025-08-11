@@ -1,1 +1,0 @@
-async function e(r,p={},s){return window.__TAURI_INTERNALS__.invoke(r,p,s)}var n;(function(r){r.Nsis="nsis",r.Msi="msi",r.Deb="deb",r.Rpm="rpm",r.AppImage="appimage",r.App="app"})(n||(n={}));async function o(){return e("plugin:app|version")}export{n as BundleType,o as getVersion};
