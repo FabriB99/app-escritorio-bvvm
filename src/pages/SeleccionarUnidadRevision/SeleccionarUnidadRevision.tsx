@@ -3,6 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../app/firebase-config";
 import { useNavigate } from 'react-router-dom';
 import './SeleccionarUnidadRevision.css';
+import Header from "../../components/Header";
 
 interface Unidad {
     id: string;
@@ -44,7 +45,9 @@ const SeleccionarUnidadSeleccion: React.FC = () => {
 
     return (
         <div className="elegir-unidad-container">
-            <h1 className="titulo-principal">Historiales</h1>
+                  <Header
+                    title="Historial Revisiones"
+                />
 
             {cargando ? (
                 <div className="cargando">

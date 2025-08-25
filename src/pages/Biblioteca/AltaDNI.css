@@ -1,54 +1,9 @@
 /* Contenedor principal */
 .alta-dni__contenedor {
-  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header superior */
-.alta-dni__header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Botón volver */
-.alta-dni__btn-volver {
-  position: absolute;
-  left: 0;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: none;
-  color: #2c3e50;
-  border: none;
-  outline: none;
-  transition: color 0.3s ease, transform 0.2s ease;
-}
-
-.alta-dni__btn-volver:hover {
-  color: #e63946;
-  transform: scale(1.05);
-}
-
-/* Título */
-.alta-dni__titulo {
-  font-size: 3.7rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  user-select: none;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Formulario principal */

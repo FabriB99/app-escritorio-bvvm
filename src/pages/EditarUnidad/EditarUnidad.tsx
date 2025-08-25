@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { mostrarToast } from "../../utils/toast"; 
 import '../Toast/toastStyles.css'; 
@@ -9,6 +8,8 @@ import { doc, getDoc, collection, getDocs, updateDoc, setDoc, deleteDoc, query, 
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import './EditarUnidad.css'; 
 import "react-toastify/dist/ReactToastify.css";
+import { FaArrowUp, FaArrowDown, FaTrash } from 'react-icons/fa';
+import Header from "../../components/Header";
 
 // Definir los tipos de los datos
 interface Elemento {
@@ -322,12 +323,10 @@ const EditarUnidad: React.FC = () => {
 
     return (
         <div className="editar-unidad__contenedor-principal">
-            <div className="editar-unidad__encabezado">
-                <button className="editar-unidad__btn-volver" onClick={() => navigate(`/unidad/${id}`)}>
-                    ↩ Regresar
-                </button>
-                <h2 className="editar-unidad__titulo">Editar Unidad</h2>
-            </div>
+            <Header
+            title="Editar Unidad"
+            onBack={() => navigate(`/unidad/${id}`)}
+            />
 
             <form onSubmit={handleSubmit} className="editar-unidad__formulario">
                 {/* Información de la unidad */}
@@ -436,16 +435,24 @@ const EditarUnidad: React.FC = () => {
                                     placeholder="Nombre de la ubicación"
                                     className="editar-unidad__input-ubicacion"
                                 />
-                                <div className="editar-unidad__mover-ubicacion">
-                                    <button type="button" onClick={() => moverUbicacion(indexUbicacion, "arriba")}>↑</button>
-                                    <button type="button" onClick={() => moverUbicacion(indexUbicacion, "abajo")}>↓</button>
-                                </div>
-                                <button type="button" className="editar-unidad__btn-icono" onClick={() => {
-                                    const nuevasUbicaciones = formData.ubicaciones.filter((_, i) => i !== indexUbicacion);
-                                    setFormData({ ...formData, ubicaciones: nuevasUbicaciones });
-                                }}>
-                                    X
-                                </button>
+                                    <div className="editar-unidad__mover-ubicacion">
+                                    <button type="button" onClick={() => moverUbicacion(indexUbicacion, "arriba")}>
+                                        <FaArrowUp />
+                                    </button>
+                                    <button type="button" onClick={() => moverUbicacion(indexUbicacion, "abajo")}>
+                                        <FaArrowDown />
+                                    </button>
+                                    </div>
+                                    <button
+                                    type="button"
+                                    className="editar-unidad__btn-icono"
+                                    onClick={() => {
+                                        const nuevasUbicaciones = formData.ubicaciones.filter((_, i) => i !== indexUbicacion);
+                                        setFormData({ ...formData, ubicaciones: nuevasUbicaciones });
+                                    }}
+                                    >
+                                    <FaTrash />
+                                    </button>
                             </div>
 
                             {ubicacion.elementos.map((elemento, indexElemento) => (
@@ -478,17 +485,37 @@ const EditarUnidad: React.FC = () => {
                                             className="editar-unidad__input-cantidad"
                                             />
 
-                                    <div className="editar-unidad__mover-elemento">
-                                        <button type="button" onClick={() => moverElemento(indexUbicacion, indexElemento, "arriba")} disabled={indexElemento === 0}>↑</button>
-                                        <button type="button" onClick={() => moverElemento(indexUbicacion, indexElemento, "abajo")} disabled={indexElemento === ubicacion.elementos.length - 1}>↓</button>
-                                    </div>
-                                    <button type="button" className="editar-unidad__btn-icono" onClick={() => {
-                                        const nuevasUbicaciones = [...formData.ubicaciones];
-                                        nuevasUbicaciones[indexUbicacion].elementos = nuevasUbicaciones[indexUbicacion].elementos.filter((_, i) => i !== indexElemento);
-                                        setFormData({ ...formData, ubicaciones: nuevasUbicaciones });
-                                    }}>
-                                        X
-                                    </button>
+                                            <div className="editar-unidad__mover-elemento">
+                                            <button
+                                                type="button"
+                                                onClick={() => moverElemento(indexUbicacion, indexElemento, "arriba")}
+                                                disabled={indexElemento === 0}
+                                                className="editar-unidad__btn-mover"
+                                            >
+                                                <FaArrowUp />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => moverElemento(indexUbicacion, indexElemento, "abajo")}
+                                                disabled={indexElemento === ubicacion.elementos.length - 1}
+                                                className="editar-unidad__btn-mover"
+                                            >
+                                                <FaArrowDown />
+                                            </button>
+                                            </div>
+
+                                            <button
+                                            type="button"
+                                            className="editar-unidad__btn-icono"
+                                            onClick={() => {
+                                                const nuevasUbicaciones = [...formData.ubicaciones];
+                                                nuevasUbicaciones[indexUbicacion].elementos = nuevasUbicaciones[indexUbicacion].elementos.filter((_, i) => i !== indexElemento);
+                                                setFormData({ ...formData, ubicaciones: nuevasUbicaciones });
+                                            }}
+                                            >
+                                            <FaTrash />
+                                            </button>
+
                                 </div>
                             ))}
 

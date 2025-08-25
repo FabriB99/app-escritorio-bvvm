@@ -1,17 +1,9 @@
 .agregar-legajo-container {
-  padding: 0 1.5rem;
-  font-family: 'Poppins';
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
   box-sizing: border-box;
-}
-
-.titulo-pagina {
-  text-align: center;
-  font-size: 2.3rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 24px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-legajo {

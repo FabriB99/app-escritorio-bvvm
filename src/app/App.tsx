@@ -96,7 +96,7 @@ const App: React.FC = () => {
           <Route
             path="/unidades"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <Unidades />
                 </MainLayout>
@@ -116,7 +116,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-unidad/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <EditarUnidad />
                 </MainLayout>
@@ -126,7 +126,7 @@ const App: React.FC = () => {
           <Route
             path="/unidad/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <UnidadDetalle />
                 </MainLayout>
@@ -136,7 +136,7 @@ const App: React.FC = () => {
           <Route
             path="/seleccionar-unidad-historial"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <SeleccionarUnidadRevision />
                 </MainLayout>
@@ -146,7 +146,7 @@ const App: React.FC = () => {
           <Route
             path="/historial-revisiones/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <HistorialRevisiones />
                 </MainLayout>
@@ -156,7 +156,7 @@ const App: React.FC = () => {
           <Route
             path="/combustible"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <CombustibleLista />
                 </MainLayout>
@@ -166,7 +166,7 @@ const App: React.FC = () => {
           <Route
             path="/generador-informe"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <GeneradorInforme />
                 </MainLayout>
@@ -188,7 +188,7 @@ const App: React.FC = () => {
           <Route
             path="/agregar-legajo"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'legajo']}>
+              <RutaProtegida rolesPermitidos={['admin', 'legajo', 'jefatura']}>
                 <MainLayout>
                   <AgregarLegajo />
                 </MainLayout>
@@ -208,7 +208,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-legajo/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'legajo']}>
+              <RutaProtegida rolesPermitidos={['admin', 'legajo', 'jefatura']}>
                 <MainLayout>
                   <EditarLegajo />
                 </MainLayout>
@@ -218,7 +218,7 @@ const App: React.FC = () => {
           <Route
             path="/historial"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'legajo']}>
+              <RutaProtegida rolesPermitidos={['admin', 'legajo', 'jefatura']}>
                 <MainLayout>
                   <HistorialLegajo />
                 </MainLayout>
@@ -226,11 +226,11 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Biblioteca Virtual administración (solo admin/jefatura) */}
+          {/* Biblioteca Virtual administración (admin, jefatura, graduados) */}
           <Route
             path="/editar-biblioteca"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <EditarBiblioteca />
                 </MainLayout>
@@ -240,7 +240,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/dnis"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <AltaDNI />
                 </MainLayout>
@@ -250,7 +250,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/dnis/listado"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <ListadoDNIs />
                 </MainLayout>
@@ -260,7 +260,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/secciones/nueva"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <NuevaSeccion />
                 </MainLayout>
@@ -270,7 +270,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-seccion/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <EditarSeccion />
                 </MainLayout>
@@ -280,7 +280,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/secciones"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <ListadoSecciones />
                 </MainLayout>
@@ -290,7 +290,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/grupos"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <GruposBiblioteca />
                 </MainLayout>
@@ -300,7 +300,7 @@ const App: React.FC = () => {
           <Route
             path="/editar-biblioteca/metricas"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <Metricas />
                 </MainLayout>
@@ -310,7 +310,7 @@ const App: React.FC = () => {
           <Route
             path="/vencimientos"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <Vencimientos />
                 </MainLayout>
@@ -320,13 +320,14 @@ const App: React.FC = () => {
           <Route
             path="/choferes"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <Choferes />
                 </MainLayout>
               </RutaProtegida>
             }
           />
+
           {/* Ruta fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

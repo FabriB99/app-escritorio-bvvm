@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
 import './VistaChoferes.css';
+import Header from "../../components/Header";
 
 import { FaShoppingCart, FaAmbulance, FaTruckPickup, FaSearch } from 'react-icons/fa';
 import { MdFireTruck } from 'react-icons/md';
@@ -14,14 +15,16 @@ type Chofer = {
   esChofer?: boolean;
 };
 
+// Unidades disponibles
 const unidades = ['Todos', 'Maestranza', 'Ambulancias', 'Livianas', 'Pesadas', 'Escalera'];
 
+// Iconos por unidad
 const unidadIconos: Record<string, JSX.Element> = {
-  maestranza: <FaShoppingCart />,
-  ambulancias: <FaAmbulance />,
-  livianas: <FaTruckPickup />,
-  pesadas: <MdFireTruck />,
-  escalera: <BsLadder />,
+  Maestranza: <FaShoppingCart />,
+  Ambulancias: <FaAmbulance />,
+  Livianas: <FaTruckPickup />,
+  Pesadas: <MdFireTruck />,
+  Escalera: <BsLadder />,
 };
 
 const VistaChoferes: React.FC = () => {
@@ -53,6 +56,7 @@ const VistaChoferes: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  // Ajuste de slider para la pestaña seleccionada
   useEffect(() => {
     const index = unidades.indexOf(filtro);
     const el = tabsRef.current[index];
@@ -64,15 +68,15 @@ const VistaChoferes: React.FC = () => {
     }
   }, [filtro]);
 
+  // Filtrar y ordenar alfabéticamente
   const filtrados = choferes
     .filter(c => filtro === 'Todos' || c.unidadesChofer.includes(filtro))
-    .filter(c => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
+    .filter(c => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 
   return (
     <div className="vista-choferes">
-      <div className="vista-choferes-header">
-        <h1>Choferes Habilitados</h1>
-      </div>
+      <Header title="Choferes Habilitados" />
 
       <div className="buscador-top">
         <div className="buscador-container">
@@ -113,21 +117,22 @@ const VistaChoferes: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filtrados.map(chofer => (
-              <tr key={chofer.id}>
-                <td className="nombre-chofer">{chofer.nombre}</td>
-                <td className="unidades-iconos">
-                  {['maestranza', 'ambulancias', 'livianas', 'pesadas', 'escalera'].map(unidad => (
-                    chofer.unidadesChofer.includes(unidad.charAt(0).toUpperCase() + unidad.slice(1)) && (
-                      <span key={unidad} className={`unidad-icon unidad-${unidad}`}>
-                        {unidadIconos[unidad]}
-                      </span>
-                    )
-                  ))}
-                </td>
-              </tr>
-            ))}
-            {filtrados.length === 0 && (
+            {filtrados.length > 0 ? (
+              filtrados.map(chofer => (
+                <tr key={chofer.id}>
+                  <td className="nombre-chofer">{chofer.nombre}</td>
+                  <td className="unidades-iconos">
+                    {['Maestranza', 'Ambulancias', 'Livianas', 'Pesadas', 'Escalera'].map(unidad =>
+                      chofer.unidadesChofer.includes(unidad) ? (
+                        <span key={unidad} className={`unidad-icon unidad-${unidad.toLowerCase()}`}>
+                          {unidadIconos[unidad]}
+                        </span>
+                      ) : null
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan={2} style={{ textAlign: 'center', padding: '1rem', color: '#999' }}>
                   No hay choferes para esta categoría.

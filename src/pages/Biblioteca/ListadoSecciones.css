@@ -1,79 +1,21 @@
 /* 🌐 Contenedor principal */
 .listado-secciones__contenedor {
   width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  display: flex;
-  flex-direction: column;
 }
 
-/* 📌 Header */
-.listado-secciones__header {
-  position: relative;
-  padding: 5px 0px 15px;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Botón volver */
-.listado-secciones__btn-volver {
-  position: absolute;
-  left: 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: none;
-  color: #2c3e50;
-  border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.3s ease, transform 0.2s ease;
-}
-
-.listado-secciones__btn-volver:hover {
-  color: #e63946;
-  transform: scale(1.05);
-}
-
-/* Contenedor del título para centrarlo */
-.listado-secciones__titulo-contenedor {
-  width: 100%;
-  text-align: center;
-}
-
-.listado-secciones__titulo {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  justify-content: center;
-  user-select: none;
-}
-
-.listado-secciones__icono {
-  font-size: 3.5rem;
-  color: #2c3e50;
-}
-
-/* 📍 Botonera justo abajo del header */
+/* 📍 Botonera justo debajo del header */
 .listado-secciones__botonera {
-  margin: 20px 0px 20px;
+  margin: 20px 0;
   display: flex;
   gap: 15px;
   justify-content: flex-start;
 }
 
-/* Botones de acción */
+/* Botones de acción principales */
 .listado-secciones__boton {
   display: flex;
   align-items: center;
@@ -86,27 +28,27 @@
   cursor: pointer;
   font-size: 0.9rem;
   user-select: none;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   white-space: nowrap;
 }
 
 .listado-secciones__boton:hover {
   background-color: #1f2a3a;
+  transform: translateY(-1px);
 }
 
 /* 🌟 Grupos */
 .listado-secciones__grupo {
   margin-bottom: 15px;
-  padding: 5px 20px 5px 15px; /* más espacio a la izquierda para el borde */
-  background-color: rgb(252, 252, 252);
+  padding: 10px 20px 10px 15px; 
+  background-color: #fcfcfc;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  border-left: 5px solid #2c3e50; /* borde izquierdo azul oscuro */
+  border-left: 5px solid #2c3e50;
 }
 
-
 .listado-secciones__grupo-titulo {
-  margin: 0px 0px 0px 0px;
+  margin: 0 0 5px 0;
   font-size: 1.7rem;
   color: #2c3e50;
   border-bottom: 1px solid #c0c0c0;
@@ -124,7 +66,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #c0c0c0;
 }
 
@@ -145,91 +87,41 @@
   margin-top: 3px;
 }
 
-/* Acciones */
+/* 🌟 Acciones: botones minimalistas y premium */
 .listado-secciones__acciones {
   display: flex;
-  gap: 8px;
-  background-color: none;
+  gap: 4px; /* espacio entre botones */
 }
 
+/* Botones mover (arriba/abajo) y editar */
 .listado-secciones__accion-btn {
+  background-color: transparent;
+  color: #394d61;
   border: none;
-  background-color: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 5px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  color: #2c3e50;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  transition: color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .listado-secciones__accion-btn:hover {
-  font-size: 1.1rem;
-  color: #1f2a3a;
+  color: #1e65ac;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
-/* ==== RESPONSIVE para pantallas grandes ==== */
-@media screen and (min-width: 1920px) {
-  .listado-secciones__titulo {
-    font-size: 3.2rem;
-  }
-  .listado-secciones__icono {
-    font-size: 3.6rem;
-  }
-  .listado-secciones__boton {
-    font-size: 1.2rem;
-    padding: 12px 22px;
-  }
-  .listado-secciones__btn-volver {
-    font-size: 1.2rem;
-    padding: 12px 22px;
-  }
-  .listado-secciones__accion-btn {
-    font-size: 1.1rem;
-    padding: 10px 14px;
-  }
+/* Botón eliminar minimalista */
+.listado-secciones__accion-btn.eliminar {
+  color: #394d61;
 }
 
-@media screen and (min-width: 2560px) {
-  .listado-secciones__titulo {
-    font-size: 3.6rem;
-  }
-  .listado-secciones__icono {
-    font-size: 4rem;
-  }
-  .listado-secciones__boton {
-    font-size: 1.3rem;
-    padding: 14px 24px;
-  }
-  .listado-secciones__btn-volver {
-    font-size: 1.3rem;
-    padding: 14px 24px;
-  }
-  .listado-secciones__accion-btn {
-    font-size: 1.2rem;
-    padding: 12px 16px;
-  }
-}
-
-@media screen and (min-width: 3840px) {
-  .listado-secciones__titulo {
-    font-size: 4rem;
-  }
-  .listado-secciones__icono {
-    font-size: 4.4rem;
-  }
-  .listado-secciones__boton {
-    font-size: 1.5rem;
-    padding: 16px 28px;
-  }
-  .listado-secciones__btn-volver {
-    font-size: 1.5rem;
-    padding: 16px 28px;
-  }
-  .listado-secciones__accion-btn {
-    font-size: 1.3rem;
-    padding: 14px 18px;
-  }
+.listado-secciones__accion-btn.eliminar:hover {
+  color: #b71c1c;
+  transform: scale(1.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }

@@ -7,55 +7,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* 📌 Header */
-.grupos-biblioteca__header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  padding: 5px 0px 15px;
-  align-items: center;
-}
-
-/* Título centrado */
-.grupos-biblioteca__titulo-contenedor {
-  width: 100%;
-  text-align: center;
-}
-
-.grupos-biblioteca__titulo {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Botón volver */
-.grupos-biblioteca__btn-volver {
-  position: absolute;
-  left: 24px;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: none;
-  color: #2c3e50;
-  border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.3s ease, transform 0.2s ease;
-}
-
-.grupos-biblioteca__btn-volver:hover {
-  color: #e63946;
-  transform: scale(1.05);
-}
-
 .grupos-biblioteca__contenedor-lista {
   display: flex;
   justify-content: center;
@@ -94,46 +45,69 @@
   flex: 1;
 }
 
-/* 🔘 Botones de acción */
+/* 🔘 Contenedor de botones de acción (horizontal) */
 .grupos-biblioteca__grupo-acciones {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
+/* Botones minimalistas icono */
 .grupos-biblioteca__grupo-acciones button {
-  background: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   border: none;
-  font-size: 1.1rem;
-  color: #2c3e50;
-  cursor: pointer;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.grupos-biblioteca__grupo-acciones button:hover {
-  transform: scale(1.15);
-}
-
-.grupos-biblioteca__btn-editar:hover {
-  color: #1f2d3b;
-}
-
-.grupos-biblioteca__btn-eliminar:hover {
-  color: #c0392b;
+/* Botones subir / bajar / editar */
+.grupos-biblioteca__btn-subir,
+.grupos-biblioteca__btn-bajar,
+.grupos-biblioteca__btn-editar {
+  color: #394d61;
 }
 
 .grupos-biblioteca__btn-subir:hover,
-.grupos-biblioteca__btn-bajar:hover {
-  color: #1f2d3b;
+.grupos-biblioteca__btn-bajar:hover,
+.grupos-biblioteca__btn-editar:hover {
+  color: #2c3e50;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
-.grupos-biblioteca__grupo-acciones button:disabled {
-  color: #ccc;
-  cursor: not-allowed;
+/* Botón eliminar */
+.grupos-biblioteca__btn-eliminar {
+  color: #e63946;
+}
+
+.grupos-biblioteca__btn-eliminar:hover {
+  color: #b71c1c;
+  transform: scale(1.2);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* Botón de edición activa (guardar / cancelar) */
+.grupos-biblioteca__btn-guardar {
+  color: #158828;
+}
+
+.grupos-biblioteca__btn-guardar:hover {
+  transform: scale(1.1);
+}
+
+.grupos-biblioteca__btn-cancelar {
+  color: #e63946;
+}
+
+.grupos-biblioteca__btn-cancelar:hover {
+  transform: scale(1.1);
 }
 
 /* ➕ Botón para agregar nuevo grupo */
@@ -172,12 +146,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   white-space: nowrap;
 }
 
 .grupos-biblioteca__btn-agregar:hover {
   background-color: #1f2d3b;
+  transform: scale(1.05);
 }
 
 /* 📥 Input al editar nombre */

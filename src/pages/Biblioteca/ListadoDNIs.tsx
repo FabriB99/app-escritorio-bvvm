@@ -4,6 +4,7 @@ import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase
 import { db } from '../../app/firebase-config';
 import { FaTrash, FaPlus, FaSearch, FaIdCard } from 'react-icons/fa';
 import './ListadoDNIs.css';
+import Header from "../../components/Header";
 
 type UsuarioBiblioteca = {
   dni: string;
@@ -61,12 +62,10 @@ const ListadoDNIs: React.FC = () => {
 
   return (
     <div className="listado-dnis__contenedor">
-      <div className="listado-dnis__header">
-        <button className="listado-dnis__btn-volver" onClick={() => navigate('/editar-biblioteca')}>
-          ↩ Regresar
-        </button>
-        <h2 className="listado-dnis__titulo">DNIs autorizados</h2>
-      </div>
+        <Header
+          title="DNIs Autorizados"
+          onBack={() => navigate('/editar-biblioteca/')}
+        />
 
       <div className="listado-dnis__buscador-contenedor">
         <div className="listado-dnis__input-wrapper">

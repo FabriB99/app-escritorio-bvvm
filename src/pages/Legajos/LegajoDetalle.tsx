@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
 import { FaEdit } from "react-icons/fa";
+import { PiFilePdfFill } from "react-icons/pi";
 import "./LegajoDetalle.css";
 import { useUser } from "../../context/UserContext";
 
@@ -67,7 +68,7 @@ const LegajoDetalle: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUser();
-  const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
+  const puedeEditar = user?.rol === "admin" || user?.rol === "jefatura" || user?.rol === "legajo";
 
   const [legajo, setLegajo] = useState<Legajo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -237,16 +238,9 @@ const LegajoDetalle: React.FC = () => {
             <button
               className="btn-generar-pdf ocultar-en-pdf"
               onClick={handleGenerarPDF}
-              title="Generar PDF completo"
-              style={{
-                marginLeft: 8,
-                padding: "6px 10px",
-                fontWeight: "600",
-                fontSize: "0.9rem",
-                cursor: "pointer",
-              }}
+              title="Generar PDF"
             >
-              📄 PDF
+              <PiFilePdfFill />
             </button>
           </>
         )}

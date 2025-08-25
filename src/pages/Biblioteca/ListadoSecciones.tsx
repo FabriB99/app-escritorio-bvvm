@@ -5,8 +5,9 @@ import {
   collection, onSnapshot, query, orderBy, deleteDoc, doc, getDocs, updateDoc
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash, FaArrowUp, FaArrowDown, FaPlus, FaBookOpen } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaArrowUp, FaArrowDown, FaPlus } from 'react-icons/fa';
 import './ListadoSecciones.css';
+import Header from "../../components/Header";
 
 type Grupo = {
   id: string;
@@ -85,22 +86,10 @@ const ListadoSecciones: React.FC = () => {
 
   return (
     <div className="listado-secciones__contenedor">
-      <header className="listado-secciones__header">
-        <button
-          className="listado-secciones__btn-volver"
-          onClick={() => navigate('/editar-biblioteca')}
-          aria-label="Volver"
-        >
-          ↩ Regresar
-        </button>
-
-        <div className="listado-secciones__titulo-contenedor">
-          <h1 className="listado-secciones__titulo">
-            <FaBookOpen className="listado-secciones__icono" />
-            Secciones de la Biblioteca
-          </h1>
-        </div>
-      </header>
+        <Header
+          title="Secciones Biblioteca"
+          onBack={() => navigate('/editar-biblioteca/')}
+        />
 
       {/* Botonera justo debajo del header */}
       <div className="listado-secciones__botonera">
@@ -170,7 +159,7 @@ const ListadoSecciones: React.FC = () => {
                         <FaEdit />
                       </button>
                       <button
-                        className="listado-secciones__accion-btn"
+                        className="listado-secciones__accion-btn eliminar"
                         onClick={() => borrar(s.id, s.nombre)}
                         title="Eliminar"
                         aria-label="Eliminar sección"
@@ -178,6 +167,7 @@ const ListadoSecciones: React.FC = () => {
                         <FaTrash />
                       </button>
                     </div>
+
                   </li>
                 );
               })}

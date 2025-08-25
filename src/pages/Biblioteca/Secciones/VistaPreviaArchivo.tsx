@@ -19,7 +19,7 @@ interface Archivo {
   nombre: string;
   fecha?: string;
   url: string;
-  tipo?: string;
+  tipo?: string; // 'archivo' | 'link'
   peso?: number;
 }
 
@@ -35,7 +35,6 @@ const VistaPreviaArchivo: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // previewUrl es el objectURL creado a partir del blob (si corresponde)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const previewBlobRef = useRef<Blob | null>(null);
   const fetchAbortRef = useRef<AbortController | null>(null);
@@ -72,12 +71,9 @@ const VistaPreviaArchivo: React.FC = () => {
     };
 
     if (rutaSeccion) fetchSeccion();
-    // cleanup handled elsewhere
   }, [rutaSeccion, archivoIndex, navigate]);
 
-  // Cuando cambia el archivo: limpiar preview anterior y (si corresponde) fetchear blob para preview
   useEffect(() => {
-    // cleanup previous
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
@@ -90,15 +86,15 @@ const VistaPreviaArchivo: React.FC = () => {
 
     if (!archivo) return;
 
-    const ext = archivo.nombre.split('.').pop()?.toLowerCase() || '';
+    // si es link externo -> no intentamos fetch de blob
+    if (archivo.tipo === 'link') return;
 
-    // Solo hacemos fetch/preview para tipos que podamos embeber sin exponer la URL:
+    const ext = archivo.nombre.split('.').pop()?.toLowerCase() || '';
     const necesitaBlobForPreview =
       ext === 'pdf' || EXT_IMAGENES.includes(ext) || EXT_VIDEOS.includes(ext) || EXT_AUDIOS.includes(ext);
 
     if (!necesitaBlobForPreview) return;
 
-    // fetch blob
     const ac = new AbortController();
     fetchAbortRef.current = ac;
 
@@ -112,10 +108,7 @@ const VistaPreviaArchivo: React.FC = () => {
         const objUrl = URL.createObjectURL(blob);
         setPreviewUrl(objUrl);
       } catch (err: any) {
-        if (err.name === 'AbortError') {
-          // aborted, ignore
-          return;
-        }
+        if (err.name === 'AbortError') return;
         console.error('Error fetching preview blob:', err);
         setErrorMsg('No se pudo cargar la vista previa (problema de red/CORS o archivo).');
       } finally {
@@ -125,7 +118,6 @@ const VistaPreviaArchivo: React.FC = () => {
     })();
 
     return () => {
-      // cleanup when archivo changes/unmount
       if (fetchAbortRef.current) {
         fetchAbortRef.current.abort();
         fetchAbortRef.current = null;
@@ -136,8 +128,7 @@ const VistaPreviaArchivo: React.FC = () => {
       previewBlobRef.current = null;
       setPreviewUrl(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [archivo?.url, archivo?.nombre]); // dependemos de archivo
+  }, [archivo?.url, archivo?.nombre, archivo?.tipo]);
 
   const ext = archivo?.nombre.split('.').pop()?.toLowerCase() || '';
 
@@ -150,10 +141,9 @@ const VistaPreviaArchivo: React.FC = () => {
     return <FaFile size={80} color="#ccc" />;
   };
 
-  // Descargar: si ya tenemos blob en memoria (previewBlobRef), lo usamos; si no, hacemos fetch.
   const handleDescargar = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (!archivo) return;
+    if (!archivo || archivo.tipo === 'link') return;
 
     try {
       let blob: Blob | null = previewBlobRef.current;
@@ -170,7 +160,6 @@ const VistaPreviaArchivo: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      // liberar objectURL después de un poco (seguro)
       setTimeout(() => URL.revokeObjectURL(urlObj), 1000);
     } catch (err) {
       console.error('Error descargando archivo:', err);
@@ -181,7 +170,28 @@ const VistaPreviaArchivo: React.FC = () => {
   const renderPreviewArea = () => {
     if (!archivo) return null;
 
-    // si hubo error cargando el blob
+    // caso especial: link externo
+    if (archivo.tipo === 'link') {
+      return (
+        <div style={{ textAlign: 'center', color: 'white', padding: 20 }}>
+          <p>Este recurso es un enlace externo:</p>
+          <a
+            href={archivo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#4da3ff',
+              textDecoration: 'underline',
+              fontSize: 18,
+              fontWeight: 600,
+            }}
+          >
+            Abrir enlace
+          </a>
+        </div>
+      );
+    }
+
     if (errorMsg) {
       return (
         <div style={{ color: 'white', textAlign: 'center', padding: 20 }}>
@@ -193,7 +203,6 @@ const VistaPreviaArchivo: React.FC = () => {
       );
     }
 
-    // Si es PDF y tenemos previewUrl (blob), usamos <iframe> apuntando al blob
     if (ext === 'pdf' && previewUrl) {
       return (
         <div style={previewContainerStyle}>
@@ -202,7 +211,6 @@ const VistaPreviaArchivo: React.FC = () => {
       );
     }
 
-    // Imagen
     if (EXT_IMAGENES.includes(ext) && previewUrl) {
       return (
         <div style={previewContainerStyle}>
@@ -211,7 +219,6 @@ const VistaPreviaArchivo: React.FC = () => {
       );
     }
 
-    // Video
     if (EXT_VIDEOS.includes(ext) && previewUrl) {
       return (
         <div style={previewContainerStyle}>
@@ -220,7 +227,6 @@ const VistaPreviaArchivo: React.FC = () => {
       );
     }
 
-    // Audio
     if (EXT_AUDIOS.includes(ext) && previewUrl) {
       return (
         <div style={{ width: '100%', padding: '0 16px' }}>
@@ -229,7 +235,6 @@ const VistaPreviaArchivo: React.FC = () => {
       );
     }
 
-    // Si no hay preview o no soportado -> mostrar icono y nombre
     return (
       <div style={{ textAlign: 'center', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
         {getIconForExtension(ext)}
@@ -238,8 +243,7 @@ const VistaPreviaArchivo: React.FC = () => {
     );
   };
 
-  // estilos en línea para que no haga falta archivo css adicional
-  const headerHeight = 64; // px, usado mentalmente por la UI - main es flex:1 así ocupa el resto
+  const headerHeight = 64;
   const containerStyle: React.CSSProperties = { height: '100vh', display: 'flex', flexDirection: 'column', background: '#111' };
   const headerStyle: React.CSSProperties = {
     display: 'flex',
@@ -307,7 +311,7 @@ const VistaPreviaArchivo: React.FC = () => {
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h3 style={{ margin: 0, fontSize: 18 }}>{archivo.nombre}</h3>
+        <h3 style={{ margin: 0, fontSize: 12 }}>{archivo.nombre}</h3>
         <div>
           <button
             onClick={() => navigate(`/biblioteca/seccion/${rutaSeccion}`)}
@@ -320,21 +324,16 @@ const VistaPreviaArchivo: React.FC = () => {
       </header>
 
       <main style={mainStyle}>
-        {/* Preview area ocupa todo el espacio vertical restante */}
         {renderPreviewArea()}
 
-        {/* controles (peso opcional y botón descarga) */}
         <div style={footerControlsStyle}>
-          {typeof archivo.peso === 'number' && (
+          {typeof archivo.peso === 'number' && archivo.tipo !== 'link' && (
             <div style={{ color: '#ddd', fontWeight: 600 }}>
               {archivo.peso >= 1024 * 1024
                 ? `${(archivo.peso / (1024 * 1024)).toFixed(2)} MB`
                 : `${(archivo.peso / 1024).toFixed(0)} KB`}
             </div>
           )}
-          <button onClick={handleDescargar} style={downloadButtonStyle}>
-            <FaDownload /> Descargar
-          </button>
         </div>
       </main>
     </div>

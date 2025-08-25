@@ -7,62 +7,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Header y resto igual */
-
-.header-container {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
-  user-select: none;
-}
-
-.header-title-container {
-    flex: 1;
-    text-align: center;
-}
-
-.header-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-.actualizar-container {
-    margin-left: auto;
-}
-
-.actualizar-icon {
-    font-size: 18px;
-    font-weight: bolder;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: rgb(245, 245, 245);
-    background-color: #2C3E50;
-    padding: 8px;
-    border-radius: 5px;
-    border: none;
-    transition: background-color 0.2s ease;
-}
-
-.actualizar-icon:hover {
-    background-color: #1f2d3a;
-}
-
-.actualizar-icon:disabled {
-    background-color: #7f8c8d;
-    cursor: not-allowed;
-}
-
 /* Tarjetas */
 .unidad-card-combustible {
     background-color: #ffffff;
@@ -75,6 +19,7 @@
 }
 
 .unidad-card-combustible:hover {
+    background-color: #b6c7d854;
     box-shadow: 0 4px 12px rgba(44, 62, 80, 0.15);
 }
 
@@ -158,39 +103,11 @@
 
 .nivel-14 { background-color: #e74c3c; }
 .nivel-24 { background-color: #f39c12; }
-.nivel-34 {
-    background-color: #f1c40f;
-    color: #2c3e50;
-}
+.nivel-34 { background-color: #f1c40f; color: #2c3e50;}
 .nivel-44 { background-color: #27ae60; }
-
-/* Responsive para pantallas pequeñas */
-@media (max-width: 768px) {
-    .unidad-info {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .unidad-nombre {
-        font-size: 1rem;
-    }
-
-    .nivel-combustible {
-        font-size: 0.9rem;
-    }
-}
-
-/* Escalado para pantallas grandes */
 
 /* HD (1366px o más) */
 @media (min-width: 1366px) {
-    .combustible-lista {
-        padding: 0 3rem; /* solo padding para separar los lados */
-    }
-
-    .header-title {
-        font-size: 4.2rem;
-    }
 
     .actualizar-icon {
         font-size: 20px;
@@ -232,13 +149,6 @@
 
 /* Full HD (1920px o más) */
 @media (min-width: 1920px) {
-    .combustible-lista {
-        padding: 0 4rem;
-    }
-
-    .header-title {
-        font-size: 4.8rem;
-    }
 
     .actualizar-icon {
         font-size: 22px;
@@ -280,13 +190,6 @@
 
 /* 2K (2048px o más) */
 @media (min-width: 2048px) {
-    .combustible-lista {
-        padding: 0 5rem;
-    }
-
-    .header-title {
-        font-size: 5.2rem;
-    }
 
     .actualizar-icon {
         font-size: 24px;
@@ -328,13 +231,6 @@
 
 /* 4K (2560px o más) */
 @media (min-width: 2560px) {
-    .combustible-lista {
-        padding: 0 6rem;
-    }
-
-    .header-title {
-        font-size: 5.6rem;
-    }
 
     .actualizar-icon {
         font-size: 26px;

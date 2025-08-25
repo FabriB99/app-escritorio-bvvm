@@ -7,57 +7,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* 📌 Header */
-.nueva-seccion__header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
-  user-select: none;
-}
-
-/* Contenedor del título para centrarlo */
-.nueva-seccion__titulo-contenedor {
-  width: 100%;
-  text-align: center;
-}
-
-.nueva-seccion__titulo {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Botón volver */
-.nueva-seccion__btn-volver {
-  position: absolute;
-  left: 24px;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: none;
-  color: #2c3e50;
-  border: none;
-  outline: none;
-  transition: color 0.3s ease, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nueva-seccion__btn-volver:hover {
-  color: #e63946;
-  transform: scale(1.05);
-}
-
 /* Formulario */
 .nueva-seccion__form {
   width: 100%;

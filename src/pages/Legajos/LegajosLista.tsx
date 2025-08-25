@@ -7,6 +7,7 @@ import { FaPlus, FaHistory, FaSearch, FaTrashAlt, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./LegajosLista.css";
 import { registrarCambioLegajo } from "../../utils/registrarCambioLegajo";
+import Header from "../../components/Header";
 
 interface Legajo {
   id: string;
@@ -31,7 +32,7 @@ const LegajosLista: React.FC = () => {
   const [modalEliminarVisible, setModalEliminarVisible] = useState(false);
   const [legajoAEliminar, setLegajoAEliminar] = useState<Legajo | null>(null);
 
-  const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
+  const puedeEditar = user?.rol === "admin" || user?.rol === "jefatura" || user?.rol === "legajo";
 
   useEffect(() => {
     cargarLegajos(true);
@@ -118,29 +119,27 @@ const LegajosLista: React.FC = () => {
 
   return (
     <div className="legajos-lista-container" ref={scrollContainerRef}>
-      <header className="legajos-header">
-        <h2 className="legajos-title">Legajos</h2>
-
-        {puedeEditar && (
-          <>
-            <button
-              className="btn-agregar"
-              title="Agregar nuevo legajo"
-              onClick={() => navigate("/agregar-legajo")}
-            >
-              <FaPlus />
-            </button>
-
-            <button
-              className="btn-ver-historial"
-              title="Ver historial"
-              onClick={() => navigate("/historial")}
-            >
-              <FaHistory />
-            </button>
-          </>
-        )}
-      </header>
+      <Header
+        title="Legajos"
+        extraButtons={
+          puedeEditar
+            ? [
+                {
+                  key: "agregar-legajo",
+                  icon: FaPlus,
+                  onClick: () => navigate("/agregar-legajo"),
+                  ariaLabel: "Agregar nuevo legajo",
+                },
+                {
+                  key: "ver-historial",
+                  icon: FaHistory,
+                  onClick: () => navigate("/historial"),
+                  ariaLabel: "Ver historial de legajos",
+                },
+              ]
+            : []
+        }
+      />
 
       <div className="buscador-container">
         <FaSearch className="icono-lupa" />

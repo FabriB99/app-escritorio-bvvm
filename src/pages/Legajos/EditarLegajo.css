@@ -1,15 +1,13 @@
-/* =============== CONTAINER PRINCIPAL =============== */
+/* ================= CONTAINER PRINCIPAL ================= */
 .editar-legajo-container {
-  margin: 0 auto;
   width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-.editar-legajo-container h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-}
-
-/* =============== FORMULARIO =============== */
+/* ================= FORMULARIO ================= */
 .form-legajo {
   display: flex;
   flex-direction: column;
@@ -17,22 +15,86 @@
   width: 100%;
 }
 
+/* Fila horizontal para foto + legajo */
+.form-fila {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch; /* que se igualen en altura */
+}
+
+/* Cada sección del formulario */
 .form-seccion {
   background-color: #fff;
   border-left: 4px solid #2c3e50;
   border: 1px solid #2c3e50;
   border-radius: 8px;
   padding: 1rem;
+  flex: 1;
 }
 
 .form-seccion legend {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   padding: 0 0.5rem;
   color: #2c3e50;
 }
 
-/* =============== GRUPOS DE INPUTS =============== */
+/* ================= FOTO ================= */
+.foto-seccion {
+  flex: 0 0 250px; /* ancho fijo de 250px */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.foto-carnet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.foto-carnet img,
+.foto-placeholder {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.foto-placeholder {
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Botón de borrar foto */
+.foto-con-boton {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-borrar-foto {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* ================= GRUPOS DE INPUTS ================= */
 .form-grupo {
   display: flex;
   flex-direction: column;
@@ -50,8 +112,11 @@
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  width: 98%;
+  width: 100%;
+  box-sizing: border-box; /* 🔑 evita que se "pase" del espacio */
+  margin-top: 0.25rem;    /* espacio entre label e input */
 }
+
 
 /* GRUPO HORIZONTAL: DOMICILIO + LUGAR + LABORAL */
 .grupo-domicilio-completo {
@@ -66,33 +131,7 @@
   min-width: 200px;
 }
 
-/* =============== FOTO =============== */
-.foto-carnet {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.foto-carnet img,
-.foto-placeholder {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.foto-placeholder {
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-/* =============== BOTONES =============== */
+/* ================= BOTONES ================= */
 .botones-acciones {
   display: flex;
   justify-content: center;
@@ -135,7 +174,7 @@
   background-color: #eee;
 }
 
-/* =============== GRUPO DE HIJOS =============== */
+/* ================= GRUPO DE HIJOS ================= */
 .grupo-hijo {
   display: flex;
   gap: 1.5rem;
@@ -195,46 +234,4 @@
   background-color: #999999;
   color: #eee;
   cursor: not-allowed;
-}
-
-/* =============== RESPONSIVE =============== */
-@media (max-width: 768px) {
-  .form-grupo input {
-    max-width: 100%;
-  }
-
-  .foto-carnet {
-    align-items: center;
-  }
-
-  .grupo-domicilio-completo {
-    flex-direction: column;
-  }
-}
-
-.foto-con-boton {
-  position: relative;
-  display: inline-block;
-}
-
-.foto-con-boton img {
-  width: 150px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.btn-borrar-foto {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: red;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
 }

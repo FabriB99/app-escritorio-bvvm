@@ -1,40 +1,11 @@
 /* src/pages/UnidadDetalle.css */
 
 .detalle-container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 40px 40px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.detalle-header {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 25px;
-    align-items: center;
-}
-
-.detalle-btn-volver,
-.detalle-btn-editar {
-    font-size: 18px;
-    font-weight: bold;
-    padding: 8px 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #333;
-    transition: color 0.2s, transform 0.2s;
-}
-
-.detalle-btn-volver:hover,
-.detalle-btn-editar:hover {
-    color: #e63946;
-    transform: scale(1.05);
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .detalle-contenido {
@@ -213,11 +184,6 @@
 
 /* Ajustes para HD y más grandes */
 @media (min-width: 1366px) {
-  .detalle-container {
-    max-width: 1200px;
-    padding: 40px 40px;
-  }
-
   .detalle-info {
     font-size: 16px;
     padding: 28px;
@@ -234,11 +200,6 @@
 }
 
 @media (min-width: 1920px) {
-  .detalle-container {
-    max-width: 1400px;
-    padding: 48px 60px;
-  }
-
   .detalle-info {
     font-size: 18px;
     padding: 32px;
@@ -260,11 +221,6 @@
 }
 
 @media (min-width: 2048px) {
-  .detalle-container {
-    max-width: 1600px;
-    padding: 56px 80px;
-  }
-
   .detalle-info {
     font-size: 19px;
     padding: 36px;
@@ -286,11 +242,6 @@
 }
 
 @media (min-width: 2560px) {
-  .detalle-container {
-    max-width: 1800px;
-    padding: 64px 100px;
-  }
-
   .detalle-info {
     font-size: 20px;
     padding: 40px;

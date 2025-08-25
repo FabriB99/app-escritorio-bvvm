@@ -1,7 +1,7 @@
 .legajo-detalle-container {
   width: 100%;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+  max-width: 100vw;
+  min-height: 100vh;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
@@ -74,15 +74,11 @@
   justify-content: center;
 }
 
-.btn-editar {
-  width: 40px;
-}
-
+.btn-editar,
 .btn-generar-pdf {
-  min-width: 80px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  width: 40px;
+  font-size: 1.3rem;
+  font-weight: bold;
 }
 
 .btn-editar:hover,

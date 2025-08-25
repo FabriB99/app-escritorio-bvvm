@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaSearch, FaDownload, FaEye } from 'react-icons/fa';
+import { FaSearch, FaDownload, FaEye, FaExternalLinkAlt } from 'react-icons/fa';
 import { db } from '../../../app/firebase-config';
 import {
   collection,
@@ -14,6 +14,7 @@ import {
 import '../biblioteca.css';
 import './VistaSeccion.css';
 import logo from '/logo-bomberos.png';
+import { invoke } from "@tauri-apps/api/core";
 
 import { useUsuarioBiblioteca } from '../../../context/UsuarioBibliotecaContext';
 
@@ -21,7 +22,7 @@ interface Archivo {
   nombre: string;
   fecha: number;
   url: string;
-  tipo?: string;
+  tipo?: 'archivo' | 'link';
 }
 
 interface Tab {
@@ -56,6 +57,7 @@ const VistaSeccion: React.FC = () => {
   const tabsRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  // Cargar sección desde Firestore
   useEffect(() => {
     const fetchSeccion = async () => {
       setLoading(true);
@@ -82,7 +84,7 @@ const VistaSeccion: React.FC = () => {
         });
 
         setTabActivo(data.tabs?.[0]?.id || '');
-        setPaginaActual(1); // resetear página al cargar nueva sección
+        setPaginaActual(1);
       } catch (e) {
         console.error('Error al cargar la sección:', e);
         navigate('/biblioteca');
@@ -94,6 +96,7 @@ const VistaSeccion: React.FC = () => {
     if (ruta) fetchSeccion();
   }, [ruta, navigate]);
 
+  // Ajustar slider de tabs
   const ajustarSlider = () => {
     if (!tabsRef.current || !sliderRef.current) return;
     const tabs = Array.from(tabsRef.current.children).filter((el) =>
@@ -118,6 +121,7 @@ const VistaSeccion: React.FC = () => {
     return () => window.removeEventListener('resize', ajustarSlider);
   }, [tabActivo, seccion]);
 
+  // Foco en búsqueda
   useEffect(() => {
     if (busquedaAbierta && inputRef.current) inputRef.current.focus();
   }, [busquedaAbierta]);
@@ -125,7 +129,7 @@ const VistaSeccion: React.FC = () => {
   const cambiarTab = (id: string) => {
     if (id === tabActivo) return;
     setTabActivo(id);
-    setPaginaActual(1); // resetear página al cambiar tab
+    setPaginaActual(1);
   };
 
   const toggleBusqueda = () => {
@@ -165,21 +169,17 @@ const VistaSeccion: React.FC = () => {
 
   const descargarArchivo = async (archivo: Archivo, e: React.MouseEvent) => {
     e.stopPropagation();
-
     registrarDescarga(archivo.nombre);
-
     try {
       const response = await fetch(archivo.url);
       if (!response.ok) throw new Error('Error al descargar el archivo');
       const blob = await response.blob();
-
       const urlBlob = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = urlBlob;
       link.download = archivo.nombre;
       document.body.appendChild(link);
       link.click();
-
       link.remove();
       window.URL.revokeObjectURL(urlBlob);
     } catch (error) {
@@ -188,15 +188,35 @@ const VistaSeccion: React.FC = () => {
     }
   };
 
+  // Abrir link externo usando Tauri (invoke)
+  const abrirLinkExterno = async (archivo: Archivo, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!archivo.url) return;
+
+    try {
+      let url = archivo.url;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      await invoke('abrir_en_navegador', { url });
+    } catch (error) {
+      console.error('No se pudo abrir el link:', error);
+      alert('No se pudo abrir el link en el navegador.');
+    }
+  };
+
   const tabActual = seccion?.tabs.find((tab) => tab.id === tabActivo);
 
+  const archivosFiltrados = tabActual?.archivos.filter((archivo) =>
+    archivo.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   const archivosPagina =
-    tabActual?.archivos.slice(
+    archivosFiltrados?.slice(
       (paginaActual - 1) * archivosPorPagina,
       paginaActual * archivosPorPagina
     ) || [];
 
-  const totalPaginas = Math.ceil((tabActual?.archivos.length || 0) / archivosPorPagina);
+  const totalPaginas = Math.ceil((archivosFiltrados?.length || 0) / archivosPorPagina);
 
   return (
     <div className="vista-seccion">
@@ -261,7 +281,7 @@ const VistaSeccion: React.FC = () => {
             </nav>
 
             <section className="vista-tab-content">
-              {tabActual?.archivos && tabActual.archivos.length > 0 ? (
+              {archivosPagina.length > 0 ? (
                 <>
                   <ul className="archivos-lista">
                     {archivosPagina.map((archivo, index) => (
@@ -270,34 +290,46 @@ const VistaSeccion: React.FC = () => {
                         <div className="archivos-meta">
                           <span className="archivos-fecha">{formatFecha(archivo.fecha)}</span>
                           <div className="archivos-acciones">
-                            <button
-                              type="button"
-                              title="Vista previa"
-                              onClick={(e) =>
-                                abrirVistaPrevia(
-                                  (paginaActual - 1) * archivosPorPagina + index,
-                                  e
-                                )
-                              }
-                              className="boton-icono"
-                            >
-                              <FaEye className="archivo-icono" />
-                            </button>
-                            <button
-                              type="button"
-                              title="Descargar"
-                              onClick={(e) => descargarArchivo(archivo, e)}
-                              className="boton-icono"
-                            >
-                              <FaDownload className="archivo-icono" />
-                            </button>
+                            {archivo.tipo === 'archivo' ? (
+                              <>
+                                <button
+                                  type="button"
+                                  title="Vista previa"
+                                  onClick={(e) =>
+                                    abrirVistaPrevia(
+                                      (paginaActual - 1) * archivosPorPagina + index,
+                                      e
+                                    )
+                                  }
+                                  className="boton-icono"
+                                >
+                                  <FaEye className="archivo-icono" />
+                                </button>
+                                <button
+                                  type="button"
+                                  title="Descargar"
+                                  onClick={(e) => descargarArchivo(archivo, e)}
+                                  className="boton-icono"
+                                >
+                                  <FaDownload className="archivo-icono" />
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                type="button"
+                                title="Abrir link"
+                                onClick={(e) => abrirLinkExterno(archivo, e)}
+                                className="boton-icono"
+                              >
+                                <FaExternalLinkAlt className="archivo-icono" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </li>
                     ))}
                   </ul>
 
-                  {/* Paginación */}
                   {totalPaginas > 1 && (
                     <div className="vista-paginacion">
                       <button

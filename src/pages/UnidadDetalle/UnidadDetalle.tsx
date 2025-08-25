@@ -6,6 +6,8 @@ import { doc, getDoc, collection, getDocs, query, where, orderBy } from 'firebas
 import { useUser } from '../../context/UserContext';
 import './UnidadDetalle.css';
 import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaQuestionCircle } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
+import Header from "../../components/Header";
 
 interface Elemento {
     id: string;
@@ -144,23 +146,24 @@ const UnidadDetalle: React.FC = () => {
         );
     }
 
-    
-    
-
     return (
         <div className="detalle-container">
-            <div className="detalle-header">
-                <button className="detalle-btn-volver" onClick={() => navigate('/unidades')}>
-                    ↩ Regresar
-                </button>
-                <button
-                    className="detalle-btn-editar"
-                    onClick={() => navigate(`/editar-unidad/${id}`)}
-                    style={{ visibility: (user?.rol === 'admin' || user?.rol === 'jefatura') ? 'visible' : 'hidden' }}
-                >
-                    ✎ Editar
-                </button>
-            </div>
+            <Header
+            title={`Detalle - ${unidad.nombre}`}
+            onBack={() => navigate('/unidades')}
+            extraButtons={[
+                ...(user?.rol === 'admin' || user?.rol === 'jefatura'
+                ? [
+                    {
+                        icon: FiEdit,
+                        onClick: () => navigate(`/editar-unidad/${id}`),
+                        ariaLabel: 'Editar unidad',
+                        className: 'header-btn-edit', // opcional para estilos extra
+                    },
+                    ]
+                : []),
+            ]}
+            />
 
             <div className="detalle-contenido">
                 <div className="detalle-header-contenido">

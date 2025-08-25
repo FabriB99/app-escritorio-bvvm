@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import { mostrarToast } from '../../utils/toast'; 
 import './CrearUnidad.css'; 
 import '../Toast/toastStyles.css'; 
+import Header from "../../components/Header";
 
 const CrearUnidad: React.FC = () => {
     const navigate = useNavigate();
@@ -71,18 +72,16 @@ const CrearUnidad: React.FC = () => {
             }
         }
 
-        mostrarToast("Unidad creada con éxito.", () => navigate(`/`));
+        mostrarToast("Unidad creada con éxito.", () => navigate(`/unidades`));
     };
 
     return (
         <div className="crear-unidad__contenedor-principal">
             {/* Encabezado */}
-            <div className="crear-unidad__encabezado">
-                <button className="crear-unidad__btn-volver" onClick={() => navigate('/unidades')}>
-                    ↩ Regresar
-                </button>
-                <h2 className="crear-unidad__titulo">Crear Unidad</h2>
-            </div>
+            <Header
+            title="Crear Unidad"
+            onBack={() => navigate('/unidades')}
+            />
 
             {/* Formulario */}
             <div className="crear-unidad__formulario">

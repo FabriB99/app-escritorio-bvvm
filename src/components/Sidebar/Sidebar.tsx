@@ -2,8 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../app/firebase-config";
 import { signOut } from "firebase/auth";
-import { FiHome } from "react-icons/fi";
-import { FiLogOut } from "react-icons/fi";
+import { FiHome, FiLogOut } from "react-icons/fi";
 import { useUser } from "../../context/UserContext"; 
 import "./Sidebar.css"; 
 
@@ -22,13 +21,14 @@ const Sidebar: React.FC = () => {
     };
 
     const getRolNombreBonito = (rol: string) => {
-        switch (rol) {
-            case 'admin': return 'Admin';
-            case 'jefatura': return 'Jefatura';
-            case 'guardia': return 'Guardia';
-            case 'legajo': return 'Legajo';
-            default: return rol;
-        }
+    switch (rol) {
+        case 'admin': return 'Admin';
+        case 'jefatura': return 'Jefatura';
+        case 'graduados': return 'Graduado';
+        case 'guardia': return 'Guardia';
+        case 'legajo': return 'Legajo';
+        default: return 'Usuario';
+    }
     };
 
     return (
@@ -48,37 +48,30 @@ const Sidebar: React.FC = () => {
                 <div className="divider" />
 
                 <nav className="nav-buttons">
-                    {/* Links para admin, jefatura y guardia */}
-                    {(user?.rol === 'admin' || user?.rol === 'jefatura' || user?.rol === 'guardia') && (
+                    {/* Links para admin, jefatura, graduados y guardia */}
+                    {['admin', 'jefatura', 'graduados', 'guardia'].includes(user?.rol || '') && (
                         <>
                             <Link to="/unidades" className="nav-button">Unidades</Link>
                             <Link to="/combustible" className="nav-button">Control Combustible</Link>
                             <Link to="/generador-informe" className="nav-button">Informe Unidades</Link>
                             <Link to="/seleccionar-unidad-historial" className="nav-button">Historial Revisiones</Link>
-
-                        </>
-                    )}
-                    {/* Link para admin y jefatura */}
-                        {['admin', 'jefatura'].includes(user?.rol || '') && (
-                        <>
-                            <Link to="/editar-biblioteca" className="nav-button">Biblioteca Virtual</Link>
-                        </>
-                    )}
-                    {/* Links para admin, jefatura y guardia */}
-                    {(user?.rol === 'admin' || user?.rol === 'jefatura' || user?.rol === 'guardia') && (
-                        <>
                             <Link to="/choferes" className="nav-button">Choferes</Link>
                         </>
                     )}
-                    {/* Link para admin y jefatura */}
-                        {['admin', 'jefatura'].includes(user?.rol || '') && (
-                        <>
-                            <Link to="/vencimientos" className="nav-button">Vencimientos</Link>
-                        </>
+
+                    {/* Vencimientos: admin, jefatura y graduados */}
+                    {['admin', 'jefatura', 'graduados'].includes(user?.rol || '') && (
+                        <Link to="/vencimientos" className="nav-button">Vencimientos</Link>
                     )}
-                    {/* Link para admin, legajo y jefatura */}
-                        {['admin', 'legajo', 'jefatura'].includes(user?.rol || '') && (
-                            <Link to="/legajos" className="nav-button">Legajos</Link>
+
+                    {/* Biblioteca Virtual: admin, jefatura y graduados */}
+                    {['admin', 'jefatura', 'graduados'].includes(user?.rol || '') && (
+                        <Link to="/editar-biblioteca" className="nav-button">Biblioteca Virtual</Link>
+                    )}
+
+                    {/* Legajos: admin, legajo y jefatura */}
+                    {['admin', 'legajo', 'jefatura'].includes(user?.rol || '') && (
+                        <Link to="/legajos" className="nav-button">Legajos</Link>
                     )}
                 </nav>
             </div>

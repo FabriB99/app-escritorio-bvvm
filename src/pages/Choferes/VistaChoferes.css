@@ -6,28 +6,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* 🔵 HEADER PRINCIPAL */
-.vista-choferes-header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-  user-select: none;
-}
-
-.vista-choferes-header h1 {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
 /* 🔵 CONTENEDOR TABS + BUSCADOR */
 .vista-choferes-tabs {
   position: relative;

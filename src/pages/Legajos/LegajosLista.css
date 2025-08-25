@@ -6,63 +6,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Header con título y botones */
-.legajos-header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
-  user-select: none;
-}
-
-/* Título centrado */
-.legajos-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Estilo base para ambos botones en el header */
-.legajos-header button.btn-agregar,
-.legajos-header button.btn-ver-historial {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.legajos-header button.btn-agregar:hover,
-.legajos-header button.btn-ver-historial:hover {
-  background-color: #1f2d3a;
-}
-
-/* Botón Agregar alineado a la derecha */
-.legajos-header button.btn-agregar {
-  right: 0;
-}
-
-/* Botón Historial separado del botón Agregar */
-.legajos-header button.btn-ver-historial {
-  right: 50px; /* separación horizontal entre botones */
-}
-
 /* Contenedor buscador debajo, con lupa a la izquierda */
 .buscador-container {
   display: flex;

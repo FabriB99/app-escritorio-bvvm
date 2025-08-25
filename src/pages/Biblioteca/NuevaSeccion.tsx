@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../app/firebase-config';
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  orderBy,
-} from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, orderBy } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { FaBookOpen, FaTrash } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import './NuevaSeccion.css'
+import Header from "../../components/Header";
 
 type Grupo = {
   id: string;
@@ -110,22 +104,10 @@ const NuevaSeccion: React.FC = () => {
 
   return (
     <div className="nueva-seccion__contenedor">
-      <header className="nueva-seccion__header">
-        <button
-          className="nueva-seccion__btn-volver"
-          onClick={() => navigate('/editar-biblioteca/secciones')}
-          aria-label="Volver"
-        >
-          ↩ Regresar
-        </button>
-
-        <div className="nueva-seccion__titulo-contenedor">
-          <h1 className="nueva-seccion__titulo">
-            <FaBookOpen className="nueva-seccion__icono" />
-            Nueva sección
-          </h1>
-        </div>
-      </header>
+      <Header
+        title="Nueva sección"
+        onBack={() => navigate('/editar-biblioteca/secciones')}
+      />
 
       <form onSubmit={handleSubmit} className="nueva-seccion__form">
         <div className="nueva-seccion__grid">

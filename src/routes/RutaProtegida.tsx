@@ -14,6 +14,7 @@ const rutaSegunRol = (rol: string | undefined) => {
     case 'admin':
     case 'jefatura':
     case 'guardia':
+    case 'graduados':
       return '/unidades';
     case 'legajo':
       return '/legajos';

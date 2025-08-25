@@ -1,20 +1,18 @@
 // src/pages/Biblioteca/EditarSeccion.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  doc, getDoc, updateDoc,
-  collection, getDocs, query, orderBy, serverTimestamp
-} from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../app/firebase-config';
 import './EditarSeccion.css';
-
-import { FaEdit, FaFolder, FaFileAlt, FaTrash, FaPlus, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import Header from "../../components/Header";
+import { FaFolder, FaFileAlt, FaTrash, FaPlus, FaArrowUp, FaArrowDown, FaLink } from 'react-icons/fa';
 
 type Archivo = {
   nombre: string;
   url: string;
   fecha: number;
+  tipo?: 'archivo' | 'link';
 };
 
 type Tab = {
@@ -118,12 +116,20 @@ const EditarSeccion: React.FC = () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         const nuevosTabs = [...tabs];
         const archivos = nuevosTabs[tabIndex].archivos || [];
-        archivos.push({ nombre: file.name, url, fecha: Date.now() });
+        archivos.push({ nombre: file.name, url, fecha: Date.now(), tipo: 'archivo' });
         nuevosTabs[tabIndex].archivos = archivos;
         setTabs(nuevosTabs);
         setUploadProgress(prev => ({ ...prev, [tabIndex]: 0 }));
       }
     );
+  };
+
+  const agregarLink = (tabIndex: number) => {
+    const nuevosTabs = [...tabs];
+    const archivos = nuevosTabs[tabIndex].archivos || [];
+    archivos.push({ nombre: '', url: '', fecha: Date.now(), tipo: 'link' });
+    nuevosTabs[tabIndex].archivos = archivos;
+    setTabs(nuevosTabs);
   };
 
   const quitarArchivo = (tabIndex: number, archivoIndex: number) => {
@@ -143,9 +149,7 @@ const EditarSeccion: React.FC = () => {
   const moverTab = (index: number, direccion: 'arriba' | 'abajo') => {
     const nuevosTabs = [...tabs];
     const nuevoIndex = direccion === 'arriba' ? index - 1 : index + 1;
-
     if (nuevoIndex < 0 || nuevoIndex >= nuevosTabs.length) return;
-
     [nuevosTabs[index], nuevosTabs[nuevoIndex]] = [nuevosTabs[nuevoIndex], nuevosTabs[index]];
     setTabs(nuevosTabs);
   };
@@ -178,18 +182,10 @@ const EditarSeccion: React.FC = () => {
 
   return (
     <div className="editar-seccion__contenedor-principal">
-      <header className="editar-seccion__header">
-        <button
-          className="editar-seccion__btn-volver"
-          onClick={() => navigate('/editar-biblioteca/secciones')}
-        >
-          ↩ Regresar
-        </button>
-
-        <h1 className="editar-seccion__titulo">
-          <FaEdit style={{ marginRight: '8px' }} />Editar sección
-        </h1>
-      </header>
+      <Header
+        title="Editar sección"
+        onBack={() => navigate('/editar-biblioteca/secciones')}
+      />
 
       <main className="editar-seccion__main">
         <form onSubmit={handleGuardar} className="editar-seccion__form">
@@ -297,7 +293,7 @@ const EditarSeccion: React.FC = () => {
                 <div className="editar-seccion__archivos-area">
                   <h4 className="editar-seccion__archivos-titulo">
                     <FaFileAlt style={{ marginRight: '6px' }} />
-                    Archivos
+                    Archivos y links
                   </h4>
 
                   {(tab.archivos || []).map((archivo, j) => (
@@ -306,14 +302,25 @@ const EditarSeccion: React.FC = () => {
                         className="editar-seccion__archivo-input"
                         value={archivo.nombre}
                         onChange={e => handleArchivoChange(i, j, 'nombre', e.target.value)}
-                        placeholder="Nombre del archivo"
+                        placeholder="Nombre del recurso"
                         required
                       />
+
+                      {archivo.tipo === 'link' && (
+                        <input
+                          className="editar-seccion__archivo-input"
+                          value={archivo.url}
+                          onChange={e => handleArchivoChange(i, j, 'url', e.target.value)}
+                          placeholder="Pegar link (Drive, YouTube, etc.)"
+                          required
+                        />
+                      )}
+
                       <button
                         type="button"
                         onClick={() => quitarArchivo(i, j)}
                         className="editar-seccion__btn editar-seccion__btn--quitar-archivo"
-                        aria-label={`Eliminar archivo ${archivo.nombre}`}
+                        aria-label={`Eliminar recurso ${archivo.nombre}`}
                       >
                         <FaTrash />
                       </button>
@@ -344,6 +351,14 @@ const EditarSeccion: React.FC = () => {
                     className="editar-seccion__btn editar-seccion__btn--agregar"
                   >
                     <FaPlus /> Agregar archivo
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => agregarLink(i)}
+                    className="editar-seccion__btn editar-seccion__btn--agregar"
+                  >
+                    <FaLink /> Agregar link
                   </button>
                 </div>
               </div>

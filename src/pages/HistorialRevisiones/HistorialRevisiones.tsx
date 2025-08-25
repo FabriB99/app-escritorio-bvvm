@@ -7,6 +7,7 @@ import { MdClose } from 'react-icons/md';
 import { mostrarToast } from '../../utils/toast'; 
 import { useUser } from '../../context/UserContext'; // ✅
 import './HistorialRevisiones.css';
+import Header from "../../components/Header";
 
 interface Revision {
     id: string;
@@ -144,15 +145,13 @@ export default function HistorialRevisiones() {
     };
 
     return (
-        <div className="historial-revisiones">
+
             <div className="historial-revisiones__contenedor-principal">
-                <div className="encabezado-historial">
-                    <button className="btn-volver-historial" onClick={() => navigate('/seleccionar-unidad-historial')}>
-                        ↩ Regresar
-                    </button>
-                    <h2 className="titulo-historial">Historial de {nombreUnidad}</h2>
-                </div>
-            </div>
+                <Header
+                title={`Historial de ${nombreUnidad}`}
+                onBack={() => navigate('/seleccionar-unidad-historial')}
+                />
+
 
             {cargando ? (
                 <div className="cargando">

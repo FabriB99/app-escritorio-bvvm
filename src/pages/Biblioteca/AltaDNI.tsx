@@ -5,6 +5,7 @@ import { db } from '../../app/firebase-config';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AltaDNI.css';
+import Header from "../../components/Header";
 
 const AltaDNI: React.FC = () => {
   const navigate = useNavigate();
@@ -54,15 +55,10 @@ const AltaDNI: React.FC = () => {
     <div className="alta-dni__contenedor">
       <ToastContainer position="top-right" autoClose={1500} hideProgressBar />
       
-      <div className="alta-dni__header">
-        <button
-          className="alta-dni__btn-volver"
-          onClick={() => navigate('/editar-biblioteca/dnis/listado')}
-        >
-          ↩ Regresar
-        </button>
-        <h1 className="alta-dni__titulo">Alta de DNIs</h1>
-      </div>
+        <Header
+          title="Agregar DNI"
+          onBack={() => navigate('/editar-biblioteca/dnis/listado')}
+        />
 
       <form className="alta-dni__formulario" onSubmit={handleGuardar}>
         <div className="alta-dni__tarjeta">

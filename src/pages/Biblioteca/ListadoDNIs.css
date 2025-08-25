@@ -1,55 +1,10 @@
 /* Contenedor general de toda la pantalla */
 .listado-dnis__contenedor {
   width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header superior: botón volver + título centrado */
-.listado-dnis__header {
-  position: relative;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Título principal grande y claro */
-.listado-dnis__titulo {
-  font-size: 3.7rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0;
-  user-select: none;
-  flex-grow: 1;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Botón volver: arriba a la izquierda, simple y con hover */
-.listado-dnis__btn-volver {
-  position: absolute;
-  left: 0;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: none;
-  color: #2c3e50;
-  border: none;
-  outline: none;
-  transition: color 0.3s ease, transform 0.2s ease;
-}
-
-.listado-dnis__btn-volver:hover {
-  color: #e63946;
-  transform: scale(1.05);
 }
 
 /* Contenedor buscador + botón agregar */

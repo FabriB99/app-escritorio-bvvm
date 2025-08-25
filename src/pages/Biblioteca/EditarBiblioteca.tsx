@@ -2,15 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBookOpen, FaIdCard,  } from 'react-icons/fa';
 import './EditarBiblioteca.css';
-{/*FaChartBar*/}
+import Header from "../../components/Header";
+
 const EditarBiblioteca: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="panel-biblioteca__contenedor-principal">
-      <header className="panel-biblioteca__header">
-        <h1 className="panel-biblioteca__titulo">Panel de Biblioteca Virtual</h1>
-      </header>
+      <Header
+        title="Biblioteca Virtual"
+      />
 
       <main className="panel-biblioteca__grid">
         <div

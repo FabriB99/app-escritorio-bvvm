@@ -15,7 +15,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "types": ["react", "react-dom"],
+    "types": ["react", "react-dom", "@tauri-apps/api"],
     "baseUrl": "src"
   },
   "include": ["src"],

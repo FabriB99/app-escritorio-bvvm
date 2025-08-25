@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
 import './AgregarLegajo.css';
+import Header from "../../components/Header";
 
 const AgregarLegajo: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +44,10 @@ const AgregarLegajo: React.FC = () => {
 
   return (
     <div className="agregar-legajo-container">
-      <h2 className="titulo-pagina">Agregar Legajo</h2>
+      <Header
+        title="Agregar Legajo"
+        onBack={() => navigate("/legajos")} // vuelve a la lista de legajos
+      />
 
       <form onSubmit={handleSubmit} className="form-legajo">
         <label>

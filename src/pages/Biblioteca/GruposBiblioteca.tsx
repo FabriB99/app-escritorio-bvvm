@@ -1,28 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  query,
-  orderBy,
-  updateDoc,
-  getDocs,
-} from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
 import { useUser } from '../../context/UserContext';
-import {
-  FaArrowUp,
-  FaArrowDown,
-  FaTrash,
-  FaEdit,
-  FaSave,
-  FaTimes,
-  FaPlus,
-} from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaTrash, FaEdit, FaSave, FaTimes, FaPlus } from 'react-icons/fa';
 import './GruposBiblioteca.css';
+import Header from "../../components/Header";
 
 type Grupo = {
   id: string;
@@ -144,22 +127,10 @@ const GruposBiblioteca = () => {
 
   return (
     <div className="grupos-biblioteca__contenedor">
-      <div className="grupos-biblioteca__header">
-        <button
-          className="grupos-biblioteca__btn-volver"
-          onClick={() => navigate('/editar-biblioteca/secciones')}
-          aria-label="Volver"
-        >
-          ↩ Regresar
-        </button>
-
-        <div className="grupos-biblioteca__titulo-contenedor">
-          <h1 className="grupos-biblioteca__titulo">
-              <FaEdit className="grupos-biblioteca__icono" />
-              Administrar grupos
-          </h1>
-        </div>
-      </div>
+      <Header
+        title="Administrar grupos"
+        onBack={() => navigate('/editar-biblioteca/secciones')}
+      />
 
       {puedeEditar && (
         <div className="grupos-biblioteca__input-nuevo">
@@ -214,27 +185,11 @@ const GruposBiblioteca = () => {
                 {puedeEditar && (
                   <div className="grupos-biblioteca__grupo-acciones">
                     <button
-                      className="grupos-biblioteca__btn-editar"
-                      onClick={() => {
-                        setEditandoId(grupo.id);
-                        setNombreEditado(grupo.nombre);
-                      }}
-                      title="Editar nombre"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className="grupos-biblioteca__btn-eliminar"
-                      onClick={() => eliminarGrupo(grupo.id)}
-                      title="Eliminar grupo"
-                    >
-                      <FaTrash />
-                    </button>
-                    <button
                       className="grupos-biblioteca__btn-subir"
                       onClick={() => moverGrupo(grupo.id, 'up')}
                       disabled={idx === 0}
                       title="Subir"
+                      aria-label="Subir grupo"
                     >
                       <FaArrowUp />
                     </button>
@@ -243,10 +198,31 @@ const GruposBiblioteca = () => {
                       onClick={() => moverGrupo(grupo.id, 'down')}
                       disabled={idx === grupos.length - 1}
                       title="Bajar"
+                      aria-label="Bajar grupo"
                     >
                       <FaArrowDown />
                     </button>
+                    <button
+                      className="grupos-biblioteca__btn-editar"
+                      onClick={() => {
+                        setEditandoId(grupo.id);
+                        setNombreEditado(grupo.nombre);
+                      }}
+                      title="Editar nombre"
+                      aria-label="Editar grupo"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="grupos-biblioteca__btn-eliminar"
+                      onClick={() => eliminarGrupo(grupo.id)}
+                      title="Eliminar grupo"
+                      aria-label="Eliminar grupo"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
+
                 )}
               </>
             )}

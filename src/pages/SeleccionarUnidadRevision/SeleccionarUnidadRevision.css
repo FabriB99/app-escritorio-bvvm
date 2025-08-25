@@ -1,22 +1,12 @@
 /* 🔷 Contenedor general */
 .elegir-unidad-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0rem 1.5rem;
-    min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* 🔷 Título principal */
-.titulo-principal {
-    font-size: 3.7rem;
-    font-weight: 700;
-    color: #333;
-    text-align: center;
-    margin-top: 5px;
-    margin-bottom: 0px;
-    letter-spacing: 1px;
-}
 
 /* 🔷 Grilla de tarjetas */
 .unidad-lista {

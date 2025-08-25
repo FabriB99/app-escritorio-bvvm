@@ -11,7 +11,7 @@ const GITHUB_REPO_API = 'https://api.github.com/repos/FabriB99/app-escritorio-bv
 
 const normalizeVersion = (version: string) => version.trim().replace(/^v/, '');
 
-const MANUAL_VERSION = '0.2.2';  // Poné acá la versión "manual" que quieras mostrar si no hay Tauri
+const MANUAL_VERSION = '0.2.4';  // Poné acá la versión "manual" que quieras mostrar si no hay Tauri
 
 const Inicio: React.FC = () => {
   const navigate = useNavigate();

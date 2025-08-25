@@ -10,6 +10,7 @@ import { registrarCambioLegajo } from "../../utils/registrarCambioLegajo";
 import { useUser } from "../../context/UserContext";
 import imageCompression from "browser-image-compression";
 import { deleteObject } from "firebase/storage";
+import Header from "../../components/Header";
 
 interface Hijo {
   nombre: string;
@@ -209,63 +210,71 @@ const EditarLegajo: React.FC = () => {
 
   return (
     <div className="editar-legajo-container">
-      <h2>Editar Legajo</h2>
+      <Header
+        title="Editar Legajo"
+        onBack={() => navigate(`/legajo/${id}`)}
+      />
       <form onSubmit={handleSubmit} className="form-legajo">
-        {/* FOTO */}
-        <fieldset className="form-seccion">
-          <legend>Foto carnet</legend>
-          <div className="foto-carnet">
-            {fotoPreview ? (
-              <div className="foto-con-boton">
-                <img src={fotoPreview} alt="Foto carnet" />
-                <button
-                  type="button"
-                  className="btn-borrar-foto"
-                  onClick={handleBorrarFoto}
-                  title="Eliminar foto"
-                >
-                  ❌
-                </button>
-              </div>
-            ) : (
-              <div className="foto-placeholder">Sin foto</div>
-            )}
-            <input type="file" accept="image/*" onChange={handleFotoChange} />
-            {uploadProgress !== null && <p>Subiendo foto... {uploadProgress.toFixed(0)}%</p>}
-          </div>
-        </fieldset>
-        {/* LEGAJO */}
-        <fieldset className="form-seccion">
-          <legend>Legajo</legend>
-          <div className="form-grupo">
-            <label>N° Legajo:</label>
-            <input
-              type="number"
-              name="numeroLegajo"
-              value={datos.numeroLegajo}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-grupo">
-            <label>Legajo Federación:</label>
-            <input
-              type="number"
-              name="numeroLegajoFederacion"
-              value={datos.numeroLegajoFederacion || ""}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-grupo">
-            <label>Legajo RUBA:</label>
-            <input
-              type="number"
-              name="numeroLegajoRUBA"
-              value={datos.numeroLegajoRUBA || ""}
-              onChange={handleChange}
-            />
-          </div>
-        </fieldset>
+        <div className="form-fila">
+                    {/* LEGAJO */}
+          <fieldset className="form-seccion legajo-seccion">
+            <legend>Legajo</legend>
+            <div className="form-grupo">
+              <label>N° Legajo:</label>
+              <input
+                type="number"
+                name="numeroLegajo"
+                value={datos.numeroLegajo}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-grupo">
+              <label>Legajo Federación:</label>
+              <input
+                type="number"
+                name="numeroLegajoFederacion"
+                value={datos.numeroLegajoFederacion || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-grupo">
+              <label>Legajo RUBA:</label>
+              <input
+                type="number"
+                name="numeroLegajoRUBA"
+                value={datos.numeroLegajoRUBA || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </fieldset>
+
+          {/* FOTO */}
+          <fieldset className="form-seccion foto-seccion">
+            <legend>Foto carnet</legend>
+            <div className="foto-carnet">
+              {fotoPreview ? (
+                <div className="foto-con-boton">
+                  <img src={fotoPreview} alt="Foto carnet" />
+                  <button
+                    type="button"
+                    className="btn-borrar-foto"
+                    onClick={handleBorrarFoto}
+                    title="Eliminar foto"
+                  >
+                    ❌
+                  </button>
+                </div>
+              ) : (
+                <div className="foto-placeholder">Sin foto</div>
+              )}
+              <input type="file" accept="image/*" onChange={handleFotoChange} />
+              {uploadProgress !== null && (
+                <p>Subiendo foto... {uploadProgress.toFixed(0)}%</p>
+              )}
+            </div>
+          </fieldset>
+        </div>
 
         {/* DATOS PERSONALES */}
         <fieldset className="form-seccion">

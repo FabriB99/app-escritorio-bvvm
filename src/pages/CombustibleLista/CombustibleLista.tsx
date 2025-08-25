@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../app/firebase-config";
 import { FiRefreshCw } from "react-icons/fi";
+import Header from "../../components/Header";
 import './CombustibleLista.css';
 
 interface Unidad {
@@ -9,7 +10,7 @@ interface Unidad {
     nombre: string;
     tipo?: string;
     combustible: string;
-    fechaControl?: string | null; // fecha como string ISO o null
+    fechaControl?: string | null;
 }
 
 const CombustibleLista: React.FC = () => {
@@ -27,10 +28,8 @@ const CombustibleLista: React.FC = () => {
 
             if (unidad.fechaControlCombustible) {
                 if (unidad.fechaControlCombustible.seconds) {
-                    // Es un timestamp de Firebase
                     fechaControlFormateada = new Date(unidad.fechaControlCombustible.seconds * 1000).toISOString();
                 } else {
-                    // Ya es string
                     fechaControlFormateada = unidad.fechaControlCombustible;
                 }
             }
@@ -44,7 +43,6 @@ const CombustibleLista: React.FC = () => {
             } as Unidad;
         });
 
-        // Ordenar por número en el nombre
         data.sort((a, b) => {
             const numA = parseInt(a.nombre.match(/\d+/)?.[0] || '0', 10);
             const numB = parseInt(b.nombre.match(/\d+/)?.[0] || '0', 10);
@@ -62,22 +60,20 @@ const CombustibleLista: React.FC = () => {
 
     return (
         <div className="combustible-lista">
-            <div className="header-container">
-                <div className="header-title-container">
-                    <h2 className="header-title">Niveles de Combustible</h2>
-                </div>
 
-                <div className="actualizar-container">
-                    <button
-                        className="actualizar-icon"
-                        onClick={obtenerUnidades}
-                        disabled={actualizando}
-                        title={actualizando ? 'Actualizando...' : 'Actualizar'}
-                    >
-                        <FiRefreshCw />
-                    </button>
-                </div>
-            </div>
+            {/* Header nuevo 👇 */}
+            <Header
+                title="Control Combustible"
+                extraButtons={[
+                    {
+                        key: "refresh",
+                        icon: FiRefreshCw,
+                        ariaLabel: "Actualizar lista",
+                        className: actualizando ? "btn-disabled" : "",
+                        onClick: obtenerUnidades
+                    }
+                ]}
+            />
 
             <div className="combustible-contenido">
                 {cargando ? (
