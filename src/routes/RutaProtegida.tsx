@@ -18,6 +18,8 @@ const rutaSegunRol = (rol: string | undefined) => {
       return '/unidades';
     case 'legajo':
       return '/legajos';
+    case 'bombero':
+      return '/inicio-bombero';
     default:
       return '/login';
   }

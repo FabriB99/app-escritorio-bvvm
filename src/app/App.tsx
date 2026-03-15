@@ -3,8 +3,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import MainLayout from '../components/MainLayout/MainLayout';
 import Inicio from '../pages/Inicio/Inicio';
+import InicioBombero from '../pages/Inicio/InicioBombero'
 import Login from '../pages/Login/Login';
 import LoginBiblioteca from '../pages/Login/LoginBiblioteca';
+
+// Unidades
 import Unidades from '../pages/Unidades/Unidades';
 import CrearUnidad from '../pages/CrearUnidad/CrearUnidad';
 import EditarUnidad from '../pages/EditarUnidad/EditarUnidad';
@@ -14,25 +17,36 @@ import SeleccionarUnidadRevision from '../pages/SeleccionarUnidadRevision/Selecc
 import CombustibleLista from '../pages/CombustibleLista/CombustibleLista';
 import GeneradorInforme from '../pages/GeneradorInforme/GeneradorInforme';
 import Vencimientos from '../pages/Vencimientos/Vencimientos';
-import Choferes from '../pages/Choferes/VistaChoferes';
 
+// Guardia
+import Choferes from '../pages/Choferes/VistaChoferes';
+import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista';
+import AgregarArea from "../pages/AreasProtegidas/AgregarArea";
+import EditarArea from "../pages/AreasProtegidas/EditarArea";
+
+// Admin
+import AdminPanel from "../pages/Admin/PanelAdmin";
+import AdminIdentidades from "../pages/Admin/AdminIdentidades"
+import AdminCrearIdentidad from "../pages/Admin/AdminCrearIdentidad";
+import AdminEditarIdentidad from "../pages/Admin/AdminEditarIdentidad";
+import AuditoriaLista from "../pages/Admin/AuditoriaLista";
+
+// Biblioteca
 import Biblioteca from '../pages/Biblioteca/Biblioteca';
 import EditarBiblioteca from '../pages/Biblioteca/EditarBiblioteca';
-import AltaDNI from '../pages/Biblioteca/AltaDNI';
-import ListadoDNIs from '../pages/Biblioteca/ListadoDNIs';
 import NuevaSeccion from '../pages/Biblioteca/NuevaSeccion';
 import EditarSeccion from '../pages/Biblioteca/EditarSeccion';
 import ListadoSecciones from '../pages/Biblioteca/ListadoSecciones';
 import GruposBiblioteca from '../pages/Biblioteca/GruposBiblioteca';
 import VistaSeccion from '../pages/Biblioteca/Secciones/VistaSeccion';
 import VistaPreviaArchivo from '../pages/Biblioteca/Secciones/VistaPreviaArchivo';
-import Metricas from '../pages/Biblioteca/Metricas';
+import RegistroAccesos from '../pages/Biblioteca/RegistroAccesos';
 
+// Legajos
 import Legajos from '../pages/Legajos/LegajosLista';
 import AgregarLegajo from '../pages/Legajos/AgregarLegajo';
 import LegajoDetalle from '../pages/Legajos/LegajoDetalle';
 import EditarLegajo from '../pages/Legajos/EditarLegajo';
-import HistorialLegajo from '../pages/Legajos/HistorialLegajo';
 
 import RutaProtegida from '../routes/RutaProtegida';
 import AuthRedirect from '../routes/AuthRedirect';
@@ -42,6 +56,7 @@ import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
 
 import { UsuarioBibliotecaProvider } from '../context/UsuarioBibliotecaContext';
 
+import './styles/variables.css';
 import './App.css';
 
 const App: React.FC = () => {
@@ -174,11 +189,44 @@ const App: React.FC = () => {
             }
           />
 
+          <Route
+            path="/areas-protegidas"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <AreasProtegidasLista />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/agregar-area"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <AgregarArea />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/editar-area/:id"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <EditarArea />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
           {/* Rutas Legajos con auth */}
           <Route
             path="/legajos"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'legajo']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'legajo', 'graduados']}>
                 <MainLayout>
                   <Legajos />
                 </MainLayout>
@@ -198,7 +246,7 @@ const App: React.FC = () => {
           <Route
             path="/legajo/:id"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'legajo']}>
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'legajo', 'bombero', 'graduados']}>
                 <MainLayout>
                   <LegajoDetalle />
                 </MainLayout>
@@ -215,16 +263,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-          <Route
-            path="/historial"
-            element={
-              <RutaProtegida rolesPermitidos={['admin', 'legajo', 'jefatura']}>
-                <MainLayout>
-                  <HistorialLegajo />
-                </MainLayout>
-              </RutaProtegida>
-            }
-          />
 
           {/* Biblioteca Virtual administración (admin, jefatura, graduados) */}
           <Route
@@ -233,26 +271,6 @@ const App: React.FC = () => {
               <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
                 <MainLayout>
                   <EditarBiblioteca />
-                </MainLayout>
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/editar-biblioteca/dnis"
-            element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
-                <MainLayout>
-                  <AltaDNI />
-                </MainLayout>
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/editar-biblioteca/dnis/listado"
-            element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
-                <MainLayout>
-                  <ListadoDNIs />
                 </MainLayout>
               </RutaProtegida>
             }
@@ -298,12 +316,12 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/editar-biblioteca/metricas"
+            path="/editar-biblioteca/registro"
             element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
-                <MainLayout>
-                  <Metricas />
-                </MainLayout>
+              <RutaProtegida rolesPermitidos={['admin']}>
+                  <MainLayout>
+                    <RegistroAccesos />
+                  </MainLayout>
               </RutaProtegida>
             }
           />
@@ -323,6 +341,71 @@ const App: React.FC = () => {
               <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
                 <MainLayout>
                   <Choferes />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          {/* Administración */}
+          <Route
+            path="/admin"
+            element={
+              <RutaProtegida rolesPermitidos={['admin']}>
+                <MainLayout>
+                  <AdminPanel />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/admin/identidades"
+            element={
+              <RutaProtegida rolesPermitidos={['admin']}>
+                <MainLayout>
+                  <AdminIdentidades />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/admin/crear-identidad"
+            element={
+              <RutaProtegida rolesPermitidos={['admin']}>
+                <MainLayout>
+                  <AdminCrearIdentidad />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/admin/editar-identidad/:id"
+            element={
+              <RutaProtegida rolesPermitidos={['admin']}>
+                <MainLayout>
+                  <AdminEditarIdentidad />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/admin/auditoria"
+            element={
+              <RutaProtegida rolesPermitidos={['admin']}>
+                <MainLayout>
+                  <AuditoriaLista />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/inicio-bombero"
+            element={
+              <RutaProtegida rolesPermitidos={['bombero']}>
+                <MainLayout>
+                  <InicioBombero />
                 </MainLayout>
               </RutaProtegida>
             }

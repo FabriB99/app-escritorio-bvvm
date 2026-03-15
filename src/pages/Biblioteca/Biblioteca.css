@@ -54,7 +54,22 @@
   margin-left: 2px;
 }
 
-/* Derecha del header: buscador */
+/* Derecha del header: saludo + buscador */
+.biblioteca-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.biblioteca-saludo {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #f1f7ff; /* blanco suave que contraste con el header */
+  white-space: nowrap;
+}
+
+/* Buscador */
 .biblioteca-busqueda {
   display: flex;
   align-items: center;
@@ -70,6 +85,7 @@
   color: #aaa;
   font-size: 1.3rem;
   user-select: none;
+  cursor: pointer;
 }
 
 .biblioteca-busqueda-input {
@@ -130,28 +146,31 @@
 
 .biblioteca-seccion-header {
   display: flex;
-  align-items: center; /* esto ya está, pero podés probar con flex-start para probar */
+  align-items: center;
   gap: 1rem;
   padding: 2rem 2rem 0 2rem;
 }
 
-/* Ajustamos el título para que tenga línea base que sirva de referencia */
 .biblioteca-seccion-titulo {
-  font-size: 2rem; /* si aumentaste a 2rem, lo dejamos así */
+  font-size: 2rem;
   font-weight: bold;
   color: #2c3e50;
   margin: 0;
-  line-height: 1; /* importante para que no agregue espacio vertical */
+  line-height: 1;
 }
 
-/* Ahora la línea */
 .biblioteca-seccion-linea {
   flex-grow: 1;
-  height: 5px; /* el que pusiste */
+  height: 5px;
   background: #2c3e50;
   opacity: 0.2;
   border-radius: 4px;
+  margin-top: 0.5rem;
+}
 
-  /* Para centrar verticalmente, hacemos un pequeño ajuste con margen */
-  margin-top: 0.5rem; /* prueba y ajusta este valor */
+/* Mensajes de sección vacía */
+.biblioteca-carpeta-vacio {
+  font-size: 1rem;
+  color: #555;
+  grid-column: 1 / -1; /* ocupa toda la fila */
 }

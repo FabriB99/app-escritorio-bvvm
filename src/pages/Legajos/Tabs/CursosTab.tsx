@@ -1,3 +1,4 @@
+// src/pages/Legajos/tabs/CursosTab.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -6,7 +7,7 @@ import { FaEdit, FaTrash, FaPlus, FaCheckCircle, FaFilePdf, FaUpload } from "rea
 import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
-import { registrarCambioLegajo } from "../../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from "../../../utils/auditoria";
 
 interface Curso {
   id: string;
@@ -18,14 +19,14 @@ interface Curso {
 }
 
 const CursosTab: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [editandoCurso, setEditandoCurso] = useState<Curso | null>(null);
   const [cursoSeleccionado, setCursoSeleccionado] = useState<Curso | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
 
   useEffect(() => {
@@ -36,7 +37,7 @@ const CursosTab: React.FC = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setCursos(data.cursos || []);
+          setCursos((data?.cursos as Curso[]) || []);
         }
       } catch (error) {
         console.error("Error al obtener cursos:", error);
@@ -71,27 +72,30 @@ const CursosTab: React.FC = () => {
 
   const guardarCurso = async (curso: Curso) => {
     const esEdicion = !!editandoCurso;
-    const nuevos = esEdicion
+    const nuevosCursos = esEdicion
       ? cursos.map((c) => (c.id === curso.id ? curso : c))
       : [...cursos, { ...curso, id: Date.now().toString() }];
 
-    await guardarEnFirebase(nuevos);
+    await guardarEnFirebase(nuevosCursos);
 
-    if (user) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: esEdicion ? "modificado" : "agregado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "curso",
-        datosPrevios: esEdicion ? cursos.find((c) => c.id === curso.id) : null,
-        datosNuevos: curso,
-      });
+    if (miembroActivo) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: esEdicion ? "editar" : "crear",
+          tipoCambio: "curso",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosNuevos: curso,
+          datosAnteriores: esEdicion ? cursos.find((c) => c.id === curso.id) || null : null,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (curso):", err);
+      }
     }
 
     cerrarFormulario();
   };
-
 
   const eliminarCurso = async (idCurso: string) => {
     if (!window.confirm("¿Eliminar curso?")) return;
@@ -101,15 +105,19 @@ const CursosTab: React.FC = () => {
 
     await guardarEnFirebase(nuevos);
 
-    if (user && cursoAEliminar) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: "eliminado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "curso",
-        datosPrevios: cursoAEliminar,
-      });
+    if (miembroActivo && cursoAEliminar) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: "eliminar",
+          tipoCambio: "curso",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosAnteriores: cursoAEliminar,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (eliminar curso):", err);
+      }
     }
 
     if (cursoSeleccionado?.id === idCurso) setCursoSeleccionado(null);
@@ -151,15 +159,19 @@ const CursosTab: React.FC = () => {
       await guardarEnFirebase(cursosActualizados);
 
       if (user) {
-        await registrarCambioLegajo({
-          legajoId: id!,
-          accion: "modificado",
-          usuarioId: user.uid,
-          usuarioRol: user.rol,
-          tipoCambio: "curso",
-          datosPrevios: cursoSeleccionado,
-          datosNuevos: { ...cursoSeleccionado, pdfUrl: url },
-        });
+        try {
+          await registrarAuditoria({
+            coleccion: "legajos",
+            accion: "editar",
+            tipoCambio: "curso_pdf",
+            docId: id!,
+            miembro: { uid: user.uid, rol: user.rol },
+            datosNuevos: { cursoId: cursoSeleccionado.id, pdfUrl: url },
+            datosAnteriores: null,
+          });
+        } catch (err) {
+          console.error("Error al registrar auditoría (subida pdf):", err);
+        }
       }
 
       alert("Archivo subido correctamente.");
@@ -170,7 +182,6 @@ const CursosTab: React.FC = () => {
       if (inputFileRef.current) inputFileRef.current.value = "";
     }
   };
-
 
   if (loading) return <p>Cargando cursos...</p>;
 
@@ -189,7 +200,6 @@ const CursosTab: React.FC = () => {
         <tbody>
           {cursos.length ? (
             [...cursos].sort((a, b) => a.fecha.localeCompare(b.fecha)).map((c) => (
-
               <tr
                 key={c.id}
                 className={cursoSeleccionado?.id === c.id ? "fila-seleccionada" : ""}
@@ -221,65 +231,54 @@ const CursosTab: React.FC = () => {
           )}
         </tbody>
       </table>
-    {puedeEditar && (
-      <div className="btn-acciones">
-        <button
-          className="btn-accion"
-          onClick={() => abrirFormulario()}
-          title="Agregar curso"
-          aria-label="Agregar curso"
-        >
-          <FaPlus />
-        </button>
 
-        <button
-          className="btn-accion"
-          onClick={() => {
-            if (!cursoSeleccionado) return alert("Seleccioná un curso para editar.");
-            abrirFormulario(cursoSeleccionado);
-          }}
-          disabled={!cursoSeleccionado}
-          title="Editar curso seleccionado"
-          aria-label="Editar curso seleccionado"
-        >
-          <FaEdit />
-        </button>
+      {puedeEditar && (
+        <div className="btn-acciones">
+          <button className="btn-accion" onClick={() => abrirFormulario()} title="Agregar curso" aria-label="Agregar curso">
+            <FaPlus />
+          </button>
 
-        <button
-          className="btn-accion btn-eliminar"
-          onClick={() => {
-            if (!cursoSeleccionado) return alert("Seleccioná un curso para eliminar.");
-            eliminarCurso(cursoSeleccionado.id);
-          }}
-          disabled={!cursoSeleccionado}
-          title="Eliminar curso seleccionado"
-          aria-label="Eliminar curso seleccionado"
-        >
-          <FaTrash />
-        </button>
+          <button
+            className="btn-accion"
+            onClick={() => {
+              if (!cursoSeleccionado) return alert("Seleccioná un curso para editar.");
+              abrirFormulario(cursoSeleccionado);
+            }}
+            disabled={!cursoSeleccionado}
+            title="Editar curso seleccionado"
+            aria-label="Editar curso seleccionado"
+          >
+            <FaEdit />
+          </button>
 
-        <button
-          className="btn-accion"
-          onClick={manejarClickSubirArchivo}
-          disabled={!cursoSeleccionado}
-          title="Subir archivo PDF para curso seleccionado"
-          aria-label="Subir archivo PDF"
-        >
-          <FaUpload />
-        </button>
+          <button
+            className="btn-accion btn-eliminar"
+            onClick={() => {
+              if (!cursoSeleccionado) return alert("Seleccioná un curso para eliminar.");
+              eliminarCurso(cursoSeleccionado.id);
+            }}
+            disabled={!cursoSeleccionado}
+            title="Eliminar curso seleccionado"
+            aria-label="Eliminar curso seleccionado"
+          >
+            <FaTrash />
+          </button>
 
-        <input
-          type="file"
-          accept="application/pdf"
-          style={{ display: "none" }}
-          ref={inputFileRef}
-          onChange={manejarArchivoChange}
-        />
-      </div>
-    )}
-      {mostrarForm && (
-        <CursoForm curso={editandoCurso} onClose={cerrarFormulario} onGuardar={guardarCurso} />
+          <button
+            className="btn-accion"
+            onClick={manejarClickSubirArchivo}
+            disabled={!cursoSeleccionado}
+            title="Subir archivo PDF"
+            aria-label="Subir archivo PDF"
+          >
+            <FaUpload />
+          </button>
+
+          <input type="file" accept="application/pdf" style={{ display: "none" }} ref={inputFileRef} onChange={manejarArchivoChange} />
+        </div>
       )}
+
+      {mostrarForm && <CursoForm curso={editandoCurso} onClose={cerrarFormulario} onGuardar={guardarCurso} />}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+// src/pages/Legajos/tabs/CondecoracionesTab.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -6,13 +7,13 @@ import {
   FaEdit, FaTrash, FaPlus, FaCheckCircle, FaFilePdf, FaUpload
 } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import "./TabsGeneral.css"; // Usamos el CSS general que ya tenés
+import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
-import { registrarCambioLegajo } from "../../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from "../../../utils/auditoria";
 
 interface Condecoracion {
   id: string;
-  fecha: string;
+  fecha: string; // ISO yyyy-mm-dd
   tipo: string;
   motivo: string;
   observaciones?: string;
@@ -20,23 +21,23 @@ interface Condecoracion {
 }
 
 const CondecoracionesTab: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [condecoraciones, setCondecoraciones] = useState<Condecoracion[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [editando, setEditando] = useState<Condecoracion | null>(null);
-  const [seleccionado, setSeleccionado] = useState<Condecoracion | null>(null);
+  const [editandoCondecoracion, setEditandoCondecoracion] = useState<Condecoracion | null>(null);
+  const [condecoracionSeleccionada, setCondecoracionSeleccionada] = useState<Condecoracion | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchCondecoraciones = async () => {
       if (!id) return;
       try {
-        const snap = await getDoc(doc(db, "legajos", id));
-        if (snap.exists()) {
-          setCondecoraciones(snap.data().condecoraciones || []);
+        const docSnap = await getDoc(doc(db, "legajos", id));
+        if (docSnap.exists()) {
+          setCondecoraciones(docSnap.data()?.condecoraciones || []);
         }
       } catch (error) {
         console.error("Error al obtener condecoraciones:", error);
@@ -44,7 +45,7 @@ const CondecoracionesTab: React.FC = () => {
         setLoading(false);
       }
     };
-    fetch();
+    fetchCondecoraciones();
   }, [id]);
 
   const guardarEnFirebase = async (datos: Condecoracion[]) => {
@@ -59,60 +60,69 @@ const CondecoracionesTab: React.FC = () => {
   };
 
   const abrirFormulario = (item?: Condecoracion) => {
-    setEditando(item || null);
+    setEditandoCondecoracion(item || null);
     setMostrarForm(true);
   };
 
   const cerrarFormulario = () => {
     setMostrarForm(false);
-    setEditando(null);
+    setEditandoCondecoracion(null);
   };
 
-  const guardar = async (item: Condecoracion) => {
-    const esEdicion = !!editando;
+  const guardarCondecoracion = async (item: Condecoracion) => {
+    const esEdicion = !!editandoCondecoracion;
     const nuevos = esEdicion
       ? condecoraciones.map((c) => (c.id === item.id ? item : c))
       : [...condecoraciones, { ...item, id: Date.now().toString() }];
 
     await guardarEnFirebase(nuevos);
 
-    if (user) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: esEdicion ? "modificado" : "agregado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "condecoracion",
-        datosPrevios: esEdicion ? condecoraciones.find((c) => c.id === item.id) : null,
-        datosNuevos: item,
-      });
+    // 🔥 Registrar auditoría
+    if (miembroActivo) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: esEdicion ? "editar" : "crear",
+          tipoCambio: "condecoracion",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosNuevos: item,
+          datosAnteriores: esEdicion ? condecoraciones.find((c) => c.id === item.id) || null : null,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (condecoración):", err);
+      }
     }
 
     cerrarFormulario();
   };
 
-
-  const eliminar = async (idItem: string) => {
+  const eliminarCondecoracion = async (idItem: string) => {
     if (!window.confirm("¿Eliminar condecoración?")) return;
     const condecoracionAEliminar = condecoraciones.find((c) => c.id === idItem);
-    const nuevos = condecoraciones.filter((c) => c.id !== idItem);
+    if (!condecoracionAEliminar) return;
 
+    const nuevos = condecoraciones.filter((c) => c.id !== idItem);
     await guardarEnFirebase(nuevos);
 
-    if (user && condecoracionAEliminar) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: "eliminado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "condecoracion",
-        datosPrevios: condecoracionAEliminar,
-      });
+    // 🔥 Registrar auditoría
+    if (miembroActivo) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: "eliminar",
+          tipoCambio: "condecoracion",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosAnteriores: condecoracionAEliminar,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (eliminar condecoración):", err);
+      }
     }
 
-    if (seleccionado?.id === idItem) setSeleccionado(null);
+    if (condecoracionSeleccionada?.id === idItem) setCondecoracionSeleccionada(null);
   };
-
 
   const formatearFecha = (fechaISO: string): string => {
     if (!fechaISO) return "—";
@@ -121,32 +131,37 @@ const CondecoracionesTab: React.FC = () => {
   };
 
   const subirPDF = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0] || !id || !seleccionado) return;
+    if (!e.target.files?.[0] || !id || !condecoracionSeleccionada) return;
     const archivo = e.target.files[0];
     if (archivo.type !== "application/pdf") {
       alert("Solo se permiten archivos PDF.");
       return;
     }
     try {
-      const pdfRef = ref(storage, `legajos/${id}/condecoraciones/${seleccionado.id}.pdf`);
+      const pdfRef = ref(storage, `legajos/${id}/condecoraciones/${condecoracionSeleccionada.id}.pdf`);
       await uploadBytes(pdfRef, archivo);
       const url = await getDownloadURL(pdfRef);
 
       const actualizados = condecoraciones.map((c) =>
-        c.id === seleccionado.id ? { ...c, pdfUrl: url } : c
+        c.id === condecoracionSeleccionada.id ? { ...c, pdfUrl: url } : c
       );
       await guardarEnFirebase(actualizados);
 
+      // 🔥 Registrar auditoría PDF
       if (user) {
-        await registrarCambioLegajo({
-          legajoId: id!,
-          accion: "modificado",
-          usuarioId: user.uid,
-          usuarioRol: user.rol,
-          tipoCambio: "condecoracion",
-          datosPrevios: seleccionado,
-          datosNuevos: { ...seleccionado, pdfUrl: url },
-        });
+        try {
+          await registrarAuditoria({
+            coleccion: "legajos",
+            accion: "editar",
+            tipoCambio: "condecoracion_pdf",
+            docId: id!,
+            miembro: { uid: user.uid, rol: user.rol },
+            datosNuevos: { id: condecoracionSeleccionada.id, pdfUrl: url },
+            datosAnteriores: null,
+          });
+        } catch (err) {
+          console.error("Error al registrar auditoría (PDF):", err);
+        }
       }
 
       alert("Archivo subido correctamente.");
@@ -157,7 +172,6 @@ const CondecoracionesTab: React.FC = () => {
       if (inputFileRef.current) inputFileRef.current.value = "";
     }
   };
-
 
   if (loading) return <p>Cargando condecoraciones...</p>;
 
@@ -176,13 +190,12 @@ const CondecoracionesTab: React.FC = () => {
         <tbody>
           {condecoraciones.length ? (
             [...condecoraciones].sort((a, b) => a.fecha.localeCompare(b.fecha)).map((c) => (
-
               <tr
                 key={c.id}
-                className={seleccionado?.id === c.id ? "fila-seleccionada" : ""}
-                onClick={() => setSeleccionado(c)}
-                style={{ cursor: "pointer" }}
+                className={condecoracionSeleccionada?.id === c.id ? "fila-seleccionada" : ""}
+                onClick={() => setCondecoracionSeleccionada(c)}
                 title="Click para seleccionar"
+                style={{ cursor: "pointer" }}
               >
                 <td>{formatearFecha(c.fecha)}</td>
                 <td>{c.tipo}</td>
@@ -208,67 +221,61 @@ const CondecoracionesTab: React.FC = () => {
           )}
         </tbody>
       </table>
-    {puedeEditar && (
-      <div className="btn-acciones">
-        <button
-          className="btn-accion"
-          onClick={() => abrirFormulario()}
-          title="Agregar condecoración"
-          aria-label="Agregar condecoración"
-        >
-          <FaPlus />
-        </button>
 
-        <button
-          className="btn-accion"
-          onClick={() => {
-            if (!seleccionado) return alert("Seleccioná una condecoración para editar.");
-            abrirFormulario(seleccionado);
-          }}
-          disabled={!seleccionado}
-          title="Editar condecoración seleccionada"
-          aria-label="Editar condecoración seleccionada"
-        >
-          <FaEdit />
-        </button>
+      {puedeEditar && (
+        <div className="btn-acciones">
+          <button className="btn-accion" onClick={() => abrirFormulario()} title="Agregar condecoración">
+            <FaPlus />
+          </button>
 
-        <button
-          className="btn-accion btn-eliminar"
-          onClick={() => {
-            if (!seleccionado) return alert("Seleccioná una condecoración para eliminar.");
-            eliminar(seleccionado.id);
-          }}
-          disabled={!seleccionado}
-          title="Eliminar condecoración seleccionada"
-          aria-label="Eliminar condecoración seleccionada"
-        >
-          <FaTrash />
-        </button>
+          <button
+            className="btn-accion"
+            onClick={() => {
+              if (!condecoracionSeleccionada) return alert("Seleccioná una condecoración para editar.");
+              abrirFormulario(condecoracionSeleccionada);
+            }}
+            disabled={!condecoracionSeleccionada}
+            title="Editar condecoración seleccionada"
+          >
+            <FaEdit />
+          </button>
 
-        <button
-          className="btn-accion"
-          onClick={() => inputFileRef.current?.click()}
-          disabled={!seleccionado}
-          title="Subir archivo PDF para condecoración seleccionada"
-          aria-label="Subir archivo PDF"
-        >
-          <FaUpload />
-        </button>
+          <button
+            className="btn-accion btn-eliminar"
+            onClick={() => {
+              if (!condecoracionSeleccionada) return alert("Seleccioná una condecoración para eliminar.");
+              eliminarCondecoracion(condecoracionSeleccionada.id);
+            }}
+            disabled={!condecoracionSeleccionada}
+            title="Eliminar condecoración seleccionada"
+          >
+            <FaTrash />
+          </button>
 
-        <input
-          type="file"
-          ref={inputFileRef}
-          accept="application/pdf"
-          style={{ display: "none" }}
-          onChange={subirPDF}
-        />
-      </div>
-    )}
+          <button
+            className="btn-accion"
+            onClick={() => inputFileRef.current?.click()}
+            disabled={!condecoracionSeleccionada}
+            title="Subir archivo PDF"
+          >
+            <FaUpload />
+          </button>
+
+          <input
+            type="file"
+            ref={inputFileRef}
+            accept="application/pdf"
+            style={{ display: "none" }}
+            onChange={subirPDF}
+          />
+        </div>
+      )}
+
       {mostrarForm && (
         <CondecoracionForm
-          condecoracion={editando}
+          condecoracion={editandoCondecoracion}
           onClose={cerrarFormulario}
-          onGuardar={guardar}
+          onGuardar={guardarCondecoracion}
         />
       )}
     </div>

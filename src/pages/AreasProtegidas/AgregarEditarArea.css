@@ -1,0 +1,127 @@
+/* AgregarEditarArea.css */
+.aae-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f3f3f3;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+.aae-title {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.aae-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.aae-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  color: #133a3d;
+}
+
+.aae-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.aae-input:focus {
+  border-color: #2c3e50;
+}
+
+.aae-form-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.aae-btn-submit {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: #2c3e50;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.aae-btn-submit:hover {
+  background-color: #1b2a36;
+}
+
+.aae-btn-cancel {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: #bdc3c7;
+  color: black;
+  transition: background-color 0.2s ease;
+}
+
+.aae-btn-cancel:hover {
+  background-color: #95a5a6;
+}
+
+/* Contenedor de direcciones dinámicas */
+.aae-direcciones-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Cada input de dirección con botón eliminar */
+.aae-direccion-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botón para eliminar dirección */
+.aae-btn-remove {
+  background-color: #d83a29;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.4rem;
+  cursor: pointer;
+  font-size: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.aae-btn-remove:hover {
+  background-color: #c0392b;
+}
+
+/* Botón para agregar otra dirección */
+.aae-btn-add {
+  margin-top: 4px;
+  align-self: flex-start;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.aae-btn-add:hover {
+  background-color: #1b2a36;
+}

@@ -1,93 +1,266 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../app/firebase-config";
 import { signOut } from "firebase/auth";
-import { FiHome, FiLogOut } from "react-icons/fi";
-import { useUser } from "../../context/UserContext"; 
-import "./Sidebar.css"; 
+import {
+  Home,
+  LogOut,
+  ChevronDown,
+  ChevronUp,
+  LayoutDashboard,
+  Truck,
+  Users,
+  Shield,
+  BookOpen,
+  User,
+  BarChart2,
+} from "lucide-react";
+import { useUser } from "../../context/UserContext";
+import "./Sidebar.css";
+
+interface SidebarSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClick: () => void;
+}
+
+const SidebarSection: React.FC<SidebarSectionProps> = ({ title, icon, children, isOpen, onClick }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState("0px");
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isOpen ? `${contentRef.current.scrollHeight}px` : "0px");
+    }
+  }, [isOpen, children]);
+
+  return (
+    <div className="sidebar-section">
+      <div className={`nav-section-title ${isOpen ? "active" : ""}`} onClick={onClick}>
+        <span className="nav-section-icon">{icon}</span>
+        <span className="nav-section-text">{title}</span>
+        <span className="nav-section-arrow">
+          {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </span>
+      </div>
+      <div
+        className="sidebar-section-content"
+        ref={contentRef}
+        style={{
+          maxHeight: height,
+          opacity: isOpen ? 1 : 0,
+          pointerEvents: isOpen ? "auto" : "none",
+        }}
+      >
+        <div className="content-inner">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+const SECCIONES = [
+  {
+    title: "Gestión de Unidades",
+    icon: <Truck size={16} />,
+    links: [
+      { text: "Unidades", to: "/unidades" },
+      { text: "Control Combustible", to: "/combustible" },
+      { text: "Informe Unidades", to: "/generador-informe" },
+      { text: "Historial Revisiones", to: "/seleccionar-unidad-historial" },
+    ],
+    rolesPermitidos: ["admin", "jefatura", "graduados", "guardia"]
+  },
+  {
+    title: "Gestión de Personal",
+    icon: <Users size={16} />,
+    links: [
+      { text: "Legajos", to: "/legajos" },
+      { text: "Vencimientos", to: "/vencimientos" },
+    ],
+    rolesPermitidos: ["admin", "legajo", "jefatura", "graduados"]
+  },
+  {
+    title: "Gestión de Guardia",
+    icon: <Shield size={16} />,
+    links: [
+      { text: "Choferes", to: "/choferes" },
+      { text: "Áreas Protegidas", to: "/areas-protegidas" }
+    ],
+    rolesPermitidos: ["admin", "jefatura", "guardia"]
+  },
+  {
+    title: "Gestión de Guardia",
+    icon: <Shield size={16} />,
+    links: [
+      { text: "Choferes", to: "/choferes" },
+    ],
+    rolesPermitidos: ["graduados"]
+  },
+  {
+    title: "Gestión Interna",
+    icon: <BookOpen size={16} />,
+    links: [
+      { text: "Biblioteca Virtual", to: "/editar-biblioteca" },
+    ],
+    rolesPermitidos: ["admin", "jefatura", "graduados"]
+  }
+];
 
 const Sidebar: React.FC = () => {
-    const navigate = useNavigate();
-    const { user, setUser } = useUser();
+  const navigate = useNavigate();
+  const { user, setUser, miembroActivo, setMiembroActivo } = useUser();
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            setUser(null);
-            navigate("/login");
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        }
-    };
-
-    const getRolNombreBonito = (rol: string) => {
-    switch (rol) {
-        case 'admin': return 'Admin';
-        case 'jefatura': return 'Jefatura';
-        case 'graduados': return 'Graduado';
-        case 'guardia': return 'Guardia';
-        case 'legajo': return 'Legajo';
-        default: return 'Usuario';
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setMiembroActivo(null);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
     }
+  };
+
+  const handleCerrarSesionMiembro = () => setMiembroActivo(null);
+  const toggleDropdown = () => setDropdownOpen(prev => !prev);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    return (
-        <div className="sidebar">
-            <div className="sidebar-top">
-                <div className="logo-container">
-                    <img src="/logo-bomberos.png" alt="Logo Bomberos" className="logo" />
-                </div>
+  const getRolNombreBonito = (rol: string) => {
+    switch (rol) {
+      case "admin":     return "Admin";
+      case "jefatura":  return "Jefatura";
+      case "graduados": return "Graduado";
+      case "guardia":   return "Guardia";
+      case "legajo":    return "Legajo";
+      case "bombero":   return "Bombero";
+      default:          return "Usuario";
+    }
+  };
 
-                {user && (
-                    <div className="sidebar-greeting-inline">
-                        <span className="sidebar-greeting-text">¡Hola, </span>
-                        <span className="sidebar-greeting-role">{getRolNombreBonito(user.rol)}!</span>
-                    </div>
-                )}
+  const handleSectionClick = (section: string) =>
+    setOpenSection(prev => (prev === section ? null : section));
 
-                <div className="divider" />
+  const renderLink = (to: string, text: string) => (
+    <Link key={to} to={to} className="nav-button-inner">{text}</Link>
+  );
 
-                <nav className="nav-buttons">
-                    {/* Links para admin, jefatura, graduados y guardia */}
-                    {['admin', 'jefatura', 'graduados', 'guardia'].includes(user?.rol || '') && (
-                        <>
-                            <Link to="/unidades" className="nav-button">Unidades</Link>
-                            <Link to="/combustible" className="nav-button">Control Combustible</Link>
-                            <Link to="/generador-informe" className="nav-button">Informe Unidades</Link>
-                            <Link to="/seleccionar-unidad-historial" className="nav-button">Historial Revisiones</Link>
-                            <Link to="/choferes" className="nav-button">Choferes</Link>
-                        </>
-                    )}
+  return (
+    <div className="sidebar">
+      <div className="sidebar-top">
 
-                    {/* Vencimientos: admin, jefatura y graduados */}
-                    {['admin', 'jefatura', 'graduados'].includes(user?.rol || '') && (
-                        <Link to="/vencimientos" className="nav-button">Vencimientos</Link>
-                    )}
-
-                    {/* Biblioteca Virtual: admin, jefatura y graduados */}
-                    {['admin', 'jefatura', 'graduados'].includes(user?.rol || '') && (
-                        <Link to="/editar-biblioteca" className="nav-button">Biblioteca Virtual</Link>
-                    )}
-
-                    {/* Legajos: admin, legajo y jefatura */}
-                    {['admin', 'legajo', 'jefatura'].includes(user?.rol || '') && (
-                        <Link to="/legajos" className="nav-button">Legajos</Link>
-                    )}
-                </nav>
-            </div>
-
-            <div className="bottom-buttons-wrapper">
-                <Link to="/" className="logout-button">
-                    <FiHome className="logout-icon" />
-                    Inicio
-                </Link>
-                <button className="logout-button" onClick={handleLogout}>
-                    <FiLogOut className="logout-icon" />
-                    Cerrar sesión
-                </button>
-            </div>
+        {/* Logo */}
+        <div className="logo-container">
+          <img src="/logo-bomberos.png" alt="Logo Bomberos" className="logo" />
         </div>
-    );
+
+        {/* Saludo */}
+        {user && (
+          <div className="sidebar-greeting-inline">
+            <span>¡Hola,&nbsp;</span>
+            <span className="sidebar-greeting-role">{getRolNombreBonito(user.rol)}!</span>
+          </div>
+        )}
+
+        {/* Miembro activo */}
+        {miembroActivo && (
+          <div className="sidebar-miembro-inline">
+            <User size={13} className="sidebar-miembro-icon" />
+            <span className="sidebar-miembro-text">
+              {miembroActivo.apellido} {miembroActivo.nombre}
+            </span>
+          </div>
+        )}
+
+        <div className="divider" />
+
+        {/* Nav */}
+        <nav className="nav-buttons">
+          {SECCIONES
+            .filter(sec => sec.rolesPermitidos.includes(user?.rol || ""))
+            .map(sec => (
+              <SidebarSection
+                key={sec.title}
+                title={sec.title}
+                icon={sec.icon}
+                isOpen={openSection === sec.title}
+                onClick={() => handleSectionClick(sec.title)}
+              >
+                {sec.links.map(link => renderLink(link.to, link.text))}
+              </SidebarSection>
+            ))}
+
+          {user?.rol === "admin" && (
+            <div className="nav-section-title nav-section-single" onClick={() => navigate("/admin")}>
+              <span className="nav-section-icon"><LayoutDashboard size={16} /></span>
+              <span className="nav-section-text">Panel Admin</span>
+            </div>
+          )}
+
+          {user?.rol === "bombero" && miembroActivo && (
+            <>
+              <div className="nav-section-title nav-section-single"
+                onClick={() => navigate(`/legajo/${miembroActivo.id}`)}>
+                <span className="nav-section-icon"><User size={16} /></span>
+                <span className="nav-section-text">Mi Legajo</span>
+              </div>
+              <div className="nav-section-title nav-section-single"
+                onClick={() => navigate(`/estadisticas/${miembroActivo.id}`)}>
+                <span className="nav-section-icon"><BarChart2 size={16} /></span>
+                <span className="nav-section-text">Mis Estadísticas</span>
+              </div>
+            </>
+          )}
+        </nav>
+      </div>
+
+      {/* Bottom */}
+      <div className="bottom-buttons-wrapper">
+        <Link to="/" className="logout-button">
+          <Home size={16} />
+          <span>Inicio</span>
+        </Link>
+
+        {(miembroActivo || user) && (
+          <div className="logout-combined-wrapper" ref={dropdownRef}>
+            <button className="logout-button logout-button-danger" onClick={toggleDropdown}>
+              <LogOut size={16} />
+              <span>Cerrar sesión</span>
+              <ChevronDown size={14} style={{ marginLeft: "auto" }} />
+            </button>
+
+            <div className={`logout-opciones-dropdown ${dropdownOpen ? "mostrar" : ""}`}>
+              {miembroActivo && (
+                <button className="logout-opcion" onClick={() => { handleCerrarSesionMiembro(); setDropdownOpen(false); }}>
+                  <User size={14} />
+                  Cambiar usuario
+                </button>
+              )}
+              {user && (
+                <button className="logout-opcion logout-opcion-danger" onClick={() => { handleLogout(); setDropdownOpen(false); }}>
+                  <LogOut size={14} />
+                  Cerrar sesión
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Sidebar;

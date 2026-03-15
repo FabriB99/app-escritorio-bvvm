@@ -1,4 +1,3 @@
-/* src/components/MainLayout/MainLayout.css */
 .main-layout {
   height: 100vh;
   width: 100vw;
@@ -6,23 +5,25 @@
 }
 
 .main-content {
-  margin-left: 250px; /* ancho por defecto sidebar */
-  padding: 24px;
+  margin-left: var(--sidebar-width);
+  padding: var(--spacing-lg);
   height: 100vh;
   overflow-y: auto;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-content);
   box-sizing: border-box;
-  transition: margin-left 0.3s ease;
+  transition: margin-left var(--transition-base);
+}
+
+.main-content.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
 }
 
 @media (min-width: 1920px) {
-  .main-content {
-    margin-left: 320px; /* coincide con sidebar 2K */
-  }
+  .main-content { margin-left: var(--sidebar-width-2k); }
 }
 
 @media (min-width: 3840px) {
-  .main-content {
-    margin-left: 400px; /* coincide con sidebar 4K */
-  }
+  .main-content { margin-left: var(--sidebar-width-4k); }
 }

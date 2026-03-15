@@ -3,6 +3,10 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface UsuarioBiblioteca {
   dni: string;
   nombre: string;
+  apellido?: string;
+  rol?: string;
+  roles?: string[];
+  categoria?: string;
 }
 
 interface UsuarioBibliotecaContextProps {

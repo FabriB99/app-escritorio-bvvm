@@ -2,23 +2,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // <-- Cambiado aquí
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../../app/firebase-config";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import "./EditarLegajo.css";
-import { registrarCambioLegajo } from "../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from "../../utils/auditoria";
 import { useUser } from "../../context/UserContext";
 import imageCompression from "browser-image-compression";
-import { deleteObject } from "firebase/storage";
 import Header from "../../components/Header";
 
-interface Hijo {
-  nombre: string;
-  fechaNacimiento: string;
-  dni: string;
-  localidad: string;
-}
-
+interface Hijo { nombre: string; fechaNacimiento: string; dni: string; localidad: string; }
 interface Legajo {
   apellido: string;
   nombre: string;
@@ -49,23 +42,20 @@ interface Legajo {
   obraSocial?: string;
   carnetConducir?: string;
   estado?: string;
+  miembroId?: string; // 🔑 conservamos la vinculación
 }
 
 const EditarLegajo: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { miembroActivo } = useUser();
 
-  const [datos, setDatos] = useState<Legajo>({
-    apellido: "",
-    nombre: "",
-    numeroLegajo: 0,
-  });
+  const [datos, setDatos] = useState<Legajo>({ apellido: "", nombre: "", numeroLegajo: 0 });
   const [loading, setLoading] = useState(true);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null); // <-- estado progreso
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
-  const datosOriginales = useRef<Legajo | null>(null); // 🟢
+  const datosOriginales = useRef<Legajo | null>(null);
 
   useEffect(() => {
     const fetchLegajo = async () => {
@@ -76,7 +66,7 @@ const EditarLegajo: React.FC = () => {
         if (docSnap.exists()) {
           const data = docSnap.data() as Legajo;
           setDatos(data);
-          datosOriginales.current = data; // 🟢 Guarda original
+          datosOriginales.current = data;
           setFotoPreview(data.fotoUrl || null);
         }
       } catch (error) {
@@ -98,36 +88,20 @@ const EditarLegajo: React.FC = () => {
     }));
   };
 
-  // === CAMBIO EN SUBIDA DE FOTO ===
+  // --- Foto ---
   const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!id || !e.target.files?.[0]) return;
-
     const file = e.target.files[0];
-
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 800,
-      useWebWorker: true,
-    };
-
     try {
-      const compressedFile = await imageCompression(file, options);
-
+      const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true });
       const storageRef = ref(storage, `legajos/${id}/imagen`);
       const uploadTask = uploadBytesResumable(storageRef, compressedFile);
-
       setUploadProgress(0);
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error("❌ Error subiendo la imagen:", error);
-          setUploadProgress(null);
-        },
+        (snapshot) => setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+        (error) => { console.error(error); setUploadProgress(null); },
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
           setFotoPreview(url);
@@ -136,69 +110,59 @@ const EditarLegajo: React.FC = () => {
         }
       );
     } catch (error) {
-      console.error("❌ Error al comprimir la imagen:", error);
+      console.error("Error al comprimir la imagen:", error);
     }
   };
 
   const handleBorrarFoto = async () => {
     if (!id || !datos.fotoUrl) return;
-
     try {
       const storageRef = ref(storage, `legajos/${id}/imagen`);
       await deleteObject(storageRef);
-
       const docRef = doc(db, "legajos", id);
       await setDoc(docRef, { fotoUrl: "" }, { merge: true });
-
       setFotoPreview(null);
       setDatos((prev) => ({ ...prev, fotoUrl: "" }));
     } catch (error) {
-      console.error("❌ Error al borrar la foto:", error);
+      console.error(error);
     }
   };
 
+  // --- Hijos ---
   const handleHijoChange = (index: number, field: keyof Hijo, value: string) => {
     const nuevosHijos = [...(datos.hijos || [])];
     nuevosHijos[index] = { ...nuevosHijos[index], [field]: value };
     setDatos((prev) => ({ ...prev, hijos: nuevosHijos }));
   };
+  const agregarHijo = () => setDatos(prev => ({ ...prev, hijos: [...(prev.hijos || []), { nombre: "", fechaNacimiento: "", dni: "", localidad: "" }] }));
+  const toggleSeleccionado = (index: number) => setSeleccionados(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
+  const eliminarSeleccionados = () => { setDatos(prev => ({ ...prev, hijos: (prev.hijos || []).filter((_, i) => !seleccionados.includes(i)) })); setSeleccionados([]); };
 
-  const agregarHijo = () => {
-    const nuevosHijos = [...(datos.hijos || []), { nombre: "", fechaNacimiento: "", dni: "", localidad: "" }];
-    setDatos((prev) => ({ ...prev, hijos: nuevosHijos }));
-  };
-
-  const toggleSeleccionado = (index: number) => {
-    setSeleccionados((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
-
-  const eliminarSeleccionados = () => {
-    const nuevosHijos = (datos.hijos || []).filter((_, i) => !seleccionados.includes(i));
-    setDatos((prev) => ({ ...prev, hijos: nuevosHijos }));
-    setSeleccionados([]);
-  };
-
+  // --- Guardar ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
 
+    if (!miembroActivo) {
+      console.error("No se pudo determinar el miembro que realiza la acción.");
+      return;
+    }
+
     try {
       const docRef = doc(db, "legajos", id);
-      await setDoc(docRef, datos, { merge: true });
 
-      if (user && datosOriginales.current) {
-        await registrarCambioLegajo({
-          legajoId: id,
-          accion: "modificado",
-          tipoCambio: "datos personales",
-          usuarioId: user.uid || "desconocido",
-          usuarioRol: user.rol || "desconocido",
-          datosPrevios: datosOriginales.current,
-          datosNuevos: datos,
-        });
-      }
+      // No tocamos miembroId, solo hacemos merge de los demás datos
+      const { miembroId, ...datosAGuardar } = datos;
+      await setDoc(docRef, datosAGuardar, { merge: true });
+
+      await registrarAuditoria({
+        coleccion: "legajos",
+        accion: "editar",
+        docId: id,
+        miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+        datosNuevos: datosAGuardar,
+        datosAnteriores: datosOriginales.current,
+      });
 
       navigate(`/legajo/${id}`);
     } catch (error) {

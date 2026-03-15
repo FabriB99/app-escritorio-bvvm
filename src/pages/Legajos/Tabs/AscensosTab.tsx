@@ -1,16 +1,17 @@
+// src/pages/Legajos/tabs/AscensosTab.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../../../app/firebase-config";
 import { FaEdit, FaTrash, FaPlus, FaCheckCircle, FaFilePdf, FaUpload } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import "./TabsGeneral.css"; // <-- CSS general para todas las tabs y botones
+import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
-import { registrarCambioLegajo } from "../../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from "../../../utils/auditoria";
 
 interface Ascenso {
   id: string;
-  fecha: string;
+  fecha: string; // ISO yyyy-mm-dd
   grado: string;
   resolucion: string;
   observaciones?: string;
@@ -18,16 +19,15 @@ interface Ascenso {
 }
 
 const AscensosTab: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [ascensos, setAscensos] = useState<Ascenso[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [editandoAscenso, setEditandoAscenso] = useState<Ascenso | null>(null);
   const [ascensoSeleccionado, setAscensoSeleccionado] = useState<Ascenso | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
-
 
   useEffect(() => {
     const fetchAscensos = async () => {
@@ -37,7 +37,7 @@ const AscensosTab: React.FC = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setAscensos(data.ascensos || []);
+          setAscensos((data?.ascensos as Ascenso[]) || []);
         }
       } catch (error) {
         console.error("Error al obtener ascensos:", error);
@@ -78,17 +78,22 @@ const AscensosTab: React.FC = () => {
 
     await guardarEnFirebase(nuevosAscensos);
 
-    // 🔥 Registrar el cambio
-    if (user) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: esEdicion ? "modificado" : "agregado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "ascenso",
-        datosPrevios: esEdicion ? ascensos.find((a) => a.id === ascenso.id) : null,
-        datosNuevos: ascenso,
-      });
+    // 🔥 Registrar en auditoría (unificado)
+    if (miembroActivo) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: esEdicion ? "editar" : "crear",
+          tipoCambio: "ascenso",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosNuevos: ascenso,
+          datosAnteriores: esEdicion ? ascensos.find((a) => a.id === ascenso.id) || null : null,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (ascenso):", err);
+        // No interrumpimos al usuario por un fallo de auditoría
+      }
     }
 
     cerrarFormulario();
@@ -115,16 +120,20 @@ const AscensosTab: React.FC = () => {
     const nuevos = ascensos.filter((a) => a.id !== idAscenso);
     await guardarEnFirebase(nuevos);
 
-    // 🔥 Registrar el cambio
-    if (user && ascensoAEliminar) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: "eliminado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "ascenso",
-        datosPrevios: ascensoAEliminar,
-      });
+    // 🔥 Registrar en auditoría (unificado)
+    if (miembroActivo && ascensoAEliminar) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: "eliminar",
+          tipoCambio: "ascenso",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosAnteriores: ascensoAEliminar,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (eliminar ascenso):", err);
+      }
     }
 
     if (ascensoSeleccionado?.id === idAscenso) setAscensoSeleccionado(null);
@@ -164,6 +173,24 @@ const AscensosTab: React.FC = () => {
         a.id === ascensoSeleccionado.id ? { ...a, pdfUrl: url } : a
       );
       await guardarEnFirebase(ascensosActualizados);
+
+      // opción: registrar en auditoría que se subió un PDF (tipoCambio distinto o mismo)
+      if (user) {
+        try {
+          await registrarAuditoria({
+            coleccion: "legajos",
+            accion: "editar",
+            tipoCambio: "ascenso_pdf",
+            docId: id!,
+            miembro: { uid: user.uid, rol: user.rol },
+            datosNuevos: { ascensoId: ascensoSeleccionado.id, pdfUrl: url },
+            datosAnteriores: null,
+          });
+        } catch (err) {
+          console.error("Error al registrar auditoría (subida pdf):", err);
+        }
+      }
+
       alert("Archivo subido correctamente.");
     } catch (error) {
       console.error("Error al subir archivo:", error);
@@ -221,69 +248,48 @@ const AscensosTab: React.FC = () => {
           )}
         </tbody>
       </table>
-    {puedeEditar && (
-      <div className="btn-acciones">
-        <button
-          className="btn-accion"
-          onClick={() => abrirFormulario()}
-          title="Agregar ascenso"
-          aria-label="Agregar ascenso"
-        >
-          <FaPlus />
-        </button>
 
-        <button
-          className="btn-accion"
-          onClick={() => {
-            if (!ascensoSeleccionado) return alert("Seleccioná un ascenso para editar.");
-            abrirFormulario(ascensoSeleccionado);
-          }}
-          disabled={!ascensoSeleccionado}
-          title="Editar ascenso seleccionado"
-          aria-label="Editar ascenso seleccionado"
-        >
-          <FaEdit />
-        </button>
+      {puedeEditar && (
+        <div className="btn-acciones">
+          <button className="btn-accion" onClick={() => abrirFormulario()} title="Agregar ascenso" aria-label="Agregar ascenso">
+            <FaPlus />
+          </button>
 
-        <button
-          className="btn-accion btn-eliminar"
-          onClick={() => {
-            if (!ascensoSeleccionado) return alert("Seleccioná un ascenso para eliminar.");
-            eliminarAscenso(ascensoSeleccionado.id);
-          }}
-          disabled={!ascensoSeleccionado}
-          title="Eliminar ascenso seleccionado"
-          aria-label="Eliminar ascenso seleccionado"
-        >
-          <FaTrash />
-        </button>
+          <button
+            className="btn-accion"
+            onClick={() => {
+              if (!ascensoSeleccionado) return alert("Seleccioná un ascenso para editar.");
+              abrirFormulario(ascensoSeleccionado);
+            }}
+            disabled={!ascensoSeleccionado}
+            title="Editar ascenso seleccionado"
+            aria-label="Editar ascenso seleccionado"
+          >
+            <FaEdit />
+          </button>
 
-        <button
-          className="btn-accion"
-          onClick={manejarClickSubirArchivo}
-          disabled={!ascensoSeleccionado}
-          title="Subir archivo PDF para ascenso seleccionado"
-          aria-label="Subir archivo PDF"
-        >
-          <FaUpload />
-        </button>
+          <button
+            className="btn-accion btn-eliminar"
+            onClick={() => {
+              if (!ascensoSeleccionado) return alert("Seleccioná un ascenso para eliminar.");
+              eliminarAscenso(ascensoSeleccionado.id);
+            }}
+            disabled={!ascensoSeleccionado}
+            title="Eliminar ascenso seleccionado"
+            aria-label="Eliminar ascenso seleccionado"
+          >
+            <FaTrash />
+          </button>
 
-        <input
-          type="file"
-          accept="application/pdf"
-          style={{ display: "none" }}
-          ref={inputFileRef}
-          onChange={manejarArchivoChange}
-        />
-      </div>
-    )}
-      {mostrarForm && (
-        <AscensoForm
-          ascenso={editandoAscenso}
-          onClose={cerrarFormulario}
-          onGuardar={guardarAscenso}
-        />
+          <button className="btn-accion" onClick={manejarClickSubirArchivo} disabled={!ascensoSeleccionado} title="Subir archivo PDF" aria-label="Subir archivo PDF">
+            <FaUpload />
+          </button>
+
+          <input type="file" accept="application/pdf" style={{ display: "none" }} ref={inputFileRef} onChange={manejarArchivoChange} />
+        </div>
       )}
+
+      {mostrarForm && <AscensoForm ascenso={editandoAscenso} onClose={cerrarFormulario} onGuardar={guardarAscenso} />}
     </div>
   );
 };
@@ -332,12 +338,7 @@ const AscensoForm: React.FC<AscensoFormProps> = ({ ascenso, onClose, onGuardar }
           </label>
           <label>
             Resolución N°:
-            <input
-              type="text"
-              value={resolucion}
-              onChange={(e) => setResolucion(e.target.value)}
-              required
-            />
+            <input type="text" value={resolucion} onChange={(e) => setResolucion(e.target.value)} required />
           </label>
           <label>
             Observaciones:

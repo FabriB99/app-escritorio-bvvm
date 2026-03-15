@@ -6,6 +6,8 @@ import logo from '/logo-bomberos.png';
 import { db } from '../../app/firebase-config';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
+import { useUsuarioBiblioteca } from '../../context/UsuarioBibliotecaContext';
+
 type Grupo = {
   id: string;
   nombre: string;
@@ -13,7 +15,7 @@ type Grupo = {
 };
 
 type Seccion = {
-  id: string;          // <--- agregamos id aquí
+  id: string;
   nombre: string;
   descripcion?: string;
   ruta: string;
@@ -22,6 +24,7 @@ type Seccion = {
 
 const Biblioteca = () => {
   const navigate = useNavigate();
+  const { usuario } = useUsuarioBiblioteca();
   const [busqueda, setBusqueda] = useState('');
   const [busquedaAbierta, setBusquedaAbierta] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,24 +34,12 @@ const Biblioteca = () => {
   useEffect(() => {
     const unsubGrupos = onSnapshot(
       query(collection(db, 'grupos_biblioteca'), orderBy('orden')),
-      (snapshot) => {
-        const lista = snapshot.docs.map(doc => {
-          const grupo = { id: doc.id, ...doc.data() } as Grupo;
-          return grupo;
-        });
-        setGrupos(lista);
-      }
+      snapshot => setGrupos(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Grupo)))
     );
 
     const unsubSecciones = onSnapshot(
       query(collection(db, 'secciones'), orderBy('orden')),
-      (snapshot) => {
-        const lista = snapshot.docs.map(doc => ({
-          id: doc.id,            // <--- traemos el id desde firestore
-          ...doc.data()
-        } as Seccion));
-        setSecciones(lista);
-      }
+      snapshot => setSecciones(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Seccion)))
     );
 
     return () => {
@@ -58,9 +49,7 @@ const Biblioteca = () => {
   }, []);
 
   useEffect(() => {
-    if (busquedaAbierta && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (busquedaAbierta && inputRef.current) inputRef.current.focus();
   }, [busquedaAbierta]);
 
   const filtrarPorGrupo = (grupo: string) =>
@@ -68,9 +57,7 @@ const Biblioteca = () => {
       .filter(s => s.grupo === grupo)
       .filter(s => s.nombre.toLowerCase().includes(busqueda.toLowerCase()));
 
-  const handleClick = (ruta: string) => {
-    navigate(`/biblioteca/seccion/${ruta}`);
-  };
+  const handleClick = (ruta: string) => navigate(`/biblioteca/seccion/${ruta}`);
 
   const toggleBusqueda = () => {
     setBusquedaAbierta(open => !open);
@@ -94,27 +81,35 @@ const Biblioteca = () => {
           </div>
         </div>
 
-        <div className="biblioteca-busqueda">
-          <FaSearch
-            className="biblioteca-icono-busqueda"
-            onClick={toggleBusqueda}
-            title="Buscar"
-            style={{ cursor: 'pointer' }}
-          />
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Buscar..."
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            className={`biblioteca-busqueda-input ${busquedaAbierta ? 'abierto' : ''}`}
-            onBlur={() => setBusquedaAbierta(false)}
-          />
+        <div className="biblioteca-header-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {usuario && (
+            <div className="biblioteca-saludo">
+              Hola, <strong>{usuario.nombre}</strong>!
+            </div>
+          )}
+
+          <div className="biblioteca-busqueda">
+            <FaSearch
+              className="biblioteca-icono-busqueda"
+              onClick={toggleBusqueda}
+              title="Buscar"
+              style={{ cursor: 'pointer' }}
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Buscar..."
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              className={`biblioteca-busqueda-input ${busquedaAbierta ? 'abierto' : ''}`}
+              onBlur={() => setBusquedaAbierta(false)}
+            />
+          </div>
         </div>
       </header>
 
       <section className="biblioteca-seccion">
-        {grupos.map((grupo) => {
+        {grupos.map(grupo => {
           const seccionesFiltradas = filtrarPorGrupo(grupo.nombre);
 
           return (
@@ -127,11 +122,11 @@ const Biblioteca = () => {
                 {seccionesFiltradas.length === 0 ? (
                   <p className="biblioteca-carpeta-vacio">Sin secciones aún.</p>
                 ) : (
-                  seccionesFiltradas.map((item) => (
+                  seccionesFiltradas.map(item => (
                     <div
-                      key={item.id}  // mejor usar id como key
+                      key={item.id}
                       className="biblioteca-carpeta biblioteca-carpeta-azul"
-                      onClick={() => handleClick(item.ruta)} 
+                      onClick={() => handleClick(item.ruta)}
                     >
                       <h3 className="biblioteca-carpeta-titulo">{item.nombre}</h3>
                       {item.descripcion && (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
 import { FaEdit } from "react-icons/fa";
 import { PiFilePdfFill } from "react-icons/pi";
@@ -67,7 +67,7 @@ const tabs = [
 const LegajoDetalle: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const puedeEditar = user?.rol === "admin" || user?.rol === "jefatura" || user?.rol === "legajo";
 
   const [legajo, setLegajo] = useState<Legajo | null>(null);
@@ -82,9 +82,25 @@ const LegajoDetalle: React.FC = () => {
 
   useEffect(() => {
     const fetchLegajo = async () => {
-      if (!id) return;
       try {
-        const docRef = doc(db, "legajos", id);
+        let legajoDocId: string | undefined = id;
+
+        // Si el usuario es bombero y hay un miembroActivo, buscamos su legajo
+        if (user?.rol === "bombero" && miembroActivo?.id) {
+          const q = query(collection(db, "legajos"), where("miembroId", "==", miembroActivo.id));
+          const querySnap = await getDocs(q);
+          if (!querySnap.empty) {
+            legajoDocId = querySnap.docs[0].id;
+          } else {
+            console.warn("No se encontró legajo vinculado al miembroActivo");
+            setLoading(false);
+            return;
+          }
+        }
+
+        if (!legajoDocId) return;
+
+        const docRef = doc(db, "legajos", legajoDocId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data() as Legajo;
@@ -99,6 +115,8 @@ const LegajoDetalle: React.FC = () => {
             })),
           };
           setLegajo(legajoConFechasFormateadas);
+        } else {
+          console.warn("No se encontró legajo");
         }
       } catch (error) {
         console.error("Error al obtener legajo:", error);
@@ -106,8 +124,9 @@ const LegajoDetalle: React.FC = () => {
         setLoading(false);
       }
     };
+
     fetchLegajo();
-  }, [id]);
+  }, [id, user, miembroActivo]);
 
   const handleGenerarPDF = async () => {
     if (!legajo) return;
@@ -141,7 +160,7 @@ const LegajoDetalle: React.FC = () => {
         fechaUltimoAscenso: legajo.fechaUltimoAscenso,
         reingreso: legajo.reingreso,
       },
-      ascensos: [], // Si tenés datos, agregalos acá
+      ascensos: [],
       condecoraciones: [],
       sanciones: [],
       cursos: [],
@@ -159,7 +178,6 @@ const LegajoDetalle: React.FC = () => {
     ];
 
     try {
-      // Guardamos display original de tabs para restaurar después
       const tabsOriginalDisplay: Record<string, string> = {};
       tabsParaCapturar.forEach((id) => {
         const el = document.getElementById(id);
@@ -169,7 +187,6 @@ const LegajoDetalle: React.FC = () => {
         }
       });
 
-      // Ocultar TODOS los botones y modales antes de capturar
       const botones = document.querySelectorAll(
         ".btn-editar, .btn-generar-pdf, .tab-btn, button.agregar-btn, button.editar-btn, button.eliminar-btn, .btn-accion, .modal-overlay"
       );
@@ -179,10 +196,8 @@ const LegajoDetalle: React.FC = () => {
         (btn as HTMLElement).style.display = "none";
       });
 
-      // Generar PDF
       await generarLegajoPDF(legajoCompleto, tabsParaCapturar);
 
-      // Restaurar display original de tabs
       tabsParaCapturar.forEach((id) => {
         const el = document.getElementById(id);
         if (el) {
@@ -190,7 +205,6 @@ const LegajoDetalle: React.FC = () => {
         }
       });
 
-      // Restaurar display original de botones
       botones.forEach((btn) => {
         const original = botonesOriginalDisplay.get(btn) || "";
         (btn as HTMLElement).style.display = original;
@@ -215,17 +229,17 @@ const LegajoDetalle: React.FC = () => {
             Legajo RUBA N°: {legajo.numeroLegajoRUBA || "—"}
           </p>
         </div>
-          <div className="foto-legajo">
-            {legajo && legajo.fotoUrl ? (
-              <img
-                src={legajo.fotoUrl}
-                alt="Foto carnet"
-                style={{ maxHeight: "150px", objectFit: "cover", borderRadius: "4px" }}
-              />
-            ) : (
-              <div className="foto-placeholder">Sin foto</div>
-            )}
-          </div>
+        <div className="foto-legajo">
+          {legajo.fotoUrl ? (
+            <img
+              src={legajo.fotoUrl}
+              alt="Foto carnet"
+              style={{ maxHeight: "150px", objectFit: "cover", borderRadius: "4px" }}
+            />
+          ) : (
+            <div className="foto-placeholder">Sin foto</div>
+          )}
+        </div>
         {puedeEditar && (
           <>
             <button
@@ -310,40 +324,22 @@ const LegajoDetalle: React.FC = () => {
       </div>
 
       {/* CONTENIDO DEL TAB ACTIVO */}
-      <div
-        id="ascensos"
-        style={{ display: tabActiva === "ascensos" ? "block" : "none" }}
-      >
+      <div id="ascensos" style={{ display: tabActiva === "ascensos" ? "block" : "none" }}>
         <AscensosTab />
       </div>
-      <div
-        id="condecoraciones"
-        style={{ display: tabActiva === "condecoraciones" ? "block" : "none" }}
-      >
+      <div id="condecoraciones" style={{ display: tabActiva === "condecoraciones" ? "block" : "none" }}>
         <CondecoracionesTab />
       </div>
-      <div
-        id="sanciones"
-        style={{ display: tabActiva === "sanciones" ? "block" : "none" }}
-      >
+      <div id="sanciones" style={{ display: tabActiva === "sanciones" ? "block" : "none" }}>
         <SancionesTab />
       </div>
-      <div
-        id="cursos"
-        style={{ display: tabActiva === "cursos" ? "block" : "none" }}
-      >
+      <div id="cursos" style={{ display: tabActiva === "cursos" ? "block" : "none" }}>
         <CursosTab />
       </div>
-      <div
-        id="observaciones"
-        style={{ display: tabActiva === "observaciones" ? "block" : "none" }}
-      >
+      <div id="observaciones" style={{ display: tabActiva === "observaciones" ? "block" : "none" }}>
         <ObservacionesTab />
       </div>
-      <div
-        id="elementos"
-        style={{ display: tabActiva === "elementos" ? "block" : "none" }}
-      >
+      <div id="elementos" style={{ display: tabActiva === "elementos" ? "block" : "none" }}>
         <ElementosEntregadosTab />
       </div>
     </div>

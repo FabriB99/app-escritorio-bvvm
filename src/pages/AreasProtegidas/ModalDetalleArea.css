@@ -1,0 +1,303 @@
+/* Overlay general del modal */
+.apla-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal del modal */
+.apla-modal-container {
+  position: relative; /* necesario para la X */
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  max-width: 600px; /* base para pantallas chicas */
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  font-family: 'Poppins', sans-serif;
+  color: #2c3e50;
+  border-top: 5px solid #2c3e50;
+  border-bottom: 5px solid #2c3e50;
+  transition: all 0.3s ease;
+}
+
+/* Flex cuando hay mapa */
+.apla-modal-flex {
+  flex-direction: row;
+  align-items: flex-start; /* arranca arriba */
+  gap: 20px;
+}
+
+/* Botón X arriba a la derecha */
+.apla-btn-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apla-btn-close:hover {
+  color: #c0392b;
+  transform: scale(1.2);
+}
+
+/* Contenido principal */
+.apla-modal-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+/* Contenedor lateral del mapa */
+.apla-mapa-lateral {
+  display: flex;
+  flex-direction: column;
+  flex: 1;          /* ocupa todo el alto disponible */
+  min-width: 450px;
+  max-width: 650px;
+  gap: 0.5rem;
+}
+
+/* Logo en la parte de abajo (solo cuando hay mapa) */
+.apla-modal-logo {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.apla-modal-logo img {
+  max-width: 180px;
+  height: auto;
+  opacity: 0.9;
+}
+
+/* Iframe del mapa */
+.apla-iframe-mapa {
+  flex: 1;           /* ocupa todo el alto disponible */
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  min-height: 300px; /* asegura un mínimo de altura */
+}
+
+/* Título del modal */
+.apla-modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1f3a3d;
+  margin: 0;
+  border-bottom: 1px solid #dcdcdc;
+  padding-bottom: 0.5rem;
+}
+
+/* Cada item de detalle */
+.apla-modal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f4f6;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.05);
+  transition: background-color 0.2s ease;
+  border-left: 4px solid #2c3e50;
+}
+
+.apla-modal-item:hover {
+  background-color: #cdd2d6;
+}
+
+/* Label del item */
+.apla-modal-item-label {
+  font-weight: 600;
+  color: #34495e;
+  min-width: 120px;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+/* Valor del item */
+.apla-modal-item-value {
+  font-weight: 500;
+  color: #1f3a3d;
+  text-align: right;
+  font-size: 0.95rem;
+  flex: 1;
+  margin-left: 0.5rem;
+  word-wrap: break-word;
+}
+
+/* Contenedor de todas las direcciones */
+.apla-modal-direcciones {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Dirección individual */
+.apla-direccion-item {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: #ffffff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(44, 62, 80, 0.08);
+  gap: 8px;
+}
+
+.apla-direccion-item span {
+  text-align: right;
+  font-weight: 500;
+  color: #1f3a3d;
+}
+
+/* Botón del mapa */
+.apla-btn-mapa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+}
+
+.apla-btn-mapa:hover {
+  color: #2980b9;
+  transform: scale(1.15);
+}
+
+/* ===== RESPONSIVE MODAL ===== */
+
+/* HD (1366px a 1920px) */
+@media (max-width: 1800px) {
+  .apla-modal-container {
+    max-width: 850px;
+    padding: 1.2rem;
+  }
+
+  .apla-mapa-lateral {
+    min-width: 450px;
+    max-width: 500px;
+  }
+
+  .apla-iframe-mapa {
+    min-height: 550px;
+  }
+
+  .apla-modal-title {
+    font-size: 1.6rem;
+  }
+
+  .apla-modal-item-label,
+  .apla-modal-item-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* FullHD (1920px a 2560px) */
+@media (min-width: 1900px) and (max-width: 2560px) {
+  .apla-modal-container {
+    max-width: 1100px;
+    padding: 2rem;
+  }
+
+  .apla-mapa-lateral {
+    min-width: 600px;
+    max-width: 700px;
+  }
+
+  .apla-iframe-mapa {
+    min-height: 550px;
+  }
+
+  .apla-modal-title {
+    font-size: 2rem;
+  }
+
+  .apla-modal-item-label,
+  .apla-modal-item-value {
+    font-size: 1rem;
+  }
+}
+
+/* 2K+ (2560px a 3840px) */
+@media (min-width: 2561px) and (max-width: 3840px) {
+  .apla-modal-container {
+    max-width: 1400px;
+    padding: 2.5rem;
+  }
+
+  .apla-mapa-lateral {
+    min-width: 750px;
+    max-width: 850px;
+  }
+
+  .apla-iframe-mapa {
+    min-height: 600px;
+  }
+
+  .apla-modal-title {
+    font-size: 2.2rem;
+  }
+
+  .apla-modal-item-label,
+  .apla-modal-item-value {
+    font-size: 1.1rem;
+  }
+}
+
+/* 4K (3840px en adelante) */
+@media (min-width: 3841px) {
+  .apla-modal-container {
+    max-width: 1800px;
+    padding: 3rem;
+  }
+
+  .apla-mapa-lateral {
+    min-width: 900px;
+    max-width: 1000px;
+  }
+
+  .apla-iframe-mapa {
+    min-height: 750px;
+  }
+
+  .apla-modal-title {
+    font-size: 2.5rem;
+  }
+
+  .apla-modal-item-label,
+  .apla-modal-item-value {
+    font-size: 1.2rem;
+  }
+}

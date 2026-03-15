@@ -3,10 +3,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useUser } from "../../context/UserContext";
 import { collection, query, orderBy, startAfter, limit, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
-import { FaPlus, FaHistory, FaSearch, FaTrashAlt, FaEye } from "react-icons/fa";
+import { FaPlus, FaSearch, FaTrashAlt, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./LegajosLista.css";
-import { registrarCambioLegajo } from "../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from "../../utils/auditoria";
 import Header from "../../components/Header";
 
 interface Legajo {
@@ -87,7 +87,14 @@ const LegajosLista: React.FC = () => {
     setLoading(false);
   };
 
+  const { miembroActivo } = useUser();
+
   const eliminarLegajo = async (id: string) => {
+    if (!miembroActivo) {
+      console.error("No se pudo determinar el miembro que realiza la acción.");
+      return;
+    }
+
     try {
       const docRef = doc(db, "legajos", id);
       const docSnap = await getDoc(docRef);
@@ -96,15 +103,14 @@ const LegajosLista: React.FC = () => {
       await deleteDoc(docRef);
       setLegajos((prev) => prev.filter((l) => l.id !== id));
 
-      if (user && datosPrevios) {
-        await registrarCambioLegajo({
-          legajoId: id,
-          accion: "eliminado",
-          tipoCambio: "legajo completo",
-          usuarioId: user.uid || "desconocido",
-          usuarioRol: user.rol || "desconocido",
-          datosPrevios,
+      if (datosPrevios) {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: "eliminar",
+          docId: id,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
           datosNuevos: null,
+          datosAnteriores: datosPrevios,
         });
       }
     } catch (error) {
@@ -129,12 +135,6 @@ const LegajosLista: React.FC = () => {
                   icon: FaPlus,
                   onClick: () => navigate("/agregar-legajo"),
                   ariaLabel: "Agregar nuevo legajo",
-                },
-                {
-                  key: "ver-historial",
-                  icon: FaHistory,
-                  onClick: () => navigate("/historial"),
-                  ariaLabel: "Ver historial de legajos",
                 },
               ]
             : []

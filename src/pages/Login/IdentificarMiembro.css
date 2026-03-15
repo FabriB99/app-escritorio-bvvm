@@ -1,0 +1,119 @@
+/* ==============================================
+   Overlay desenfocado
+   ============================================== */
+.identificar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* ==============================================
+   Modal moderno
+   ============================================== */
+.identificar-modal {
+  background: #f9f9f9;
+  border-radius: 18px;
+  padding: 2rem 2.5rem;
+  width: 360px;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transform: translateY(-20px);
+  animation: slideIn 0.4s ease forwards;
+  position: relative;
+  border-top: 5px solid #2C3E50;
+  border-bottom: 5px solid #2C3E50;
+}
+
+/* Logo superior */
+.identificar-modal::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 150px;
+  background-image: url('/logo-bomberos.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  border: 5px solid #2C3E50;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Título */
+.identificar-modal h3 {
+  font-size: 1.7rem;
+  color: #2C3E50;
+  font-weight: 700;
+  margin-top: 60px;
+  margin-bottom: 0px;
+}
+
+/* Input */
+.identificar-modal input {
+  padding: 12px 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  background: #e8ecf2;
+  box-shadow: 3px 3px 6px #c5cdd6, -3px -3px 6px #ffffff;
+  transition: all 0.3s ease;
+}
+
+.identificar-modal input:focus {
+  outline: none;
+  box-shadow: inset 2px 2px 4px #c5cdd6, inset -2px -2px 4px #ffffff;
+}
+
+/* Botón de identificar */
+.identificar-modal button {
+  background: #2C3E50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.identificar-modal button:hover {
+  background: #1b2a41;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Error */
+.identificar-error {
+  color: #e63946;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ==============================================
+   Animaciones
+   ============================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

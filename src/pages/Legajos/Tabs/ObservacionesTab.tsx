@@ -1,3 +1,4 @@
+// src/pages/Legajos/tabs/ObservacionesTab.tsx
 import React, { useEffect, useState } from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../../../app/firebase-config";
@@ -5,7 +6,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
-import { registrarCambioLegajo } from "../../../utils/registrarCambioLegajo";
+import { registrarAuditoria } from '../../../utils/auditoria';
 
 interface Observacion {
   id: string;
@@ -15,13 +16,13 @@ interface Observacion {
 }
 
 const ObservacionesTab: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [observaciones, setObservaciones] = useState<Observacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [editando, setEditando] = useState<Observacion | null>(null);
-  const [seleccionada, setSeleccionada] = useState<Observacion | null>(null);
-  const { user } = useUser();
+  const [editandoObservacion, setEditandoObservacion] = useState<Observacion | null>(null);
+  const [observacionSeleccionada, setObservacionSeleccionada] = useState<Observacion | null>(null);
+  const { user, miembroActivo } = useUser();
   const puedeEditar = user?.rol === "admin" || user?.rol === "legajo";
 
   useEffect(() => {
@@ -30,10 +31,10 @@ const ObservacionesTab: React.FC = () => {
       try {
         const snap = await getDoc(doc(db, "legajos", id));
         if (snap.exists()) {
-          setObservaciones(snap.data().observaciones || []);
+          setObservaciones((snap.data()?.observaciones as Observacion[]) || []);
         }
-      } catch (error) {
-        console.error("Error al obtener observaciones:", error);
+      } catch (err) {
+        console.error("Error al obtener observaciones:", err);
       } finally {
         setLoading(false);
       }
@@ -53,46 +54,45 @@ const ObservacionesTab: React.FC = () => {
   };
 
   const abrirFormulario = (obs?: Observacion) => {
-    setEditando(obs || null);
+    setEditandoObservacion(obs || null);
     setMostrarForm(true);
   };
 
   const cerrarFormulario = () => {
     setMostrarForm(false);
-    setEditando(null);
+    setEditandoObservacion(null);
   };
 
-  const guardar = async (obs: Observacion) => {
-    const esEdicion = !!editando;
+  const guardarObservacion = async (obs: Observacion) => {
+    const esEdicion = !!editandoObservacion;
     const actualizadas = esEdicion
       ? observaciones.map((o) => (o.id === obs.id ? obs : o))
       : [...observaciones, { ...obs, id: Date.now().toString() }];
 
     await guardarEnFirebase(actualizadas);
 
-    if (user) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: esEdicion ? "modificado" : "agregado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "observacion",
-        datosPrevios: esEdicion ? observaciones.find((o) => o.id === obs.id) : null,
-        datosNuevos: obs,
-      });
+    if (miembroActivo) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: esEdicion ? "editar" : "crear",
+          tipoCambio: "observacion",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosNuevos: obs,
+          datosAnteriores: esEdicion
+            ? observaciones.find((o) => o.id === obs.id) || null
+            : null,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (observación):", err);
+      }
     }
 
     cerrarFormulario();
   };
 
-
-  const formatearFecha = (fechaISO: string): string => {
-    if (!fechaISO) return "—";
-    const [a, m, d] = fechaISO.split("-");
-    return `${d}-${m}-${a}`;
-  };
-
-  const eliminar = async (idObs: string) => {
+  const eliminarObservacion = async (idObs: string) => {
     if (!window.confirm("¿Eliminar observación?")) return;
 
     const obsAEliminar = observaciones.find((o) => o.id === idObs);
@@ -100,20 +100,29 @@ const ObservacionesTab: React.FC = () => {
 
     await guardarEnFirebase(nuevas);
 
-    if (user && obsAEliminar) {
-      await registrarCambioLegajo({
-        legajoId: id!,
-        accion: "eliminado",
-        usuarioId: user.uid,
-        usuarioRol: user.rol,
-        tipoCambio: "observacion",
-        datosPrevios: obsAEliminar,
-      });
+    if (miembroActivo && obsAEliminar) {
+      try {
+        await registrarAuditoria({
+          coleccion: "legajos",
+          accion: "eliminar",
+          tipoCambio: "observacion",
+          docId: id!,
+          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
+          datosAnteriores: obsAEliminar,
+        });
+      } catch (err) {
+        console.error("Error al registrar auditoría (eliminar observación):", err);
+      }
     }
 
-    if (seleccionada?.id === idObs) setSeleccionada(null);
+    if (observacionSeleccionada?.id === idObs) setObservacionSeleccionada(null);
   };
 
+  const formatearFecha = (fechaISO: string): string => {
+    if (!fechaISO) return "—";
+    const [a, m, d] = fechaISO.split("-");
+    return `${d}-${m}-${a}`;
+  };
 
   if (loading) return <p>Cargando observaciones...</p>;
 
@@ -129,20 +138,21 @@ const ObservacionesTab: React.FC = () => {
         </thead>
         <tbody>
           {observaciones.length ? (
-            [...observaciones].sort((a, b) => a.fecha.localeCompare(b.fecha)).map((o) => (
-
-              <tr
-                key={o.id}
-                className={seleccionada?.id === o.id ? "fila-seleccionada" : ""}
-                onClick={() => setSeleccionada(o)}
-                style={{ cursor: "pointer" }}
-                title="Click para seleccionar"
-              >
-                <td>{formatearFecha(o.fecha)}</td>
-                <td>{o.motivo}</td>
-                <td>{o.observacion}</td>
-              </tr>
-            ))
+            [...observaciones]
+              .sort((a, b) => a.fecha.localeCompare(b.fecha))
+              .map((o) => (
+                <tr
+                  key={o.id}
+                  className={observacionSeleccionada?.id === o.id ? "fila-seleccionada" : ""}
+                  onClick={() => setObservacionSeleccionada(o)}
+                  style={{ cursor: "pointer" }}
+                  title="Click para seleccionar"
+                >
+                  <td>{formatearFecha(o.fecha)}</td>
+                  <td>{o.motivo}</td>
+                  <td>{o.observacion}</td>
+                </tr>
+              ))
           ) : (
             <tr>
               <td colSpan={3} style={{ textAlign: "center" }}>
@@ -152,46 +162,52 @@ const ObservacionesTab: React.FC = () => {
           )}
         </tbody>
       </table>
-    {puedeEditar && (
-      <div className="btn-acciones">
-        <button
-          className="btn-accion"
-          onClick={() => abrirFormulario()}
-          title="Agregar observación"
-          aria-label="Agregar observación"
-        >
-          <FaPlus />
-        </button>
 
-        <button
-          className="btn-accion"
-          onClick={() => {
-            if (!seleccionada) return alert("Seleccioná una observación para editar.");
-            abrirFormulario(seleccionada);
-          }}
-          disabled={!seleccionada}
-          title="Editar observación seleccionada"
-          aria-label="Editar observación"
-        >
-          <FaEdit />
-        </button>
+      {puedeEditar && (
+        <div className="btn-acciones">
+          <button
+            className="btn-accion"
+            onClick={() => abrirFormulario()}
+            title="Agregar observación"
+            aria-label="Agregar observación"
+          >
+            <FaPlus />
+          </button>
 
-        <button
-          className="btn-accion btn-eliminar"
-          onClick={() => {
-            if (!seleccionada) return alert("Seleccioná una observación para eliminar.");
-            eliminar(seleccionada.id);
-          }}
-          disabled={!seleccionada}
-          title="Eliminar observación seleccionada"
-          aria-label="Eliminar observación"
-        >
-          <FaTrash />
-        </button>
-      </div>
-    )}
+          <button
+            className="btn-accion"
+            onClick={() => {
+              if (!observacionSeleccionada) return alert("Seleccioná una observación para editar.");
+              abrirFormulario(observacionSeleccionada);
+            }}
+            disabled={!observacionSeleccionada}
+            title="Editar observación seleccionada"
+            aria-label="Editar observación"
+          >
+            <FaEdit />
+          </button>
+
+          <button
+            className="btn-accion btn-eliminar"
+            onClick={() => {
+              if (!observacionSeleccionada) return alert("Seleccioná una observación para eliminar.");
+              eliminarObservacion(observacionSeleccionada.id);
+            }}
+            disabled={!observacionSeleccionada}
+            title="Eliminar observación seleccionada"
+            aria-label="Eliminar observación"
+          >
+            <FaTrash />
+          </button>
+        </div>
+      )}
+
       {mostrarForm && (
-        <ObservacionForm observacion={editando} onClose={cerrarFormulario} onGuardar={guardar} />
+        <ObservacionForm
+          observacion={editandoObservacion}
+          onClose={cerrarFormulario}
+          onGuardar={guardarObservacion}
+        />
       )}
     </div>
   );
