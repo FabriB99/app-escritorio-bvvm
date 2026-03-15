@@ -11,7 +11,7 @@ import { auth, db } from '../../app/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 import { useUser } from '../../context/UserContext';
 import './Login.css';
-import { FaUser, FaLock, FaHome } from 'react-icons/fa';
+import { User, Lock, Home } from 'lucide-react';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const Login: React.FC = () => {
         <div className="login-glass-card">
           {/* Icono Home */}
           <div className="login-glass-home-icon" onClick={() => navigate('/')} title='Volver a Inicio'>
-            <FaHome />
+            <Home size={20} />
           </div>
 
           {/* Logo y título */}
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
           {/* Formulario */}
           <form onSubmit={handleLogin}>
             <div className="login-glass-input-wrapper">
-              <FaUser className="login-glass-icon" />
+              <User size={16} className="login-glass-icon" />
               <input
                 type="email"
                 placeholder="Correo electrónico"
@@ -97,7 +97,7 @@ const Login: React.FC = () => {
             </div>
 
             <div className="login-glass-input-wrapper">
-              <FaLock className="login-glass-icon" />
+              <Lock size={16} className="login-glass-icon" />
               <input
                 type="password"
                 placeholder="Contraseña"
