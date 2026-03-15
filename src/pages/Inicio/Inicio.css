@@ -1,36 +1,50 @@
-/* Base (mobile y tablets) */
 .inicio-glass-page {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  background: linear-gradient(135deg, #0f1923 0%, #1e2d3d 50%, #2c3e50 100%);
   background-size: 300% 300%;
-  animation: login-bg-shift 10s ease infinite;
+  animation: login-bg-shift 12s ease infinite;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-main);
   padding: 20px;
+  box-sizing: border-box;
+}
+
+@keyframes login-bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .inicio-glass-container {
   text-align: center;
   color: #cadff3;
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 0.7s ease-out;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .inicio-logo-grande {
   width: 180px;
-  padding-top: 20px;
-  margin-bottom: 0;
+  margin-bottom: 16px;
 }
 
 .inicio-nombre-cuartel {
   font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 40px;
-  color: #cadff3;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  font-weight: 700;
+  margin-bottom: 48px;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.5px;
 }
 
 .inicio-tarjetas-container {
@@ -42,175 +56,107 @@
 
 .inicio-tarjeta {
   width: 280px;
-  height: 130px;
-  padding: 15px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #cadff3;
+  height: 140px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.9);
   text-align: center;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
 }
 
 .inicio-tarjeta:hover {
-  transform: scale(1.06);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-.inicio-tarjeta svg {
-  font-size: 70px;
-  margin-bottom: 5px;
-}
+.inicio-tarjeta.biblioteca:hover { border-color: rgba(124, 181, 255, 0.5); }
+.inicio-tarjeta.control:hover    { border-color: rgba(230, 57, 70, 0.5); }
 
 .inicio-tarjeta h2 {
-  font-size: 28px;
-  margin-bottom: 5px;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* Bordes */
-.inicio-tarjeta.biblioteca,
-.inicio-tarjeta.control {
-  border-left: 8px solid #7cb5ffa8;
-  border-right: 8px solid #7cb5ffa8;
-}
-
-
-/* Media Queries */
-
-/* HD - 1280px */
-@media (min-width: 1280px) {
-  .inicio-logo-grande {
-    width: 200px;
-  }
-  .inicio-nombre-cuartel {
-    font-size: 44px;
-  }
-  .inicio-tarjeta {
-    width: 320px;
-    height: 140px;
-    padding: 18px;
-  }
-  .inicio-tarjeta svg {
-    font-size: 80px;
-  }
-  .inicio-tarjeta h2 {
-    font-size: 32px;
-  }
-  .inicio-tarjetas-container {
-    gap: 60px;
-  }
-}
-
-/* FullHD - 1920px */
-@media (min-width: 1920px) {
-  .inicio-logo-grande {
-    width: 300px;
-  }
-  .inicio-nombre-cuartel {
-    font-size: 54px;
-  }
-  .inicio-tarjeta {
-    width: 350px;
-    height: 150px;
-    padding: 20px;
-  }
-  .inicio-tarjeta svg {
-    font-size: 90px;
-  }
-  .inicio-tarjeta h2 {
-    font-size: 34px;
-  }
-  .inicio-tarjetas-container {
-    gap: 80px;
-  }
-}
-
-/* 2K - 2560px */
-@media (min-width: 2560px) {
-  .inicio-logo-grande {
-    width: 350px;
-  }
-  .inicio-nombre-cuartel {
-    font-size: 64px;
-  }
-  .inicio-tarjeta {
-    width: 400px;
-    height: 170px;
-    padding: 25px;
-  }
-  .inicio-tarjeta svg {
-    font-size: 105px;
-  }
-  .inicio-tarjeta h2 {
-    font-size: 38px;
-  }
-  .inicio-tarjetas-container {
-    gap: 100px;
-  }
-}
-
-/* 4K - 3840px */
-@media (min-width: 3840px) {
-  .inicio-logo-grande {
-    width: 400px;
-  }
-  .inicio-nombre-cuartel {
-    font-size: 74px;
-  }
-  .inicio-tarjeta {
-    width: 450px;
-    height: 190px;
-    padding: 30px;
-  }
-  .inicio-tarjeta svg {
-    font-size: 120px;
-  }
-  .inicio-tarjeta h2 {
-    font-size: 42px;
-  }
-  .inicio-tarjetas-container {
-    gap: 120px;
-  }
-}
-
+/* Versión */
 .version-info {
   position: fixed;
-  bottom: 10px;
-  right: 15px;
-  font-size: 0.85rem;
-  color: #ccc;
-  opacity: 0.8;
-  z-index: 1000;
+  bottom: 12px;
+  right: 16px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
   pointer-events: none;
+  font-family: var(--font-main);
 }
 
+/* Banner actualización */
 .update-banner {
   position: fixed;
-  bottom: 10px;
-  left: 15px;
-  background-color: rgba(100, 130, 180, 0.2); /* azul grisáceo translúcido */
-  color: #cadff3; /* color texto claro, que usás en el resto */
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(100, 130, 180, 0.4);
+  bottom: 12px;
+  left: 16px;
+  background: rgba(100, 130, 180, 0.15);
+  border: 1px solid rgba(100, 130, 180, 0.3);
+  color: #cadff3;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  z-index: 1000;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
 .update-banner:hover {
-  background-color: rgba(100, 130, 180, 0.35);
-  transform: scale(1.05);
+  background: rgba(100, 130, 180, 0.28);
+  transform: scale(1.03);
+}
+
+/* Media Queries */
+@media (min-width: 1280px) {
+  .inicio-logo-grande      { width: 200px; }
+  .inicio-nombre-cuartel   { font-size: 44px; }
+  .inicio-tarjeta          { width: 320px; height: 150px; }
+  .inicio-tarjeta h2       { font-size: 24px; }
+  .inicio-tarjetas-container { gap: 60px; }
+}
+
+@media (min-width: 1920px) {
+  .inicio-logo-grande      { width: 280px; }
+  .inicio-nombre-cuartel   { font-size: 52px; }
+  .inicio-tarjeta          { width: 360px; height: 165px; }
+  .inicio-tarjeta h2       { font-size: 28px; }
+  .inicio-tarjetas-container { gap: 80px; }
+}
+
+@media (min-width: 2560px) {
+  .inicio-logo-grande      { width: 340px; }
+  .inicio-nombre-cuartel   { font-size: 62px; }
+  .inicio-tarjeta          { width: 410px; height: 180px; }
+  .inicio-tarjeta h2       { font-size: 32px; }
+  .inicio-tarjetas-container { gap: 100px; }
+}
+
+@media (min-width: 3840px) {
+  .inicio-logo-grande      { width: 400px; }
+  .inicio-nombre-cuartel   { font-size: 72px; }
+  .inicio-tarjeta          { width: 460px; height: 200px; }
+  .inicio-tarjeta h2       { font-size: 38px; }
+  .inicio-tarjetas-container { gap: 120px; }
 }
