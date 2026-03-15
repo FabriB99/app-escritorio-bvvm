@@ -3,8 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../../app/firebase-config";
 import { deleteDoc, doc, collection, onSnapshot } from 'firebase/firestore';
-import { FaFilter, FaPlus } from 'react-icons/fa';
-import { MdClose } from 'react-icons/md';
+import { Plus, Filter, X } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import { mostrarToast } from '../../utils/toast';
 import { useUser } from '../../context/UserContext';
@@ -91,20 +90,18 @@ const Unidades: React.FC = () => {
   const unidadesFiltradas = units.filter(u => !filtroTipo || u.tipo === filtroTipo);
 
   // Botones del Header
-  const headerButtons = [
-    // Botón agregar (solo admin)
-    ...(user?.rol === 'admin' ? [{
-      icon: FaPlus,
-      onClick: () => navigate("/crear-unidad"),
-      ariaLabel: "Agregar unidad"
-    }] : []),
-    // Botón filtro
-    {
-      icon: FaFilter,
-      onClick: () => setIsFilterOpen(!isFilterOpen),
-      ariaLabel: "Filtrar unidades"
-    }
-  ];
+const headerButtons = [
+  ...(user?.rol === 'admin' ? [{
+    icon: Plus,
+    onClick: () => navigate("/crear-unidad"),
+    ariaLabel: "Agregar unidad"
+  }] : []),
+  {
+    icon: Filter,
+    onClick: () => setIsFilterOpen(!isFilterOpen),
+    ariaLabel: "Filtrar unidades"
+  }
+];
 
   return (
     <>
@@ -137,7 +134,7 @@ const Unidades: React.FC = () => {
             >
               {user?.rol === 'admin' && (
                 <button className="btn-eliminar-tarjeta" onClick={() => abrirModalEliminar(unidad.id)}>
-                  <MdClose size={20} />
+                  <X size={18} />
                 </button>
               )}
 

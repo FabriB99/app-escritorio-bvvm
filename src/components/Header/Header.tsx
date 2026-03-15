@@ -1,4 +1,5 @@
 import React from "react";
+import { CornerUpLeft } from "lucide-react";
 import "./Header.css";
 
 interface HeaderButton {
@@ -13,18 +14,20 @@ interface HeaderButton {
 
 interface HeaderProps {
   title: string;
-  onBack?: () => void;          // si lo pasás, aparece "↩ Regresar"
-  extraButtons?: HeaderButton[]; // botones opcionales a la derecha
+  onBack?: () => void;
+  extraButtons?: HeaderButton[];
 }
 
 const Header: React.FC<HeaderProps> = ({ title, onBack, extraButtons = [] }) => {
   return (
     <header className="app-header">
+
       {/* IZQUIERDA */}
       <div className="header-left">
         {onBack && (
           <button className="header-btn-back" onClick={onBack}>
-            ↩ Regresar
+            <CornerUpLeft size={14} />
+            Regresar
           </button>
         )}
       </div>
@@ -32,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, extraButtons = [] }) => 
       {/* CENTRO */}
       <div className="header-center">
         <h1 className="header-title">{title}</h1>
+        <div className="header-title-underline" />
       </div>
 
       {/* DERECHA */}
@@ -46,12 +50,13 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, extraButtons = [] }) => 
               aria-label={btn.ariaLabel || btn.label}
               title={btn.ariaLabel || btn.label}
             >
-              {Icon && <Icon className="btn-icon" />}
+              {Icon && <Icon size={14} className="btn-icon" />}
               {btn.label && <span className="btn-label">{btn.label}</span>}
             </button>
           );
         })}
       </div>
+
     </header>
   );
 };
