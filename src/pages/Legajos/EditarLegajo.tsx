@@ -1,10 +1,9 @@
-// src/pages/Legajos/EditarLegajo.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../../app/firebase-config";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { Plus, Trash2, User } from "lucide-react";
 import "./EditarLegajo.css";
 import { registrarAuditoria } from "../../utils/auditoria";
 import { useUser } from "../../context/UserContext";
@@ -13,42 +12,24 @@ import Header from "../../components/Header";
 
 interface Hijo { nombre: string; fechaNacimiento: string; dni: string; localidad: string; }
 interface Legajo {
-  apellido: string;
-  nombre: string;
-  numeroLegajo: number;
-  numeroLegajoFederacion?: number;
-  numeroLegajoRUBA?: number;
-  dni?: string;
-  fechaNacimiento?: string;
-  grupoSanguineo?: string;
-  domicilio?: string;
-  domicilioLaboral?: string;
-  lugar?: string;
-  altura?: number;
-  peso?: number;
-  estadoCivil?: string;
-  conyuge?: string;
-  dniConyuge?: string;
-  hijos?: Hijo[];
-  fechaIngreso?: string;
-  grado?: string;
-  cargo?: string;
-  cargoRegional?: string;
-  cargoProvincial?: string;
-  cargoNacional?: string;
-  fechaUltimoAscenso?: string;
-  reingreso?: string;
-  fotoUrl?: string;
-  obraSocial?: string;
-  carnetConducir?: string;
-  estado?: string;
-  miembroId?: string; // 🔑 conservamos la vinculación
+  apellido: string; nombre: string; numeroLegajo: number;
+  numeroLegajoFederacion?: number; numeroLegajoRUBA?: number;
+  dni?: string; fechaNacimiento?: string; grupoSanguineo?: string;
+  domicilio?: string; domicilioLaboral?: string; lugar?: string;
+  altura?: number; peso?: number; estadoCivil?: string;
+  conyuge?: string; dniConyuge?: string; hijos?: Hijo[];
+  fechaIngreso?: string; grado?: string; cargo?: string;
+  cargoRegional?: string; cargoProvincial?: string; cargoNacional?: string;
+  fechaUltimoAscenso?: string; reingreso?: string; fotoUrl?: string;
+  obraSocial?: string; carnetConducir?: string; estado?: string;
+  miembroId?: string;
 }
 
 const EditarLegajo: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { miembroActivo } = useUser();
+  const fotoInputRef = useRef<HTMLInputElement>(null);
 
   const [datos, setDatos] = useState<Legajo>({ apellido: "", nombre: "", numeroLegajo: 0 });
   const [loading, setLoading] = useState(true);
@@ -61,8 +42,7 @@ const EditarLegajo: React.FC = () => {
     const fetchLegajo = async () => {
       if (!id) return;
       try {
-        const docRef = doc(db, "legajos", id);
-        const docSnap = await getDoc(docRef);
+        const docSnap = await getDoc(doc(db, "legajos", id));
         if (docSnap.exists()) {
           const data = docSnap.data() as Legajo;
           setDatos(data);
@@ -80,353 +60,300 @@ const EditarLegajo: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setDatos((prev) => ({
+    setDatos(prev => ({
       ...prev,
-      [name]: ["numeroLegajo", "numeroLegajoFederacion", "numeroLegajoRUBA", "altura", "peso"].includes(name)
-        ? Number(value)
-        : value,
+      [name]: ["numeroLegajo","numeroLegajoFederacion","numeroLegajoRUBA","altura","peso"].includes(name)
+        ? Number(value) : value,
     }));
   };
 
-  // --- Foto ---
   const handleFotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!id || !e.target.files?.[0]) return;
     const file = e.target.files[0];
     try {
-      const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true });
+      const compressed = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true });
       const storageRef = ref(storage, `legajos/${id}/imagen`);
-      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+      const uploadTask = uploadBytesResumable(storageRef, compressed);
       setUploadProgress(0);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
-        (error) => { console.error(error); setUploadProgress(null); },
+      uploadTask.on("state_changed",
+        snap => setUploadProgress((snap.bytesTransferred / snap.totalBytes) * 100),
+        err => { console.error(err); setUploadProgress(null); },
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
           setFotoPreview(url);
-          setDatos((prev) => ({ ...prev, fotoUrl: url }));
+          setDatos(prev => ({ ...prev, fotoUrl: url }));
           setUploadProgress(null);
         }
       );
-    } catch (error) {
-      console.error("Error al comprimir la imagen:", error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const handleBorrarFoto = async () => {
     if (!id || !datos.fotoUrl) return;
     try {
-      const storageRef = ref(storage, `legajos/${id}/imagen`);
-      await deleteObject(storageRef);
-      const docRef = doc(db, "legajos", id);
-      await setDoc(docRef, { fotoUrl: "" }, { merge: true });
+      await deleteObject(ref(storage, `legajos/${id}/imagen`));
+      await setDoc(doc(db, "legajos", id), { fotoUrl: "" }, { merge: true });
       setFotoPreview(null);
-      setDatos((prev) => ({ ...prev, fotoUrl: "" }));
-    } catch (error) {
-      console.error(error);
-    }
+      setDatos(prev => ({ ...prev, fotoUrl: "" }));
+    } catch (error) { console.error(error); }
   };
 
-  // --- Hijos ---
   const handleHijoChange = (index: number, field: keyof Hijo, value: string) => {
-    const nuevosHijos = [...(datos.hijos || [])];
-    nuevosHijos[index] = { ...nuevosHijos[index], [field]: value };
-    setDatos((prev) => ({ ...prev, hijos: nuevosHijos }));
+    const nuevos = [...(datos.hijos || [])];
+    nuevos[index] = { ...nuevos[index], [field]: value };
+    setDatos(prev => ({ ...prev, hijos: nuevos }));
   };
-  const agregarHijo = () => setDatos(prev => ({ ...prev, hijos: [...(prev.hijos || []), { nombre: "", fechaNacimiento: "", dni: "", localidad: "" }] }));
-  const toggleSeleccionado = (index: number) => setSeleccionados(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
-  const eliminarSeleccionados = () => { setDatos(prev => ({ ...prev, hijos: (prev.hijos || []).filter((_, i) => !seleccionados.includes(i)) })); setSeleccionados([]); };
 
-  // --- Guardar ---
+  const agregarHijo = () => setDatos(prev => ({
+    ...prev, hijos: [...(prev.hijos || []), { nombre: "", fechaNacimiento: "", dni: "", localidad: "" }]
+  }));
+
+  const toggleSeleccionado = (i: number) => setSeleccionados(prev =>
+    prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]
+  );
+
+  const eliminarSeleccionados = () => {
+    setDatos(prev => ({ ...prev, hijos: (prev.hijos || []).filter((_, i) => !seleccionados.includes(i)) }));
+    setSeleccionados([]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
-
-    if (!miembroActivo) {
-      console.error("No se pudo determinar el miembro que realiza la acción.");
-      return;
-    }
-
+    if (!id || !miembroActivo) return;
     try {
-      const docRef = doc(db, "legajos", id);
-
-      // No tocamos miembroId, solo hacemos merge de los demás datos
       const { miembroId, ...datosAGuardar } = datos;
-      await setDoc(docRef, datosAGuardar, { merge: true });
-
+      await setDoc(doc(db, "legajos", id), datosAGuardar, { merge: true });
       await registrarAuditoria({
-        coleccion: "legajos",
-        accion: "editar",
-        docId: id,
+        coleccion: "legajos", accion: "editar", docId: id,
         miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
         datosNuevos: datosAGuardar,
         datosAnteriores: datosOriginales.current,
       });
-
       navigate(`/legajo/${id}`);
-    } catch (error) {
-      console.error("Error al guardar:", error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   if (loading) return <p>Cargando...</p>;
 
   return (
     <div className="editar-legajo-container">
-      <Header
-        title="Editar Legajo"
-        onBack={() => navigate(`/legajo/${id}`)}
-      />
-      <form onSubmit={handleSubmit} className="form-legajo">
-        <div className="form-fila">
-                    {/* LEGAJO */}
-          <fieldset className="form-seccion legajo-seccion">
-            <legend>Legajo</legend>
-            <div className="form-grupo">
-              <label>N° Legajo:</label>
-              <input
-                type="number"
-                name="numeroLegajo"
-                value={datos.numeroLegajo}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-grupo">
-              <label>Legajo Federación:</label>
-              <input
-                type="number"
-                name="numeroLegajoFederacion"
-                value={datos.numeroLegajoFederacion || ""}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-grupo">
-              <label>Legajo RUBA:</label>
-              <input
-                type="number"
-                name="numeroLegajoRUBA"
-                value={datos.numeroLegajoRUBA || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </fieldset>
+      <Header title="Editar Legajo" onBack={() => navigate(`/legajo/${id}`)} />
 
-          {/* FOTO */}
-          <fieldset className="form-seccion foto-seccion">
-            <legend>Foto carnet</legend>
+      <form onSubmit={handleSubmit} className="form-legajo">
+
+        {/* Fila superior: foto + números */}
+        <div className="form-fila">
+          <div className="form-seccion foto-seccion">
+            <div className="form-seccion-titulo">Foto carnet</div>
             <div className="foto-carnet">
               {fotoPreview ? (
                 <div className="foto-con-boton">
                   <img src={fotoPreview} alt="Foto carnet" />
-                  <button
-                    type="button"
-                    className="btn-borrar-foto"
-                    onClick={handleBorrarFoto}
-                    title="Eliminar foto"
-                  >
-                    ❌
+                  <button type="button" className="btn-borrar-foto" onClick={handleBorrarFoto}>
+                    <Trash2 size={12} />
                   </button>
                 </div>
               ) : (
-                <div className="foto-placeholder">Sin foto</div>
+                <div className="foto-placeholder">
+                  <User size={32} color="#cbd5e1" />
+                  <span>Sin foto</span>
+                </div>
               )}
-              <input type="file" accept="image/*" onChange={handleFotoChange} />
+              <input ref={fotoInputRef} type="file" accept="image/*" onChange={handleFotoChange} className="foto-input" />
+              <button type="button" className="btn-subir-foto" onClick={() => fotoInputRef.current?.click()}>
+                {fotoPreview ? 'Cambiar foto' : 'Subir foto'}
+              </button>
               {uploadProgress !== null && (
-                <p>Subiendo foto... {uploadProgress.toFixed(0)}%</p>
+                <p className="foto-progress">Subiendo... {uploadProgress.toFixed(0)}%</p>
               )}
             </div>
-          </fieldset>
+          </div>
+
+          <div className="form-seccion">
+            <div className="form-seccion-titulo">Números de legajo</div>
+            <div className="form-seccion-grid">
+              <div className="form-grupo">
+                <label>N° Legajo</label>
+                <input type="number" name="numeroLegajo" value={datos.numeroLegajo} onChange={handleChange} required />
+              </div>
+              <div className="form-grupo">
+                <label>Federación</label>
+                <input type="number" name="numeroLegajoFederacion" value={datos.numeroLegajoFederacion || ""} onChange={handleChange} />
+              </div>
+              <div className="form-grupo">
+                <label>RUBA</label>
+                <input type="number" name="numeroLegajoRUBA" value={datos.numeroLegajoRUBA || ""} onChange={handleChange} />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* DATOS PERSONALES */}
-        <fieldset className="form-seccion">
-          <legend>Datos personales</legend>
-          <div className="form-grupo">
-            <label>Apellido:</label>
-            <input type="text" name="apellido" value={datos.apellido} onChange={handleChange} required />
-          </div>
-          <div className="form-grupo">
-            <label>Nombre:</label>
-            <input type="text" name="nombre" value={datos.nombre} onChange={handleChange} required />
-          </div>
-          <div className="form-grupo">
-            <label>DNI:</label>
-            <input type="text" name="dni" value={datos.dni || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Fecha de nacimiento:</label>
-            <input type="date" name="fechaNacimiento" value={datos.fechaNacimiento || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Grupo sanguíneo:</label>
-            <input type="text" name="grupoSanguineo" value={datos.grupoSanguineo || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Obra social:</label>
-            <input type="text" name="obraSocial" value={datos.obraSocial || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Carnet de conducir:</label>
-            <input type="text" name="carnetConducir" value={datos.carnetConducir || ""} onChange={handleChange} />
-          </div>
-          <div className="grupo-domicilio-completo">
+        {/* Datos personales */}
+        <div className="form-seccion">
+          <div className="form-seccion-titulo">Datos personales</div>
+          <div className="form-seccion-grid">
             <div className="form-grupo">
-              <label htmlFor="domicilio">Domicilio</label>
-              <input type="text" id="domicilio" name="domicilio" value={datos.domicilio || ""} onChange={handleChange} />
+              <label>Apellido</label>
+              <input type="text" name="apellido" value={datos.apellido} onChange={handleChange} required />
             </div>
             <div className="form-grupo">
-              <label htmlFor="lugar">Lugar</label>
-              <input type="text" id="lugar" name="lugar" value={datos.lugar || ""} onChange={handleChange} />
+              <label>Nombre</label>
+              <input type="text" name="nombre" value={datos.nombre} onChange={handleChange} required />
             </div>
             <div className="form-grupo">
-              <label htmlFor="domicilioLaboral">Domicilio laboral</label>
-              <input type="text" id="domicilioLaboral" name="domicilioLaboral" value={datos.domicilioLaboral || ""} onChange={handleChange} />
+              <label>DNI</label>
+              <input type="text" name="dni" value={datos.dni || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Fecha nacimiento</label>
+              <input type="date" name="fechaNacimiento" value={datos.fechaNacimiento || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Grupo sanguíneo</label>
+              <input type="text" name="grupoSanguineo" value={datos.grupoSanguineo || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Obra social</label>
+              <input type="text" name="obraSocial" value={datos.obraSocial || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Carnet conducir</label>
+              <input type="text" name="carnetConducir" value={datos.carnetConducir || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Altura (cm)</label>
+              <input type="number" name="altura" value={datos.altura || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Peso (kg)</label>
+              <input type="number" name="peso" value={datos.peso || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Estado civil</label>
+              <input type="text" name="estadoCivil" value={datos.estadoCivil || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Cónyuge</label>
+              <input type="text" name="conyuge" value={datos.conyuge || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>DNI cónyuge</label>
+              <input type="text" name="dniConyuge" value={datos.dniConyuge || ""} onChange={handleChange} />
+            </div>
+            <div className="grupo-domicilio-completo">
+              <div className="form-grupo">
+                <label>Domicilio</label>
+                <input type="text" name="domicilio" value={datos.domicilio || ""} onChange={handleChange} />
+              </div>
+              <div className="form-grupo">
+                <label>Lugar</label>
+                <input type="text" name="lugar" value={datos.lugar || ""} onChange={handleChange} />
+              </div>
+              <div className="form-grupo">
+                <label>Domicilio laboral</label>
+                <input type="text" name="domicilioLaboral" value={datos.domicilioLaboral || ""} onChange={handleChange} />
+              </div>
             </div>
           </div>
-          <div className="form-grupo">
-            <label>Altura (cm):</label>
-            <input type="number" name="altura" value={datos.altura || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Peso (kg):</label>
-            <input type="number" name="peso" value={datos.peso || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Estado civil:</label>
-            <input type="text" name="estadoCivil" value={datos.estadoCivil || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Casado/a con:</label>
-            <input type="text" name="conyuge" value={datos.conyuge || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>DNI cónyuge:</label>
-            <input type="text" name="dniConyuge" value={datos.dniConyuge || ""} onChange={handleChange} />
-          </div>
-        </fieldset>
+        </div>
 
-        {/* HIJOS */}
-        <fieldset className="form-seccion">
-          <legend>Hijos</legend>
+        {/* Hijos */}
+        <div className="form-seccion">
+          <div className="form-seccion-titulo">Hijos</div>
           {(datos.hijos || []).map((hijo, index) => (
             <div key={index} className="grupo-hijo">
               <input
                 type="checkbox"
                 checked={seleccionados.includes(index)}
                 onChange={() => toggleSeleccionado(index)}
-                aria-label={`Seleccionar hijo ${hijo.nombre}`}
                 className="checkbox-seleccion"
               />
               <div className="form-grupo">
-                <label>Nombre:</label>
-                <input
-                  type="text"
-                  value={hijo.nombre}
-                  onChange={(e) => handleHijoChange(index, "nombre", e.target.value)}
-                />
+                <label>Nombre</label>
+                <input type="text" value={hijo.nombre} onChange={e => handleHijoChange(index, "nombre", e.target.value)} />
               </div>
               <div className="form-grupo">
-                <label>Fecha de nacimiento:</label>
-                <input
-                  type="date"
-                  value={hijo.fechaNacimiento}
-                  onChange={(e) => handleHijoChange(index, "fechaNacimiento", e.target.value)}
-                />
+                <label>Fecha nacimiento</label>
+                <input type="date" value={hijo.fechaNacimiento} onChange={e => handleHijoChange(index, "fechaNacimiento", e.target.value)} />
               </div>
               <div className="form-grupo">
-                <label>DNI:</label>
-                <input
-                  type="text"
-                  value={hijo.dni}
-                  onChange={(e) => handleHijoChange(index, "dni", e.target.value)}
-                />
+                <label>DNI</label>
+                <input type="text" value={hijo.dni} onChange={e => handleHijoChange(index, "dni", e.target.value)} />
               </div>
               <div className="form-grupo">
-                <label>Localidad:</label>
-                <input
-                  type="text"
-                  value={hijo.localidad}
-                  onChange={(e) => handleHijoChange(index, "localidad", e.target.value)}
-                />
+                <label>Localidad</label>
+                <input type="text" value={hijo.localidad} onChange={e => handleHijoChange(index, "localidad", e.target.value)} />
               </div>
             </div>
           ))}
+          <div className="botones-hijos-container">
+            <button type="button" onClick={agregarHijo} className="btn-agregar-hijo">
+              <Plus size={14} /> Agregar hijo
+            </button>
+            <button
+              type="button"
+              onClick={eliminarSeleccionados}
+              className="btn-eliminar-hijo"
+              disabled={seleccionados.length === 0}
+            >
+              <Trash2 size={14} /> Eliminar seleccionados
+            </button>
+          </div>
+        </div>
 
-            <div className="botones-hijos-container">
-              <button
-                type="button"
-                onClick={agregarHijo}
-                className="btn btn-agregar-hijo"
-                title="Agregar hijo"
-                aria-label="Agregar hijo"
-              >
-                <FaPlus />
-              </button>
-              <button
-                type="button"
-                onClick={eliminarSeleccionados}
-                className="btn btn-eliminar-hijo"
-                disabled={seleccionados.length === 0}
-                title={seleccionados.length === 0 ? "Seleccioná al menos un hijo para eliminar" : "Eliminar hijos seleccionados"}
-                aria-label="Eliminar hijos seleccionados"
-              >
-                <FaTrash />
-              </button>
-            </div>  
-        </fieldset>
+        {/* Datos institucionales */}
+        <div className="form-seccion">
+          <div className="form-seccion-titulo">Datos institucionales</div>
+          <div className="form-seccion-grid">
+            <div className="form-grupo">
+              <label>Fecha ingreso</label>
+              <input type="date" name="fechaIngreso" value={datos.fechaIngreso || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Grado</label>
+              <input type="text" name="grado" value={datos.grado || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Cargo institucional</label>
+              <input type="text" name="cargo" value={datos.cargo || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Cargo regional</label>
+              <input type="text" name="cargoRegional" value={datos.cargoRegional || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Cargo provincial</label>
+              <input type="text" name="cargoProvincial" value={datos.cargoProvincial || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Cargo nacional</label>
+              <input type="text" name="cargoNacional" value={datos.cargoNacional || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Fecha último ascenso</label>
+              <input type="date" name="fechaUltimoAscenso" value={datos.fechaUltimoAscenso || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Estado</label>
+              <input type="text" name="estado" value={datos.estado || ""} onChange={handleChange} />
+            </div>
+            <div className="form-grupo">
+              <label>Reingreso</label>
+              <input type="text" name="reingreso" value={datos.reingreso || ""} onChange={handleChange} />
+            </div>
+          </div>
+        </div>
 
-        {/* DATOS INSTITUCIONALES */}
-        <fieldset className="form-seccion">
-          <legend>Datos institucionales</legend>
-          <div className="form-grupo">
-            <label>Fecha de ingreso:</label>
-            <input type="date" name="fechaIngreso" value={datos.fechaIngreso || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Grado:</label>
-            <input type="text" name="grado" value={datos.grado || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Cargo institucional:</label>
-            <input type="text" name="cargo" value={datos.cargo || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Cargo regional:</label>
-            <input type="text" name="cargoRegional" value={datos.cargoRegional || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Cargo provincial:</label>
-            <input type="text" name="cargoProvincial" value={datos.cargoProvincial || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Cargo nacional:</label>
-            <input type="text" name="cargoNacional" value={datos.cargoNacional || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Fecha último ascenso:</label>
-            <input type="date" name="fechaUltimoAscenso" value={datos.fechaUltimoAscenso || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Estado:</label>
-            <input type="text" name="estado" value={datos.estado || ""} onChange={handleChange} />
-          </div>
-          <div className="form-grupo">
-            <label>Reingreso:</label>
-            <input type="text" name="reingreso" value={datos.reingreso || ""} onChange={handleChange} />
-          </div>
-        </fieldset>
-
-        {/* BOTONES */}
+        {/* Botones */}
         <div className="botones-acciones">
-          <button type="submit" className="btn btn-guardar1">
-            Guardar
-          </button>
-          <button type="button" className="btn btn-cancel" onClick={() => navigate(`/legajo/${id}`)}>
+          <button type="button" className="btn-cancel" onClick={() => navigate(`/legajo/${id}`)}>
             Cancelar
           </button>
+          <button type="submit" className="btn-guardar1">
+            Guardar cambios
+          </button>
         </div>
+
       </form>
     </div>
   );
