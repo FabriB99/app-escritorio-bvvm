@@ -89,6 +89,7 @@ const AgregarLegajo: React.FC = () => {
         apellido: miembroEncontrado.apellido,
         dni: dni.trim(),
         miembroId: miembroEncontrado.id,
+        categoria: miembroEncontrado.categoria,
         numeroLegajo: Number(numeroLegajo),
         creadoEn: serverTimestamp(),
       });
