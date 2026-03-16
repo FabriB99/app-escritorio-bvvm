@@ -1,30 +1,78 @@
-// src/pages/AgregarLegajo/AgregarLegajo.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, serverTimestamp, doc, setDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
-import './AgregarLegajo.css';
-import Header from "../../components/Header";
 import { useUser } from '../../context/UserContext';
 import { registrarAuditoria } from '../../utils/auditoria';
+import { FileText } from 'lucide-react';
+import Header from "../../components/Header";
+import './AgregarLegajo.css';
 
 const AgregarLegajo: React.FC = () => {
   const navigate = useNavigate();
   const { miembroActivo } = useUser();
 
-  const [apellido, setApellido] = useState('');
-  const [nombre, setNombre] = useState('');
   const [dni, setDni] = useState('');
   const [numeroLegajo, setNumeroLegajo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [buscando, setBuscando] = useState(false);
   const [error, setError] = useState('');
+
+  // Datos autocompletados desde miembros
+  const [miembroEncontrado, setMiembroEncontrado] = useState<{
+    id: string;
+    nombre: string;
+    apellido: string;
+    categoria: string;
+  } | null>(null);
+
+  const buscarMiembro = async (dniValue: string) => {
+    if (dniValue.trim().length < 7) {
+      setMiembroEncontrado(null);
+      return;
+    }
+    setBuscando(true);
+    try {
+      const snapshot = await getDocs(collection(db, 'miembros'));
+      const encontrado = snapshot.docs.find(d => d.data().dni === dniValue.trim());
+      if (encontrado) {
+        const data = encontrado.data();
+        setMiembroEncontrado({
+          id: encontrado.id,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          categoria: data.categoria || '',
+        });
+        setError('');
+      } else {
+        setMiembroEncontrado(null);
+        setError('No existe un miembro con ese DNI.');
+      }
+    } catch {
+      setError('Error al buscar el miembro.');
+    } finally {
+      setBuscando(false);
+    }
+  };
+
+  const handleDniChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDni(value);
+    setError('');
+    buscarMiembro(value);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!nombre.trim() || !apellido.trim() || !numeroLegajo.trim() || !dni.trim()) {
+    if (!dni.trim() || !numeroLegajo.trim()) {
       setError('Por favor completá todos los campos.');
+      return;
+    }
+
+    if (!miembroEncontrado) {
+      setError('Primero ingresá un DNI válido.');
       return;
     }
 
@@ -35,41 +83,26 @@ const AgregarLegajo: React.FC = () => {
 
     try {
       setLoading(true);
-
-      // ---- Buscar miembro por DNI ----
-      const miembrosSnapshot = await getDocs(collection(db, 'miembros'));
-      const miembroEncontrado = miembrosSnapshot.docs.find(docSnap => docSnap.data().dni === dni.trim());
-
-      if (!miembroEncontrado) {
-        setError('No existe un miembro con ese DNI. Primero debe registrarse el miembro.');
-        setLoading(false);
-        return;
-      }
-
-      const miembroId = miembroEncontrado.id; // UID del miembro al que pertenece el legajo
-
-      // ---- Crear legajo vinculado al miembro correcto ----
       const nuevoDocRef = doc(collection(db, 'legajos'));
       await setDoc(nuevoDocRef, {
-        nombre: nombre.trim(),
-        apellido: apellido.trim(),
-        numeroLegajo: Number(numeroLegajo),
+        nombre: miembroEncontrado.nombre,
+        apellido: miembroEncontrado.apellido,
         dni: dni.trim(),
-        miembroId, // 🔑 vinculación correcta
+        miembroId: miembroEncontrado.id,
+        numeroLegajo: Number(numeroLegajo),
         creadoEn: serverTimestamp(),
       });
 
-      // ---- Registrar auditoría con el creador ----
       await registrarAuditoria({
         coleccion: "legajos",
         accion: "crear",
         docId: nuevoDocRef.id,
         miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
         datosNuevos: {
-          nombre: nombre.trim(),
-          apellido: apellido.trim(),
-          numeroLegajo: Number(numeroLegajo),
+          nombre: miembroEncontrado.nombre,
+          apellido: miembroEncontrado.apellido,
           dni: dni.trim(),
+          numeroLegajo: Number(numeroLegajo),
         },
       });
 
@@ -86,33 +119,104 @@ const AgregarLegajo: React.FC = () => {
     <div className="agregar-legajo-container">
       <Header title="Agregar Legajo" onBack={() => navigate("/legajos")} />
 
-      <form onSubmit={handleSubmit} className="form-legajo">
-        <label>
-          DNI
-          <input type="text" value={dni} onChange={(e) => setDni(e.target.value)} required />
-        </label>
+      <div className="form-legajo-card">
+        {/* Header card */}
+        <div className="form-legajo-card-header">
+          <div className="form-legajo-card-icon">
+            <FileText size={22} />
+          </div>
+          <div>
+            <div className="form-legajo-card-title">Nuevo Legajo</div>
+            <div className="form-legajo-card-subtitle">Completá los datos del bombero</div>
+          </div>
+        </div>
 
-        <label>
-          Apellido
-          <input type="text" value={apellido} onChange={(e) => setApellido(e.target.value)} required />
-        </label>
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="form-legajo">
 
-        <label>
-          Nombre
-          <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-        </label>
+          {/* Fila 1: DNI + N° Legajo */}
+          <div className="form-legajo-row">
+            <div className="form-legajo-field">
+              <label>DNI</label>
+              <div className="form-legajo-input-wrapper">
+                <input
+                  type="text"
+                  value={dni}
+                  onChange={handleDniChange}
+                  placeholder="Ej: 31403586"
+                  required
+                  className={miembroEncontrado ? 'input-vinculado' : error ? 'input-error' : ''}
+                />
+                {buscando && <span className="form-legajo-badge buscando">Buscando...</span>}
+                {miembroEncontrado && !buscando && (
+                  <span className="form-legajo-badge vinculado">✓ Vinculado</span>
+                )}
+              </div>
+              {miembroEncontrado && (
+                <span className="form-legajo-miembro-info">
+                  {miembroEncontrado.apellido} {miembroEncontrado.nombre} — {miembroEncontrado.categoria}
+                </span>
+              )}
+            </div>
 
-        <label>
-          N° de Legajo
-          <input type="number" value={numeroLegajo} onChange={(e) => setNumeroLegajo(e.target.value)} required />
-        </label>
+            <div className="form-legajo-field">
+              <label>N° de Legajo</label>
+              <input
+                type="number"
+                value={numeroLegajo}
+                onChange={(e) => setNumeroLegajo(e.target.value)}
+                placeholder="Ej: 001"
+                required
+              />
+            </div>
+          </div>
 
-        {error && <p className="error-text">{error}</p>}
+          {/* Fila 2: Nombre + Apellido autocompletados */}
+          <div className="form-legajo-row">
+            <div className="form-legajo-field">
+              <label className="label-auto">Apellido <span>(desde miembro)</span></label>
+              <input
+                type="text"
+                value={miembroEncontrado?.apellido || ''}
+                disabled
+                placeholder="Se completa automáticamente"
+                className="input-disabled"
+              />
+            </div>
+            <div className="form-legajo-field">
+              <label className="label-auto">Nombre <span>(desde miembro)</span></label>
+              <input
+                type="text"
+                value={miembroEncontrado?.nombre || ''}
+                disabled
+                placeholder="Se completa automáticamente"
+                className="input-disabled"
+              />
+            </div>
+          </div>
 
-        <button type="submit" className="btn-guardar" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar Legajo'}
-        </button>
-      </form>
+          {error && <p className="form-legajo-error">{error}</p>}
+
+          <div className="form-legajo-divider" />
+
+          <div className="form-legajo-botones">
+            <button
+              type="button"
+              className="btn-cancelar"
+              onClick={() => navigate("/legajos")}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn-guardar"
+              disabled={loading || !miembroEncontrado}
+            >
+              {loading ? 'Guardando...' : 'Guardar Legajo'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

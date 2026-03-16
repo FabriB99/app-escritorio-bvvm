@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
-import './VistaChoferes.css';
-import Header from "../../components/Header";
-
-import { FaShoppingCart, FaAmbulance, FaTruckPickup, FaSearch } from 'react-icons/fa';
+import { ShoppingCart, Ambulance, Truck, Search } from 'lucide-react';
 import { MdFireTruck } from 'react-icons/md';
-import { BsLadder } from "react-icons/bs";
+import { BsLadder } from 'react-icons/bs';
+import Header from "../../components/Header";
+import './VistaChoferes.css';
 
 type Chofer = {
   id: string;
@@ -15,16 +14,14 @@ type Chofer = {
   esChofer?: boolean;
 };
 
-// Unidades disponibles
 const unidades = ['Todos', 'Maestranza', 'Ambulancias', 'Livianas', 'Pesadas', 'Escalera'];
 
-// Iconos por unidad
 const unidadIconos: Record<string, JSX.Element> = {
-  Maestranza: <FaShoppingCart />,
-  Ambulancias: <FaAmbulance />,
-  Livianas: <FaTruckPickup />,
-  Pesadas: <MdFireTruck />,
-  Escalera: <BsLadder />,
+  Maestranza: <ShoppingCart size={14} />,
+  Ambulancias: <Ambulance size={14} />,
+  Livianas:   <Truck size={14} />,
+  Pesadas:    <MdFireTruck />,
+  Escalera:   <BsLadder />,
 };
 
 const VistaChoferes: React.FC = () => {
@@ -56,7 +53,6 @@ const VistaChoferes: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  // Ajuste de slider para la pestaña seleccionada
   useEffect(() => {
     const index = unidades.indexOf(filtro);
     const el = tabsRef.current[index];
@@ -68,7 +64,6 @@ const VistaChoferes: React.FC = () => {
     }
   }, [filtro]);
 
-  // Filtrar y ordenar alfabéticamente
   const filtrados = choferes
     .filter(c => filtro === 'Todos' || c.unidadesChofer.includes(filtro))
     .filter(c => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -86,7 +81,7 @@ const VistaChoferes: React.FC = () => {
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
-          <FaSearch className="icono-lupa" />
+          <Search size={14} className="icono-lupa" />
         </div>
       </div>
 
