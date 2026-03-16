@@ -59,14 +59,8 @@ const IdentificarMiembro: React.FC = () => {
       setError('Error al identificar miembro');
     } finally {
       setCargando(false);
-      // Limpiamos el PIN **solo si hubo error** para que no borre al identificar correctamente
-      if (error) {
-        setPin('');
-      }
-      // Siempre intentar poner focus
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
+      if (error) setPin('');
+      if (inputRef.current) inputRef.current.focus();
     }
   };
 
@@ -89,6 +83,7 @@ const IdentificarMiembro: React.FC = () => {
           {cargando ? 'Validando...' : 'Identificar'}
         </button>
         {error && <p className="identificar-error">{error}</p>}
+        <p className="identificar-hint">Presioná Enter para confirmar</p>
       </div>
     </div>
   );

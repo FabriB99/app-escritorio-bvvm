@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaIdCard, FaChartBar } from "react-icons/fa";
+import { IdCard, BarChart2 } from 'lucide-react';
 import Header from "../../components/Header";
 import { useUser } from "../../context/UserContext";
 import "./InicioBombero.css";
@@ -27,7 +27,7 @@ const InicioBombero: React.FC = () => {
               navigate(`/legajo/${miembroActivo.id}`);
           }}
         >
-          <FaIdCard className="inicio-bombero__icono" />
+          <IdCard size={52} className="inicio-bombero__icono" />
           <h3>Mi Legajo</h3>
           <p>
             Consulta tus datos personales, historial y toda tu información
@@ -52,7 +52,7 @@ const InicioBombero: React.FC = () => {
             if (e.key === "Enter" && miembroActivo) navigate("/estadisticas");
           }}
         >
-          <FaChartBar className="inicio-bombero__icono" />
+          <BarChart2 size={52} className="inicio-bombero__icono" />
           <h3>Mis Estadísticas</h3>
           <p>
             Visualiza tus participaciones, asistencias y métricas de desempeño.

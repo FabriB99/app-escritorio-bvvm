@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
-import './LoginBiblioteca.css';
-import { FaIdCard, FaHome } from 'react-icons/fa';
-
+import { IdCard, Home } from 'lucide-react';
 import { useUsuarioBiblioteca } from '../../context/UsuarioBibliotecaContext';
+import '../Login/Login.css';
 
 const LoginBiblioteca: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ const LoginBiblioteca: React.FC = () => {
     setCargando(true);
 
     try {
-      // Buscamos al miembro por DNI
       const q = query(collection(db, 'miembros'), where('dni', '==', dni));
       const querySnapshot = await getDocs(q);
 
@@ -36,7 +34,6 @@ const LoginBiblioteca: React.FC = () => {
       const miembroDoc = querySnapshot.docs[0];
       const miembroData = miembroDoc.data();
 
-      // Guardamos en el contexto lo básico del miembro
       setUsuario({
         dni: miembroData.dni,
         nombre: miembroData.nombre,
@@ -45,7 +42,6 @@ const LoginBiblioteca: React.FC = () => {
         categoria: miembroData.categoria || '',
       });
 
-      // Registrar acceso en colección accesosBiblioteca cumpliendo las reglas
       await addDoc(collection(db, 'accesosBiblioteca'), {
         dni: miembroData.dni,
         nombre: miembroData.nombre,
@@ -56,9 +52,8 @@ const LoginBiblioteca: React.FC = () => {
       });
 
       setMensaje('Ingreso exitoso.');
-      setTimeout(() => {
-        navigate('/biblioteca');
-      }, 1000);
+      setTimeout(() => navigate('/biblioteca'), 1000);
+
     } catch (err) {
       console.error('Error al validar DNI:', err);
       setError('Error en la conexión, intente nuevamente.');
@@ -68,20 +63,20 @@ const LoginBiblioteca: React.FC = () => {
   };
 
   return (
-    <div className="login-libro-page">
-      <div className="login-libro-container">
-        <div className="login-libro-card">
-          {/* Icono para volver a inicio */}
-          <div className="login-libro-home-icon" onClick={() => navigate('/')} title="Volver a Inicio">
-            <FaHome />
+    <div className="login-glass-page">
+      <div className="login-glass-container">
+        <div className="login-glass-card">
+
+          <div className="login-glass-home-icon" onClick={() => navigate('/')} title="Volver a Inicio">
+            <Home size={20} />
           </div>
 
-          <img src="/logo-bomberos.png" alt="Logo Bomberos" className="login-libro-logo" />
-          <h2 className="login-libro-title">Acceso Biblioteca Virtual</h2>
+          <img src="/logo-bomberos.png" alt="Logo Bomberos" className="login-glass-logo" />
+          <h2 className="login-glass-title">Biblioteca Virtual</h2>
 
           <form onSubmit={handleLoginBiblioteca}>
-            <div className="login-libro-input-wrapper">
-              <FaIdCard className="login-libro-icon-input" />
+            <div className="login-glass-input-wrapper">
+              <IdCard size={16} className="login-glass-icon" />
               <input
                 type="number"
                 placeholder="Ingrese su DNI"
@@ -94,13 +89,14 @@ const LoginBiblioteca: React.FC = () => {
               />
             </div>
 
-            <button type="submit" className="login-libro-button" disabled={cargando}>
+            <button type="submit" className="login-glass-button" disabled={cargando}>
               {cargando ? 'Validando...' : 'Ingresar'}
             </button>
 
-            {error && <p className="login-libro-error">{error}</p>}
-            {mensaje && <p className="login-libro-mensaje">{mensaje}</p>}
+            {error && <p className="login-glass-error">{error}</p>}
+            {mensaje && <p className="login-glass-error" style={{ color: '#a8f0c6' }}>{mensaje}</p>}
           </form>
+
         </div>
       </div>
     </div>
