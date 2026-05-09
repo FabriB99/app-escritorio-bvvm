@@ -1,0 +1,43 @@
+name: "Publicar Versión Automática"
+
+on:
+  push:
+    tags:
+      - 'v*' # Se activa al subir un tag como v0.2.8
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: |
+          cd apps/escritorio
+          npm install
+
+      - name: Build and Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        with:
+          projectPath: "apps/escritorio" # 👈 Muy importante por tu estructura
+          tagName: v__VERSION__ 
+          releaseName: "Control BVVM v__VERSION__"
+          releaseBody: "Actualización automática del sistema de Bomberos."
+          releaseDraft: false
+          prerelease: false
