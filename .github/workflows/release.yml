@@ -17,11 +17,14 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: false # 👈 IMPORTANTE: Ignora errores de submódulos
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20 # Usamos la versión estable
 
       - name: Install dependencies
         run: |
@@ -35,9 +38,9 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          projectPath: "apps/escritorio" # 👈 Muy importante por tu estructura
+          projectPath: "apps/escritorio"
           tagName: v__VERSION__ 
           releaseName: "Control BVVM v__VERSION__"
-          releaseBody: "Actualización automática del sistema de Bomberos."
+          releaseBody: "Actualización automática del sistema."
           releaseDraft: false
           prerelease: false
