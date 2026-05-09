@@ -1,0 +1,339 @@
+.editar-legajo-container {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
+
+.form-legajo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-fila {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.form-seccion {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-seccion-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-sidebar);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-sidebar);
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+.form-seccion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.form-seccion-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.foto-seccion {
+  display: flex;
+  flex-direction: column;
+}
+
+.foto-carnet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.foto-carnet img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e0e4ea;
+}
+
+.foto-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  background: #f0f2f5;
+  border: 2px dashed #d0d5dd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.foto-con-boton {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-borrar-foto {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.btn-borrar-foto:hover { background: var(--color-accent-hover); }
+
+.btn-subir-foto {
+  background: none;
+  border: 1.5px solid #e0e4ea;
+  color: #64748b;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  width: 100%;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-subir-foto:hover {
+  border-color: var(--color-sidebar);
+  color: var(--color-sidebar);
+}
+
+.foto-input { display: none; }
+
+.foto-progress {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-grupo label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-grupo input {
+  padding: 9px 12px;
+  border: 1.5px solid #e0e4ea;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-main);
+  color: var(--color-sidebar);
+  background: #f8f9fa;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-grupo input:focus {
+  border-color: var(--color-sidebar);
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
+  background: #ffffff;
+}
+
+.grupo-domicilio-completo {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  grid-column: 1 / -1;
+}
+
+/* Hijos */
+.grupo-hijo {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e8ecf0;
+  border-left: 4px solid var(--color-sidebar);
+  margin-bottom: 10px;
+  transition: border-left-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.grupo-hijo:hover {
+  border-left-color: var(--color-accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.checkbox-seleccion {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-sidebar);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.grupo-hijo .form-grupo { margin-bottom: 0; }
+
+.grupo-hijo .form-grupo label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grupo-hijo .form-grupo input {
+  background: #ffffff;
+  border: 1.5px solid #e8ecf0;
+  font-size: 13px;
+}
+
+.grupo-hijo .form-grupo input:focus {
+  border-color: var(--color-sidebar);
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
+}
+
+.botones-hijos-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-agregar-hijo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-sidebar);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-agregar-hijo:hover {
+  background: var(--color-sidebar-dark);
+  transform: scale(1.02);
+}
+
+.btn-eliminar-hijo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid #e0e4ea;
+  color: #94a3b8;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-eliminar-hijo:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-eliminar-hijo:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.botones-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 4px 0 24px;
+}
+
+.btn-guardar1 {
+  background: var(--color-sidebar);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-guardar1:hover {
+  background: var(--color-sidebar-dark);
+  transform: scale(1.02);
+}
+
+.btn-cancel {
+  background: none;
+  border: 1.5px solid #e0e4ea;
+  color: #64748b;
+  border-radius: var(--radius-sm);
+  padding: 11px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-cancel:hover {
+  border-color: var(--color-sidebar);
+  color: var(--color-sidebar);
+}
+
+@media (max-width: 1366px) {
+  .form-seccion-grid { grid-template-columns: repeat(2, 1fr); }
+  .grupo-domicilio-completo { grid-template-columns: 1fr 1fr; }
+  .grupo-hijo { grid-template-columns: auto 1fr 1fr; }
+}

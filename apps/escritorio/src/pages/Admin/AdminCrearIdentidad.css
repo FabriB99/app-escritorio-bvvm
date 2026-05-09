@@ -1,0 +1,179 @@
+/* =======================
+   CONTENEDOR GENERAL
+   (Alineación exacta con .app-header)
+======================= */
+.admin-identidad__contenedor {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  /* Padding horizontal idéntico al Header */
+  padding: 0 var(--spacing-md); 
+}
+
+/* =======================
+   FORMULARIO
+======================= */
+.admin-identidad__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-sm);
+  width: 100%;
+}
+
+/* =======================
+   TARJETA (Estilo .detalle-info)
+======================= */
+.admin-identidad__tarjeta {
+  background-color: #ffffff;
+  padding: var(--spacing-lg) 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  border-left: 3px solid var(--color-sidebar); /* Marca de la casa */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+/* =======================
+   TÍTULO (Estilo .admin-identidades__grupo-titulo)
+======================= */
+.admin-identidad__seccion-titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-sidebar);
+  margin: 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+/* =======================
+   GRID Y FILAS
+======================= */
+.admin-identidad__grid,
+.admin-identidad__fila-doble {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+/* =======================
+   CAMPO (Estilo Ficha Técnica)
+======================= */
+.admin-identidad__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid #f0f2f5; /* Línea sutil de tus detalles */
+  padding-bottom: 4px;
+}
+
+.admin-identidad__campo label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8; /* Gris fuerte para labels */
+}
+
+.admin-identidad__campo input,
+.admin-identidad__campo select {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  font-family: var(--font-main);
+  width: 100%;
+  outline: none;
+}
+
+.admin-identidad__campo input:focus {
+  color: var(--color-sidebar);
+}
+
+/* =======================
+   ROLES (Estilo .detalle-elemento-item)
+======================= */
+.admin-identidad__checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.admin-identidad__checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid rgba(44, 62, 80, 0.1);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-identidad__checkboxes label:hover {
+  background: #edf2f7;
+  border-left-color: var(--color-accent);
+}
+
+/* =======================
+   BOTÓN (Estilo .header-btn)
+======================= */
+.admin-identidad__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+}
+
+.admin-identidad__btn-principal {
+  background-color: var(--color-sidebar);
+  color: var(--color-text-white);
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.55px;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.admin-identidad__btn-principal:hover {
+  background-color: var(--color-sidebar-dark);
+  transform: scale(1.02);
+}
+
+/* =======================
+   TOAST Y MENSAJES
+======================= */
+.admin-identidad__mensaje.error {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.Toastify__toast {
+  background-color: var(--color-sidebar) !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font-main) !important;
+}
+
+/* Ajuste 4K */
+@media (min-width: 1920px) {
+  .admin-identidad__contenedor {
+    padding: 0 var(--spacing-lg);
+  }
+}

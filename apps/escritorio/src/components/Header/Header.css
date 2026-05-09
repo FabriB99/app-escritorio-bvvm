@@ -1,0 +1,295 @@
+/*
+ * ============================================================================
+ * PERSONALIZAR EL HEADER — dónde tocar cada cosa
+ * ============================================================================
+ *
+ * 1) ESPACIO ENTRE EL HEADER Y EL CONTENIDO DE ABAJO
+ *    → Buscá .app-header y la propiedad margin-bottom (o la variable local
+ *      --header-margin-below en la misma regla). Subís = más aire, bajás = más pegado.
+ *
+ * 2) ALTURA FIJA DE LA BARRA DEL HEADER (y menú filtro en Unidades)
+ *    → Archivo: src/app/styles/variables.css
+ *    → Variable: --app-header-height
+ *    → Unidades.css usa: top: calc(var(--app-header-height) + var(--spacing-lg))
+ *      para el desplegable de filtros; si cambiás mucho la altura, revisá eso.
+ *
+ * 3) TÍTULO (tamaño, color, una o varias líneas)
+ *    → .header-title (font-size, line-height, letter-spacing)
+ *    → Línea roja bajo el título: .header-title::after (altura, margin-top; el ancho sigue al texto)
+ *
+ * 4) BOTONES DE ACCIÓN (derecha: +, filtro, etc.)
+ *    → Contenedor: .header-right (gap entre botones)
+ *    → Estilo base: .header-btn
+ *        - padding, min-height → tamaño del “recuadro”
+ *        - border, border-radius, background → qué tan “fuerte” se ve
+ *        - font-size, font-weight → texto junto al ícono
+ *    → Hover: .header-btn:hover:not(:disabled)
+ *    → Secundario / editar unidad: .header-btn.btn-secondary, .header-btn.header-btn-edit
+ *
+ * 5) BOTÓN “REGRESAR”
+ *    → .header-btn-back
+ *
+ * 6) ÍCONOS (tamaño en píxeles)
+ *    → Archivo: Header.tsx — props size={…} en CornerUpLeft y en <Icon size={…} />
+ *
+ * 7) PANTALLAS GRANDES / CHICAS
+ *    → @media (min-width: 1920px) y @media (max-width: 600px) al final de este archivo
+ * ============================================================================
+ */
+
+.app-header {
+  /* --- Ajustá solo este valor para el hueco bajo el header (todo el resto de la página) --- */
+  --header-margin-below: 12px;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-bg-content);
+  padding: 0 var(--spacing-md);
+  min-height: var(--app-header-height);
+  height: var(--app-header-height);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--spacing-md);
+  position: relative;
+  margin-bottom: var(--header-margin-below);
+  user-select: none;
+  font-family: var(--font-main);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--spacing-sm);
+  min-width: 0;
+  z-index: 1;
+}
+
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: min(100%, 56vw);
+  justify-self: center;
+  text-align: center;
+}
+
+/* Ancho = largo del texto (hasta el máximo del centro); la raya usa ::after al 100% de ese ancho */
+.header-title {
+  margin: 0;
+  width: fit-content;
+  max-width: 100%;
+  font-size: clamp(1.28rem, 2.95vw, 2.05rem);
+  font-weight: 800;
+  color: var(--color-sidebar);
+  letter-spacing: -0.45px;
+  line-height: 1.16;
+  font-family: var(--font-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-title::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin-top: 7px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  z-index: 1;
+}
+
+.header-btn-back {
+  background: none;
+  border: none;
+  color: var(--color-text-dark);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.65;
+  transition: opacity var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.header-btn-back:hover {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.header-btn-back:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Botones de acción: recuadro fino (borde suave + fondo muy ligero); hover rellena */
+.header-btn {
+  --header-btn-border: 1px solid rgba(44, 62, 80, 0.2);
+  --header-btn-bg: rgba(44, 62, 80, 0.05);
+  --header-btn-bg-hover: var(--color-sidebar);
+
+  background-color: var(--header-btn-bg);
+  color: var(--color-sidebar);
+  border: var(--header-btn-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  min-height: 32px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.header-btn:hover:not(:disabled) {
+  background-color: var(--header-btn-bg-hover);
+  border-color: var(--color-sidebar-dark);
+  color: var(--color-text-white);
+}
+
+.header-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Misma idea, borde aún más suave (secundario / editar) */
+.header-btn.btn-secondary,
+.header-btn.header-btn-edit {
+  --header-btn-border: 1px solid rgba(44, 62, 80, 0.14);
+  --header-btn-bg: transparent;
+  --header-btn-bg-hover: rgba(44, 62, 80, 0.07);
+
+  background: var(--header-btn-bg);
+  color: var(--color-text-dark);
+}
+
+.header-btn.btn-secondary:hover:not(:disabled),
+.header-btn.header-btn-edit:hover:not(:disabled) {
+  background: var(--header-btn-bg-hover);
+  border-color: rgba(44, 62, 80, 0.28);
+  color: var(--color-sidebar);
+}
+
+.header-btn:disabled,
+.header-btn.btn-disabled {
+  background-color: rgba(149, 165, 166, 0.2);
+  border: 1px solid rgba(149, 165, 166, 0.35);
+  color: #6b7b7c;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.85;
+}
+
+.header-btn.btn-secondary:disabled,
+.header-btn.btn-secondary.btn-disabled,
+.header-btn.header-btn-edit:disabled {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+  opacity: 0.7;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-label {
+  line-height: 1;
+}
+
+@media (min-width: 1920px) {
+  .app-header {
+    padding: 0 var(--spacing-lg);
+    column-gap: var(--spacing-lg);
+  }
+
+  .header-title {
+    font-size: clamp(1.42rem, 2.1vw, 2.15rem);
+  }
+
+  .header-center {
+    max-width: min(100%, 52vw);
+  }
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+    column-gap: 8px;
+    padding: 0 12px;
+  }
+
+  .header-center {
+    max-width: 100%;
+    order: 0;
+  }
+
+  .header-left {
+    order: -1;
+  }
+
+  .header-right {
+    order: 1;
+  }
+
+  .header-title::after {
+    display: none;
+  }
+
+  .header-btn {
+    padding: 5px 10px;
+    min-height: 30px;
+  }
+
+  .header-btn-back {
+    position: relative;
+    padding: 6px 6px;
+    font-size: 12px;
+  }
+
+  .header-btn-back-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}

@@ -1,0 +1,317 @@
+/* Detalle de unidad — misma línea que Unidades / LegajoDetalle (variables + tarjetas claras) */
+
+.detalle-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  position: relative;
+}
+
+.detalle-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: var(--spacing-md);
+}
+
+.detalle-header-contenido {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-lg);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.detalle-imagen {
+  width: 48%;
+  min-width: 0;
+  flex: 1 1 280px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-content);
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.detalle-info {
+  width: 48%;
+  min-width: 0;
+  flex: 1 1 280px;
+  background: #ffffff;
+  padding: var(--spacing-lg) 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  border-left: 3px solid var(--color-sidebar);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--spacing-md);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-dark);
+  box-sizing: border-box;
+}
+
+.detalle-info-nombre-tipo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: 4px;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid #e8ecf0;
+}
+
+.detalle-nombre {
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  margin: 0;
+  color: var(--color-sidebar);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+}
+
+.detalle-tipo {
+  display: inline-block;
+  align-self: flex-start;
+  background-color: var(--color-sidebar);
+  color: var(--color-text-white);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.55px;
+}
+
+.detalle-info-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detalle-info p,
+.detalle-info-datos p {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 16px;
+  color: #506680;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.detalle-info p:last-child,
+.detalle-info-datos p:last-child {
+  border-bottom: none;
+}
+
+.detalle-info strong {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+/* Ubicaciones */
+.detalle-ubicaciones {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid #e8ecf0;
+}
+
+.detalle-ubicacion-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+.detalle-ubicacion-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 8px;
+  background: rgba(44, 62, 80, 0.07);
+  color: var(--color-sidebar);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+  align-items: center;
+  border: 1px solid rgba(44, 62, 80, 0.1);
+}
+
+.detalle-ubicacion-nombre {
+  text-align: center;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  color: var(--color-sidebar);
+}
+
+.detalle-header-cantidad,
+.detalle-header-estado {
+  text-align: center;
+  color: #506680;
+  font-weight: 600;
+}
+
+.detalle-elementos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detalle-elemento-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid rgba(44, 62, 80, 0.2);
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-text-dark);
+  transition: border-left-color var(--transition-fast);
+}
+
+.detalle-elemento-item:hover {
+  border-left-color: var(--color-accent);
+}
+
+.detalle-elemento-nombre,
+.detalle-elemento-cantidad,
+.detalle-elemento-estado {
+  text-align: center;
+}
+
+.detalle-elemento-nombre {
+  font-weight: 500;
+}
+
+.detalle-elemento-cantidad {
+  color: #506680;
+  font-weight: 600;
+}
+
+/* Estados (Lucide: color vía currentColor) */
+.icon-operativo {
+  color: #27ae60;
+}
+
+.icon-faltante {
+  color: #f1c40f;
+}
+
+.icon-falla {
+  color: #e74c3c;
+}
+
+.icon-desconocido {
+  color: #94a3b8;
+}
+
+.estado-completo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-text-dark);
+}
+
+.icon-estado {
+  flex-shrink: 0;
+}
+
+.detalle-sin-elementos {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 13px;
+  padding: var(--spacing-md) 0;
+  margin: 0;
+}
+
+/* Carga / error (solo esta pantalla usa .contenido-principal así) */
+.contenido-principal {
+  padding: var(--spacing-xl);
+  font-family: var(--font-main);
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contenido-principal .cargando p,
+.contenido-principal .error p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #506680;
+}
+
+.contenido-principal .error p {
+  color: var(--color-accent);
+}
+
+@media (max-width: 960px) {
+  .detalle-header-contenido {
+    flex-direction: column;
+  }
+
+  .detalle-imagen,
+  .detalle-info {
+    width: 100%;
+    flex: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .detalle-ubicacion-header,
+  .detalle-elemento-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1920px) {
+  .detalle-info {
+    padding: 28px 28px;
+    font-size: 14px;
+  }
+
+  .detalle-info p,
+  .detalle-info-datos p {
+    font-size: 14px;
+  }
+
+  .detalle-nombre {
+    font-size: clamp(1.5rem, 2vw, 2rem);
+  }
+
+  .detalle-ubicacion-header,
+  .detalle-elemento-item {
+    font-size: 14px;
+  }
+}

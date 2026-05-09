@@ -1,0 +1,160 @@
+.login-glass-page {
+  position: fixed;
+  inset: 0;
+  background: #1a2535;
+  background: linear-gradient(135deg, #0f1923 0%, #1e2d3d 50%, #2c3e50 100%);
+  background-size: 300% 300%;
+  animation: login-bg-shift 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-main);
+  overflow: hidden;
+}
+
+@keyframes login-bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-glass-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.login-glass-home-icon {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.login-glass-home-icon:hover {
+  color: var(--color-accent);
+  transform: scale(1.1);
+}
+
+.login-glass-logo {
+  width: 180px;
+  margin-bottom: 8px;
+}
+
+.login-glass-title {
+  font-size: 22px;
+  margin-bottom: 24px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3px;
+}
+
+.login-glass-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  padding: 11px 14px;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.login-glass-input-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(230, 57, 70, 0.6);
+}
+
+.login-glass-icon {
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.login-glass-input-wrapper input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  width: 100%;
+  font-size: 14px;
+  font-family: var(--font-main);
+}
+
+.login-glass-input-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.login-glass-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 6px 0 18px;
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.login-glass-checkbox input[type="checkbox"] {
+  accent-color: var(--color-accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.login-glass-button {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  width: 100%;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: var(--font-main);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.login-glass-button:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.01);
+}
+
+.login-glass-error {
+  color: #ffcdd2;
+  font-size: 13px;
+  margin-top: 14px;
+  background: rgba(230, 57, 70, 0.15);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}

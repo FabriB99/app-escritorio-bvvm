@@ -1,0 +1,214 @@
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+.admin-grados {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
+
+.contenido-principal {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =========================
+   FORMULARIO (TARJETA SUPERIOR)
+========================= */
+.admin-grados__form-card {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.admin-grados__form-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+.admin-grados__form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-grados__form-row input,
+.admin-grados__form-row select {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.admin-grados__form-row input[type="number"] {
+  flex: 0 0 100px; /* Más chico para el orden */
+}
+
+.btn-crear {
+  background: var(--color-sidebar);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-crear:hover {
+  background: #1f2d3a;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   SECCIONES POR CATEGORÍA
+========================= */
+.admin-grados__secciones {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.admin-grados__categoria-bloque {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  overflow: hidden;
+}
+
+.categoria-header {
+  margin: 0;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e8ecf0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-sidebar);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* =========================
+   TABLA / FILAS DE GRADOS
+========================= */
+.admin-grados__tabla {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-grados__fila {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+
+.admin-grados__fila:last-child {
+  border-bottom: none;
+}
+
+.admin-grados__fila:hover {
+  background: #fdfdfd;
+}
+
+.grado-nombre {
+  flex: 1;
+  font-weight: 500;
+  color: #334155;
+  font-size: 14px;
+}
+
+.grado-orden {
+  font-size: 12px;
+  color: #94a3b8;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-right: 20px;
+}
+
+.grado-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.grado-acciones button {
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  transition: all 0.2s;
+}
+
+.grado-acciones button:hover {
+  background: var(--color-sidebar);
+  color: white;
+  border-color: var(--color-sidebar);
+}
+
+/* =========================
+   EDICIÓN INLINE
+========================= */
+.fila-edicion {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.fila-edicion input {
+  padding: 6px 10px;
+  border: 1px solid var(--color-sidebar);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+.fila-edicion button {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .admin-grados__form-row {
+    flex-direction: column;
+  }
+  
+  .admin-grados__form-row input,
+  .admin-grados__form-row select,
+  .btn-crear {
+    width: 100%;
+  }
+
+  .admin-grados__fila {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .grado-nombre {
+    flex: 0 0 100%;
+  }
+}

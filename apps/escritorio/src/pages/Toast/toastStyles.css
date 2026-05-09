@@ -1,0 +1,13 @@
+.toast-personalizado {
+  background-color: var(--color-sidebar) !important;
+  color: var(--color-text-white) !important;
+  font-weight: 500;
+  font-family: var(--font-main);
+  border-radius: var(--radius-md) !important;
+  padding: 1rem !important;
+  box-shadow: var(--shadow-dropdown);
+}
+
+.toast-personalizado .Toastify__progress-bar {
+  background-color: var(--color-accent) !important;
+}

@@ -1,0 +1,169 @@
+/* =======================
+   CONTENEDOR GENERAL
+   (Alineación exacta con .app-header)
+======================= */
+.admin-identidad__contenedor {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  /* Copiamos el padding del .app-header */
+  padding: 0 var(--spacing-md); 
+}
+
+/* =======================
+   FORMULARIO
+======================= */
+.admin-identidad__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  /* El margen superior debe compensar el --header-margin-below */
+  margin-top: var(--spacing-sm); 
+  width: 100%;
+}
+
+/* =======================
+   SECCIONES (Estilo Ficha Técnica / Detalle)
+======================= */
+.admin-identidad__seccion {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 100%;
+  border: 1px solid #e8ecf0;
+  border-left: 3px solid var(--color-sidebar);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+/* Título igual al de los grupos de identidades */
+.admin-identidad__seccion-titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-sidebar);
+  margin: 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid #f0f2f5;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+/* =======================
+   INPUTS (Estilo Detalle-Datos: limpios y sin cajas pesadas)
+======================= */
+.admin-identidad__grid-dos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.admin-identidad__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Línea inferior sutil como en tus detalles de unidad */
+  border-bottom: 1px solid #f0f2f5; 
+  padding-bottom: 4px;
+}
+
+.admin-identidad__campo label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.admin-identidad__campo input,
+.admin-identidad__campo select {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  font-family: var(--font-main);
+  width: 100%;
+  outline: none;
+}
+
+.admin-identidad__campo input:focus {
+  color: var(--color-sidebar);
+}
+
+/* =======================
+   ROLES (Grid igual a elementos de inventario)
+======================= */
+.admin-identidad__checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.admin-identidad__checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid rgba(44, 62, 80, 0.1);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-identidad__checkboxes label:hover {
+  background: #edf2f7;
+  border-left-color: var(--color-accent);
+}
+
+/* =======================
+   BOTÓN GUARDAR (Estilo header-btn de tu código)
+======================= */
+.admin-identidad__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--spacing-md);
+}
+
+.admin-identidad__btn-principal {
+  background-color: var(--color-sidebar);
+  color: var(--color-text-white);
+  border: 1px solid var(--color-sidebar-dark);
+  border-radius: var(--radius-sm);
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.55px;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.admin-identidad__btn-principal:hover {
+  background-color: rgba(44, 62, 80, 0.9);
+  transform: scale(1.02);
+}
+
+/* =======================
+   AJUSTE PANTALLAS GRANDES (Compensación Header)
+======================= */
+@media (min-width: 1920px) {
+  .admin-identidad__contenedor {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-identidad__grid-dos {
+    grid-template-columns: 1fr;
+  }
+}

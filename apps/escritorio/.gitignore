@@ -1,0 +1,17 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar carpeta de build
+dist/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar carpetas de editores
+.vscode/
+.idea/
+
+# Ignorar logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

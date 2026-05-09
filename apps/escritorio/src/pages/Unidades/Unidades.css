@@ -1,0 +1,331 @@
+/* FILTER MENU — mismo lenguaje que dropdowns del sidebar */
+/* Posición vertical del menú filtro: debe quedar bajo el header (variables.css → --app-header-height) */
+.filter-menu {
+  position: absolute;
+  top: calc(var(--app-header-height) + var(--spacing-lg));
+  right: 24px;
+  background: #ffffff;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-dropdown);
+  z-index: 1000;
+  width: 220px;
+  border: 1px solid rgba(44, 62, 80, 0.12);
+  font-family: var(--font-main);
+}
+
+.filter-menu label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-sidebar);
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.filter-menu select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  background: var(--color-bg-content);
+  transition: border-color var(--transition-fast);
+}
+
+.filter-menu select:focus {
+  outline: none;
+  border-color: var(--color-sidebar);
+}
+
+/* Página: evita que la grilla desborde el main-content y se “monte” en el sidebar */
+.unidades {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* CARDS — grilla estable: cada tarjeta ocupa 1 celda (sin max-width que choque con 1fr) */
+.cards-container {
+  display: grid;
+  /* min() permite 1 columna limpia en móvil; auto-fill evita columnas “fantasma” centradas raras */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 252px), 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 var(--spacing-lg);
+  box-sizing: border-box;
+  align-items: stretch;
+  justify-items: stretch;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px 16px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  border-left: 3px solid var(--color-border);
+  text-align: center;
+  font-family: var(--font-main);
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(44, 62, 80, 0.12);
+  border-color: rgba(44, 62, 80, 0.15);
+  z-index: 1;
+}
+
+.card-link h3 {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--color-sidebar);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.card p {
+  font-size: 13px;
+  font-weight: 500;
+  color: #506680;
+  margin: 6px 0;
+  line-height: 1.45;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.card .tipo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background-color: var(--color-sidebar);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-white);
+  margin-top: 4px;
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.card .estado {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  font-family: var(--font-main);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+/* COLORES ESTADO + BORDES (señales semánticas; bordes alineados al acento) */
+.card.estado-operativa          { border-left-color: #2e8b57; }
+.card.estado-fuera-de-servicio  { border-left-color: #b32e2e; }
+.card.estado-en-reparacion      { border-left-color: #f1c100; }
+.card.estado-desconocido        { border-left-color: #94a3b8; }
+
+.card .estado-operativa {
+  background-color: rgba(46, 139, 87, 0.12);
+  color: #1e6b45;
+  border: 1px solid rgba(46, 139, 87, 0.45);
+}
+
+.card .estado-fuera-de-servicio {
+  background-color: rgba(179, 46, 46, 0.12);
+  color: #8b2323;
+  border: 1px solid rgba(179, 46, 46, 0.45);
+}
+
+.card .estado-en-reparacion {
+  background-color: rgba(241, 193, 0, 0.15);
+  color: #9a7a00;
+  border: 1px solid rgba(241, 193, 0, 0.55);
+}
+
+.card .estado-desconocido {
+  background-color: var(--color-bg-content);
+  color: var(--color-text-dark);
+  border: 1px solid var(--color-border);
+}
+
+/* BOTÓN ELIMINAR */
+.btn-eliminar-tarjeta {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e8ecf0;
+  border-radius: var(--radius-sm);
+  color: #506680;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.btn-eliminar-tarjeta:hover {
+  color: var(--color-accent);
+  border-color: rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.06);
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(31, 45, 58, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  font-family: var(--font-main);
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid #e8ecf0;
+  box-shadow: var(--shadow-dropdown);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h3 {
+  margin: 0 0 var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-sidebar);
+  line-height: 1.4;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.btn-eliminar-modal,
+.btn-cancelar {
+  background-color: transparent;
+  color: #506680;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-eliminar-modal:hover {
+  color: var(--color-accent);
+  transform: scale(1.02);
+}
+
+.btn-cancelar:hover {
+  color: var(--color-sidebar);
+  background: rgba(44, 62, 80, 0.06);
+  transform: scale(1.02);
+}
+
+.btn-eliminar-modal::after,
+.btn-cancelar::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width var(--transition-base);
+  margin: 6px auto 0;
+  border-radius: 1px;
+}
+
+.btn-eliminar-modal:hover::after,
+.btn-cancelar:hover::after {
+  width: 100%;
+}
+
+/* Full HD (~1920): columnas más predecibles con el sidebar ancho */
+@media (min-width: 1366px) and (max-width: 1919px) {
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr));
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 288px), 1fr));
+    gap: 22px;
+  }
+  .card-link h3 { font-size: 1.4rem; }
+}
+
+@media (min-width: 2560px) {
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 26px;
+  }
+  .card-link h3 { font-size: 1.5rem; }
+  .card p { font-size: 14px; }
+}

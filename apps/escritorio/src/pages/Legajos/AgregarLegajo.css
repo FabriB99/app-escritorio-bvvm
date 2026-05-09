@@ -1,0 +1,223 @@
+.agregar-legajo-container {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
+
+.form-legajo-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  max-width: 760px;
+  width: calc(100% - 48px);
+  margin: 0 auto;
+}
+
+.form-legajo-card-header {
+  background: var(--color-sidebar);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.form-legajo-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.form-legajo-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.form-legajo-card-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+}
+
+.form-legajo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+.form-legajo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-legajo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-legajo-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-sidebar);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.label-auto {
+  color: #94a3b8 !important;
+}
+
+.label-auto span {
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.form-legajo-field input {
+  padding: 11px 14px;
+  border: 1.5px solid #e0e4ea;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-main);
+  color: var(--color-sidebar);
+  background: #f8f9fa;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-legajo-field input:focus {
+  border-color: var(--color-sidebar);
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
+  background: #ffffff;
+}
+
+.input-vinculado {
+  border-color: #2e7d32 !important;
+  background: #f9fef9 !important;
+}
+
+.input-error {
+  border-color: var(--color-accent) !important;
+  background: #fff9f9 !important;
+}
+
+.input-disabled {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+.form-legajo-input-wrapper {
+  position: relative;
+}
+
+.form-legajo-input-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 90px;
+}
+
+.form-legajo-badge {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.form-legajo-badge.vinculado {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.form-legajo-badge.buscando {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.form-legajo-miembro-info {
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.form-legajo-error {
+  color: var(--color-accent);
+  font-size: 13px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  margin: 0;
+}
+
+.form-legajo-divider {
+  height: 1px;
+  background: #f0f2f5;
+}
+
+.form-legajo-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancelar {
+  background: none;
+  border: 1.5px solid #e0e4ea;
+  color: #64748b;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-cancelar:hover {
+  border-color: var(--color-sidebar);
+  color: var(--color-sidebar);
+}
+
+.btn-guardar {
+  background: var(--color-sidebar);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: var(--color-sidebar-dark);
+  transform: scale(1.02);
+}
+
+.btn-guardar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}

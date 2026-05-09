@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  background-color: var(--color-bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.App {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
