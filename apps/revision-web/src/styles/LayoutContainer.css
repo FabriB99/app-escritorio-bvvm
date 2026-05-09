@@ -1,0 +1,16 @@
+/* src/styles/LayoutContainer.css */
+
+.layout-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    font-family: 'Poppins', sans-serif;
+    color: #2c3e50;
+}
