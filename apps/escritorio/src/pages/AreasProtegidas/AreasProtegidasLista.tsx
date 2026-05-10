@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "../../context/UserContext";
 import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
-import { FaSearch, FaTrashAlt, FaEye, FaEdit } from "react-icons/fa";
-import { Plus } from "lucide-react";
+import { Plus, Search, Trash2, Eye, Pencil, ShieldCheck, Building2, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./AreasProtegidasLista.css";
 import Header from "../../components/Header";
@@ -73,6 +72,7 @@ const AreasProtegidasLista: React.FC = () => {
     <div className="apla-lista-container">
       <Header
         title="Áreas Protegidas"
+        onBack={() => navigate(-1)}
         extraButtons={
           puedeEditar
             ? [
@@ -87,9 +87,13 @@ const AreasProtegidasLista: React.FC = () => {
         }
       />
 
-      {/* Buscador */}
+      <div className="apla-page-head">
+        <ShieldCheck size={18} />
+        <span>Gestión de áreas operativas protegidas</span>
+      </div>
+
       <div className="apla-buscador-container">
-        <FaSearch className="apla-icono-lupa" />
+        <Search size={16} className="apla-icono-lupa" />
         <input
           className="apla-buscar"
           type="text"
@@ -99,46 +103,57 @@ const AreasProtegidasLista: React.FC = () => {
         />
       </div>
 
-      {/* Lista */}
-      <div className="apla-lista">
+      <div className="cards-container">
         {areasFiltradas.map((area) => (
-          <div key={area.id} className="apla-card">
-            <div className="apla-info">
-              <p className="apla-nombre-direccion">
-                <span className="apla-nombre">{area.nombre} |</span>
-                <span className="apla-direccion-span">{area.direcciones?.join(", ")}</span>
-              </p>
+          <div key={area.id} className="card">
+            <div className="apla-card-head">
+              <Building2 size={20} className="apla-building-icon" />
+              <h3 className="apla-card-title">{area.nombre}</h3>
             </div>
+
+            <div className="apla-card-detail">
+              <MapPin size={14} />
+              <p>{area.direcciones?.[0] || "Sin dirección registrada"}</p>
+            </div>
+
+            <div className="apla-card-detail">
+              <Phone size={14} />
+              <p>{area.telefono || "Sin teléfono registrado"}</p>
+            </div>
+
             <div className="apla-acciones">
               <button
                 title="Ver detalle"
-                className="apla-btn-ver"
+                className="apla-btn-accion"
                 onClick={() => {
                   setAreaSeleccionada(area);
                   setModalDetalleVisible(true);
                 }}
+                aria-label="Ver detalle"
               >
-                <FaEye />
+                <Eye size={16} />
               </button>
 
               {puedeEditar && (
                 <>
                   <button
                     title="Editar área"
-                    className="apla-btn-editar"
+                    className="apla-btn-accion"
                     onClick={() => navigate(`/editar-area/${area.id}`)}
+                    aria-label="Editar área"
                   >
-                    <FaEdit />
+                    <Pencil size={16} />
                   </button>
                   <button
                     title="Eliminar área"
-                    className="apla-btn-eliminar"
+                    className="apla-btn-accion"
                     onClick={() => {
                       setAreaAEliminar(area);
                       setModalEliminarVisible(true);
                     }}
+                    aria-label="Eliminar área"
                   >
-                    <FaTrashAlt />
+                    <Trash2 size={16} />
                   </button>
                 </>
               )}

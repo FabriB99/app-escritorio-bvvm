@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { collection, doc, getDoc, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { Plus, X, ShieldCheck, Building2, MapPin, User, Phone } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./AgregarEditarArea.css";
+import Header from "../../components/Header";
 
 interface Area {
   nombre: string;
@@ -28,7 +29,6 @@ const AgregarEditarArea: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Cargar datos si es edición
   useEffect(() => {
     if (!id) return;
 
@@ -37,14 +37,14 @@ const AgregarEditarArea: React.FC = () => {
       const docRef = doc(db, "areas_protegidas", id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const data = docSnap.data() as any;
+        const data = docSnap.data() as Record<string, unknown>;
         setArea({
-          nombre: data.nombre || "",
+          nombre: (data.nombre as string) || "",
           direcciones: Array.isArray(data.direcciones)
-            ? data.direcciones
-            : [data.direcciones || ""],
-          responsable: data.responsable || "",
-          telefono: data.telefono || "",
+            ? (data.direcciones as string[])
+            : [String(data.direcciones || "")],
+          responsable: (data.responsable as string) || "",
+          telefono: (data.telefono as string) || "",
         });
       } else {
         toast.error("No se encontró el área a editar.");
@@ -56,7 +56,6 @@ const AgregarEditarArea: React.FC = () => {
     cargarArea();
   }, [id, navigate]);
 
-  // Manejar cambios en direcciones
   const handleDireccionChange = (value: string, index: number) => {
     const nuevas = [...area.direcciones];
     nuevas[index] = value;
@@ -104,7 +103,7 @@ const AgregarEditarArea: React.FC = () => {
         toast.success("Área agregada correctamente");
       }
 
-      setTimeout(() => navigate("/areas-protegidas"), 2000); // deja ver el toast
+      setTimeout(() => navigate("/areas-protegidas"), 2000);
     } catch (error) {
       console.error("Error guardando área:", error);
       toast.error("Ocurrió un error al guardar el área.");
@@ -112,88 +111,118 @@ const AgregarEditarArea: React.FC = () => {
     setLoading(false);
   };
 
+  const titulo = id ? "Editar área protegida" : "Agregar área protegida";
+
   return (
-    <div className="aae-container">
-      <h2 className="aae-title">
-        {id ? "Editar Área Protegida" : "Agregar Área Protegida"}
-      </h2>
-      <form className="aae-form" onSubmit={handleSubmit}>
-        <label className="aae-label">
-          Nombre*
-          <input
-            type="text"
-            name="nombre"
-            value={area.nombre}
-            onChange={handleChange}
-            className="aae-input"
-          />
-        </label>
+    <div className="aae-page">
+      <Header title={titulo} onBack={() => navigate("/areas-protegidas")} />
 
-        {/* Direcciones */}
-        <div className="aae-direcciones-container">
-          <label className="aae-label">Direcciones*</label>
-          {area.direcciones.map((dir, index) => (
-            <div key={index} className="aae-direccion-group">
-              <input
-                type="text"
-                value={dir}
-                onChange={(e) => handleDireccionChange(e.target.value, index)}
-                placeholder={`Dirección ${index + 1}`}
-                className="aae-input"
-              />
-              {area.direcciones.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeDireccion(index)}
-                  className="aae-btn-remove"
-                >
-                  <FaTimes />
-                </button>
-              )}
+      <div className="aae-page-inner">
+        <div className="aae-page-head">
+          <ShieldCheck size={18} aria-hidden />
+          <span>{titulo}</span>
+        </div>
+
+        <form className="aae-glass-panel" onSubmit={handleSubmit}>
+          <div className="aae-field">
+            <label className="aae-label" htmlFor="aae-nombre">
+              <Building2 size={14} className="aae-label-icon" aria-hidden />
+              Nombre *
+            </label>
+            <input
+              id="aae-nombre"
+              type="text"
+              name="nombre"
+              value={area.nombre}
+              onChange={handleChange}
+              className="aae-input"
+              autoComplete="off"
+            />
+          </div>
+
+          <div className="aae-field">
+            <span className="aae-label aae-label--static">
+              <MapPin size={14} className="aae-label-icon" aria-hidden />
+              Direcciones *
+            </span>
+            <div className="aae-direcciones">
+              {area.direcciones.map((dir, index) => (
+                <div key={index} className="aae-direccion-row">
+                  <input
+                    type="text"
+                    value={dir}
+                    onChange={(e) => handleDireccionChange(e.target.value, index)}
+                    placeholder={`Dirección ${index + 1}`}
+                    className="aae-input"
+                    aria-label={`Dirección ${index + 1}`}
+                  />
+                  {area.direcciones.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeDireccion(index)}
+                      className="aae-btn-icon-danger"
+                      title="Quitar dirección"
+                      aria-label="Quitar dirección"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button type="button" onClick={addDireccion} className="aae-btn-add-dir">
+                <Plus size={16} aria-hidden />
+                Agregar otra dirección
+              </button>
             </div>
-          ))}
-          <button type="button" onClick={addDireccion} className="aae-btn-add">
-            <FaPlus /> Agregar otra dirección
-          </button>
-        </div>
+          </div>
 
-        <label className="aae-label">
-          Responsable
-          <input
-            type="text"
-            name="responsable"
-            value={area.responsable}
-            onChange={handleChange}
-            className="aae-input"
-          />
-        </label>
+          <div className="aae-field">
+            <label className="aae-label" htmlFor="aae-responsable">
+              <User size={14} className="aae-label-icon" aria-hidden />
+              Responsable
+            </label>
+            <input
+              id="aae-responsable"
+              type="text"
+              name="responsable"
+              value={area.responsable}
+              onChange={handleChange}
+              className="aae-input"
+              autoComplete="off"
+            />
+          </div>
 
-        <label className="aae-label">
-          Teléfono
-          <input
-            type="text"
-            name="telefono"
-            value={area.telefono}
-            onChange={handleChange}
-            className="aae-input"
-          />
-        </label>
+          <div className="aae-field">
+            <label className="aae-label" htmlFor="aae-telefono">
+              <Phone size={14} className="aae-label-icon" aria-hidden />
+              Teléfono
+            </label>
+            <input
+              id="aae-telefono"
+              type="text"
+              name="telefono"
+              value={area.telefono}
+              onChange={handleChange}
+              className="aae-input"
+              autoComplete="off"
+            />
+          </div>
 
-        <div className="aae-form-buttons">
-          <button type="submit" disabled={loading} className="aae-btn-submit">
-            {loading ? "Guardando..." : "Guardar"}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/areas-protegidas")}
-            className="aae-btn-cancel"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+          <div className="aae-form-actions">
+            <button type="submit" disabled={loading} className="aae-btn-primary">
+              {loading ? "Guardando…" : "Guardar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/areas-protegidas")}
+              className="aae-btn-secondary"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
 
-      {/* 🔥 Toasts solo para esta pantalla */}
       <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );

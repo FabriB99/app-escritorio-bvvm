@@ -57,4 +57,12 @@
   --spacing-md:           16px;
   --spacing-lg:           24px;
   --spacing-xl:           32px;
+
+  /* Superficies glass (modales / paneles traslúcidos) */
+  --glass-bg:             color-mix(in srgb, var(--color-text-white) 76%, transparent);
+  --glass-bg-elevated:    color-mix(in srgb, var(--color-text-white) 88%, transparent);
+  --glass-border:         color-mix(in srgb, var(--color-sidebar) 16%, transparent);
+  --glass-blur:           14px;
+  --glass-shadow:         var(--shadow-dropdown);
+  --backdrop-scrim:       color-mix(in srgb, var(--color-sidebar-dark) 58%, transparent);
 }

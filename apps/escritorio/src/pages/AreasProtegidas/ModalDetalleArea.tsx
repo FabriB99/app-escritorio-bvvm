@@ -1,6 +1,13 @@
 // src/pages/AreasProtegidas/ModalDetalleArea.tsx
 import React, { useState } from "react";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import {
+  Building2,
+  MapPin,
+  Phone,
+  User,
+  Info,
+} from "lucide-react";
 import "./ModalDetalleArea.css";
 
 interface AreaDetalle {
@@ -17,90 +24,139 @@ interface Props {
 }
 
 const ModalDetalleArea: React.FC<Props> = ({ area, onClose }) => {
+  const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [direccionSeleccionada, setDireccionSeleccionada] = useState<string | null>(null);
 
   return (
-    <div className="apla-modal-overlay">
-      <div className={`apla-modal-container ${direccionSeleccionada ? "apla-modal-flex" : ""}`}>
-        {/* Botón cerrar arriba a la derecha */}
-        <button className="apla-btn-close" onClick={onClose} aria-label="Cerrar">
-          ×
-        </button>
-
-        {/* Columna izquierda: datos */}
-        <div className="apla-modal-content">
-          {/* Título fijo arriba de los datos */}
-          <h2 className="apla-modal-title">Área Protegida</h2>
-
-          {/* Nombre */}
-          <div className="apla-modal-item">
-            <span className="apla-modal-item-label">Nombre:</span>
-            <span className="apla-modal-item-value">{area.nombre}</span>
+    <div className="apla-detalle-overlay" role="presentation" onClick={onClose}>
+      <div
+        className={`apla-glass-container ${direccionSeleccionada ? "apla-glass-container--split" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="apla-detalle-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="apla-detalle-head">
+          <div className="apla-detalle-head-icon">
+            <Info size={18} aria-hidden />
           </div>
+          <h2 id="apla-detalle-title" className="apla-detalle-title">
+            Área protegida
+          </h2>
+          <p className="apla-detalle-subtitle">
+            Datos operativos y ubicación
+          </p>
+        </div>
 
-          {/* Direcciones */}
-          <div className="apla-modal-item">
-            <span className="apla-modal-item-label">Direcciones:</span>
-            <div className="apla-modal-direcciones">
-              {(area.direcciones || []).map((dir, idx) => (
-                <div key={idx} className="apla-direccion-item">
-                  <span>{dir}</span>
-                  <button
-                    className="apla-btn-mapa"
-                    title={`Ver mapa: ${dir}`}
-                    onClick={() =>
-                      setDireccionSeleccionada(
-                        direccionSeleccionada === dir ? null : dir
-                      )
-                    }
-                  >
-                    <FaMapMarkerAlt />
-                  </button>
+        <div className="apla-detalle-body">
+          <div className="apla-detalle-col">
+            <div className="apla-detalle-item">
+              <span className="apla-detalle-item-icon" aria-hidden>
+                <Building2 size={16} />
+              </span>
+              <div className="apla-detalle-item-text">
+                <span className="apla-detalle-label">Nombre</span>
+                <span className="apla-detalle-value">{area.nombre}</span>
+              </div>
+            </div>
+
+            <div className="apla-detalle-item apla-detalle-item--stack">
+              <span className="apla-detalle-item-icon" aria-hidden>
+                <MapPin size={16} />
+              </span>
+              <div className="apla-detalle-item-text apla-detalle-item-text--grow">
+                <span className="apla-detalle-label">Ubicación</span>
+                <div className="apla-detalle-direcciones">
+                  {(area.direcciones || []).length === 0 && (
+                    <span className="apla-detalle-value apla-detalle-value--muted">
+                      Sin direcciones registradas
+                    </span>
+                  )}
+                  {(area.direcciones || []).map((dir, idx) => (
+                    <div key={idx} className="apla-detalle-direccion-row">
+                      <span className="apla-detalle-value">{dir}</span>
+                      <button
+                        type="button"
+                        className="apla-detalle-btn-mapa"
+                        title={`Ver mapa: ${dir}`}
+                        onClick={() =>
+                          setDireccionSeleccionada(
+                            direccionSeleccionada === dir ? null : dir
+                          )
+                        }
+                        aria-label={`Ver mapa de ${dir}`}
+                      >
+                        <MapPin size={16} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            </div>
+
+            <div className="apla-detalle-item">
+              <span className="apla-detalle-item-icon" aria-hidden>
+                <User size={16} />
+              </span>
+              <div className="apla-detalle-item-text">
+                <span className="apla-detalle-label">Responsable</span>
+                <span className="apla-detalle-value">
+                  {area.responsable || "No asignado"}
+                </span>
+              </div>
+            </div>
+
+            <div className="apla-detalle-item">
+              <span className="apla-detalle-item-icon" aria-hidden>
+                <Phone size={16} />
+              </span>
+              <div className="apla-detalle-item-text">
+                <span className="apla-detalle-label">Contacto</span>
+                <span className="apla-detalle-value">
+                  {area.telefono || "No registrado"}
+                </span>
+              </div>
+            </div>
+
+            {direccionSeleccionada && (
+              <div className="apla-detalle-logo">
+                <img src="/logo-bvvm.webp" alt="Logo Cuartel" />
+              </div>
+            )}
+
+            <div className="apla-detalle-actions modal-buttons">
+              <button
+                type="button"
+                className="btn-eliminar-modal"
+                onClick={() => {
+                  onClose();
+                  navigate(`/editar-area/${area.id}`);
+                }}
+              >
+                Editar
+              </button>
+              <button type="button" className="btn-cancelar" onClick={onClose}>
+                Cerrar
+              </button>
             </div>
           </div>
 
-          {/* Responsable */}
-          <div className="apla-modal-item">
-            <span className="apla-modal-item-label">Responsable:</span>
-            <span className="apla-modal-item-value">
-              {area.responsable || "No asignado"}
-            </span>
-          </div>
-
-          {/* Teléfono */}
-          <div className="apla-modal-item">
-            <span className="apla-modal-item-label">Teléfono:</span>
-            <span className="apla-modal-item-value">
-              {area.telefono || "No registrado"}
-            </span>
-          </div>
-
-          {/* Logo del cuartel, solo si hay mapa */}
-          {direccionSeleccionada && (
-            <div className="apla-modal-logo">
-              <img src="/logo-bvvm.webp" alt="Logo Cuartel" />
+          {direccionSeleccionada && apiKey && (
+            <div className="apla-detalle-mapa">
+              <iframe
+                className="apla-detalle-iframe"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(
+                  direccionSeleccionada
+                )}`}
+                title={`Mapa de ${direccionSeleccionada}`}
+              />
             </div>
           )}
         </div>
-
-        {/* Columna derecha: mapa */}
-        {direccionSeleccionada && apiKey && (
-          <div className="apla-mapa-lateral">
-            <iframe
-              className="apla-iframe-mapa"
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(
-                direccionSeleccionada
-              )}`}
-              title={`Mapa de ${direccionSeleccionada}`}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
