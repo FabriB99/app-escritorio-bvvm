@@ -20,9 +20,9 @@ const Inicio: React.FC = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
-        // 1. Obtenemos la versión real del tauri.conf.json automáticamente
+        // 1. Obtenemos la versión real desde Tauri
         const v = await getVersion();
-        setCurrentVersion(v);
+        setCurrentVersion(v?.trim() ? v : 'Desconocida');
 
         // 2. Verificamos si hay una actualización disponible en el endpoint
         // (Usa el latest.json que definiste en tu tauri.conf.json) [cite: 7]
@@ -33,24 +33,17 @@ const Inicio: React.FC = () => {
           setUpdateAvailable(true);
         }
       } catch (err) {
-        // Convertimos el error a string de forma segura para que TypeScript no se queje
         const errorMsg = String(err);
-      
-        // Fallback para cuando corrés la app en el navegador (npm run dev)
         if (errorMsg.includes('window.__TAURI_IPC__')) {
-          setCurrentVersion('Dev-Mode');
-        } else {
-          console.error('Error al inicializar el updater:', err);
+          setCurrentVersion('Web-Preview');
+          return;
         }
+        console.error('Error al inicializar el updater:', err);
+        setCurrentVersion('Desconocida');
       }
     };
 
-    // Solo ejecutamos si estamos dentro de Tauri
-    if (window.__TAURI_IPC__ !== undefined) {
-      initApp();
-    } else {
-      setCurrentVersion('Web-Preview');
-    }
+    initApp();
   }, []);
 
   /**
