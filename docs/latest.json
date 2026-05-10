@@ -1,11 +1,11 @@
 {
-  "version": "0.2.8",
-  "notes": "Versión Actualización Automática",
-  "pub_date": "2026-05-10T12:00:00Z",
+  "version": "0.2.9",
+  "notes": "Versión Actualización Automática y Versión en pantalla",
+  "pub_date": "2026-05-10T13:00:00Z",
   "platforms": {
     "windows": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDR5b3ZhQTVJditaUnJucGJ0UEowS2REa1h0WWNoZ1VGMVo3SWdrclowWDdtTC9IS2p2d3FzVGVOZ0xhRGVqUkZJSzdNMFhaNnJOdThvNmVnWnJvR0FjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc4NDI3MTg5CWZpbGU6Q29udHJvbC1CVlZNXzAuMi44X3g2NF9lbi1VUy5tc2kKOTM2UnBnMldRUjQxd1FmdXRDc2pSOW80M2RBUndWdWY4aXUrNjBPNURFd0l1cEdaRzZpVExpZmJQNVlVQitRUldZbWw3ZTYrNHdRNmx0UkNVZHF0QlE9PQo=",
-      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.2.8/Control-BVVM_0.2.8_x64_en-US.msi"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDVjN1o5SGhGVUFOWkhEQVBMVExwK216ZTQ0RGJ6d2lVeWJRNlBrOTBwbnpCWWFWd3hzRGJQa0dMNnZVR1VENWsxakg4bU1rQm16Mk9LN3VXb2lMUkFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc4NDI4NTc2CWZpbGU6Q29udHJvbC1CVlZNXzAuMi45X3g2NF9lbi1VUy5tc2kKd0ZhSVlvQmo3TVoxVzNXNFh3bk5wSm80TWZoRWlyTGxuMVJldUtQOXJhZG1BQjM2VTAvQ2hNQ3R4eUJKajR1eFk2WUZxZ3NmdEF1WURWc0R2YUJGQnc9PQo=",
+      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.2.9/Control-BVVM_0.2.9_x64_en-US.msi"
     }
   }
 }
