@@ -1,7 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::Manager;
-use tauri_plugin_shell::ShellExt;
+use tauri_plugin_opener::OpenerExt;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -15,8 +14,8 @@ fn abrir_en_navegador(app_handle: tauri::AppHandle, url: String) -> Result<(), S
     }
 
     app_handle
-        .shell()
-        .open(&url, None)
+        .opener()
+        .open_url(&url, None::<&str>)
         .map_err(|e| e.to_string())?;
 
     Ok(())
@@ -27,7 +26,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(tauri_plugin_shell::init()) // 🔑 habilitamos el plugin shell
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet, abrir_en_navegador])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
