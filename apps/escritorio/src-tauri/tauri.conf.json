@@ -24,7 +24,7 @@
   "bundle": {
     "active": true,
     "createUpdaterArtifacts": true,
-    "targets": "all",
+    "targets": ["msi"],
     "icon": [
       "icons/bvvm64x64.ico",
       "icons/bvvm128x128.ico",
