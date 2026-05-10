@@ -1,9 +1,12 @@
 name: "Publicar Versión Automática"
 
+# Nota: no existe el tag @v2 en tauri-apps/tauri-action; la línea oficial es @v0
+# y es la que usa la documentación de Tauri v2 para builds y release.
+
 on:
   push:
     tags:
-      - 'v*' # Se activa al subir un tag como v0.2.8
+      - "v*" # Se activa al subir un tag como v0.2.8
 
 jobs:
   publish-tauri:
@@ -18,29 +21,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: false # 👈 IMPORTANTE: Ignora errores de submódulos
+          submodules: false
           fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Usamos la versión estable
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/escritorio/package-lock.json
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/escritorio/src-tauri -> target
 
       - name: Install dependencies
-        run: |
-          cd apps/escritorio
-          npm install
+        working-directory: apps/escritorio
+        run: npm ci
 
+      # Firma: el CLI de Tauri v2 lee TAURI_SIGNING_PRIVATE_KEY (+ password opcional).
+      # Los secretos pueden llamarse como en la doc oficial o con los nombres legacy.
       - name: Build and Release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
         with:
-          projectPath: "apps/escritorio"
-          tagName: v__VERSION__ 
+          projectPath: apps/escritorio
+          tagName: v__VERSION__
           releaseName: "Control BVVM v__VERSION__"
-          releaseBody: "Actualización automática del sistema."
+          releaseBody: "Actualización automática del sistema de Control de Bomberos."
           releaseDraft: false
           prerelease: false
+          # Subir .sig junto al instalador (por defecto es true; se deja explícito).
+          uploadUpdaterSignatures: true
+          # Si generás MSI y NSIS, el JSON del updater puede preferir uno u otro.
+          updaterJsonPreferNsis: false
