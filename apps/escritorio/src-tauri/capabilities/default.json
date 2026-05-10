@@ -1,10 +1,17 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
+  "description": "Permisos para el sistema de control de Bomberos",
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "core:app:allow-version",
+    "core:event:default",
+    "core:window:default",
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install",
+    "process:allow-restart",
     "opener:default"
   ]
 }

@@ -19,27 +19,37 @@ const Inicio: React.FC = () => {
 
   useEffect(() => {
     const initApp = async () => {
-      try {
-        // 1. Obtenemos la versión real desde Tauri
-        const v = await getVersion();
-        setCurrentVersion(v?.trim() ? v : 'Desconocida');
+      // 1. Pequeño respiro para asegurar que el IPC de Tauri cargó
+      await new Promise(r => setTimeout(r, 150));
 
-        // 2. Verificamos si hay una actualización disponible en el endpoint
-        // (Usa el latest.json que definiste en tu tauri.conf.json) [cite: 7]
+      // 2. Obtener Versión (Independiente del updater)
+      try {
+        const v = await getVersion();
+        if (v) {
+          setCurrentVersion(v);
+        } else {
+          setCurrentVersion('0.2.8'); // Fallback manual
+        }
+      } catch (err) {
+        console.error('Error al obtener versión:', err);
+        // Si no detectamos rastro de Tauri, es que estamos en un navegador
+        if (!(window as any).__TAURI_INTERNALS__) {
+          setCurrentVersion('Web-Preview');
+        } else {
+          setCurrentVersion('Desconocida');
+        }
+      }
+
+      // 3. Verificar Actualización (Si falla, no rompe el estado de la versión)
+      try {
         const update = await check();
-        
         if (update?.available) {
           console.log(`Nueva versión encontrada: ${update.version}`);
           setUpdateAvailable(true);
         }
       } catch (err) {
-        const errorMsg = String(err);
-        if (errorMsg.includes('window.__TAURI_IPC__')) {
-          setCurrentVersion('Web-Preview');
-          return;
-        }
-        console.error('Error al inicializar el updater:', err);
-        setCurrentVersion('Desconocida');
+        // Aquí caerá tu error de "windows-x86_64" hasta que lo arregles en el JSON
+        console.error('El updater falló (revisar formato de latest.json):', err);
       }
     };
 
@@ -52,20 +62,18 @@ const Inicio: React.FC = () => {
   const handleUpdate = async () => {
     try {
       setIsUpdating(true);
-      
       const update = await check();
       
       if (update?.available) {
-        // Descarga el .msi y valida la firma (.sig) automáticamente [cite: 6]
+        // Tauri v2 maneja la descarga y validación de firma (.sig)
         await update.downloadAndInstall();
-        
-        // Reinicia la aplicación para aplicar la nueva versión
+        // Reinicio para aplicar cambios
         await relaunch();
       }
     } catch (err) {
       console.error('Error durante la actualización:', err);
       setIsUpdating(false);
-      alert('Hubo un error al instalar la actualización. Por favor, intenta de nuevo.');
+      alert('Hubo un error al instalar la actualización. Verifica tu conexión.');
     }
   };
 
@@ -90,10 +98,10 @@ const Inicio: React.FC = () => {
         </div>
       </div>
 
-      {/* VERSIÓN EN PANTALLA */}
+      {/* VERSIÓN EN PANTALLA (Ya no debería desaparecer) */}
       <div className="version-info">v{currentVersion}</div>
 
-      {/* BANNER DE ACTUALIZACIÓN (Solo aparece si hay una versión nueva) */}
+      {/* BANNER DE ACTUALIZACIÓN */}
       {updateAvailable && (
         <div
           className={`update-banner ${isUpdating ? 'updating' : ''}`}
