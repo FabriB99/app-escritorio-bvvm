@@ -45,11 +45,11 @@ const InicioBombero: React.FC = () => {
           className={`inicio-bombero__card ${
             !miembroActivo ? "inicio-bombero__card--disabled" : ""
           }`}
-          onClick={() => miembroActivo && navigate("/estadisticas")}
+          onClick={() => miembroActivo && navigate("/mis-estadisticas")}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && miembroActivo) navigate("/estadisticas");
+            if (e.key === "Enter" && miembroActivo) navigate("/mis-estadisticas");
           }}
         >
           <BarChart2 size={52} className="inicio-bombero__icono" />

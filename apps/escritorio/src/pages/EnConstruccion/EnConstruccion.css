@@ -1,0 +1,111 @@
+/* src/components/EnConstruccion/EnConstruccion.css */
+
+/* Contenedor principal: ocupa todo el espacio disponible del MainLayout */
+.en-construccion-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-bg-main); /* O el fondo general de tu app */
+    padding: var(--spacing-xl);
+    box-sizing: border-box;
+  }
+  
+  /* La "tarjeta" central que imita el estilo de tus cards de Unidades */
+  .en-construccion-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra suave similar a .card */
+    border: 1px solid #e8ecf0; /* Borde claro igual que .card */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  /* Icono grande */
+  .en-construccion-icon-wrapper {
+    font-size: 3.5rem;
+    margin-bottom: var(--spacing-sm);
+    /* Pequeña animación para que no sea estático */
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .en-construccion-icon {
+    display: inline-block;
+  }
+  
+  /* Título usando tus variables */
+  .en-construccion-title {
+    margin: 0;
+    font-size: var(--font-size-xl); /* O clamp(1.2rem, 2vw, 1.5rem) si prefieres fluido */
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: var(--color-sidebar); /* Tu color oscuro de sidebar/títulos */
+    line-height: 1.3;
+  }
+  
+  /* Texto descriptivo */
+  .en-construccion-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #506680; /* Gris medio como el p de tus cards */
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  /* Barra de progreso decorativa (visual) */
+  .en-construccion-progress {
+    width: 100%;
+    height: 6px;
+    background-color: #e8ecf0; /* Fondo gris claro */
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin: var(--spacing-sm) 0;
+  }
+  
+  .en-construccion-bar {
+    height: 100%;
+    width: 60%; /* Simula progreso */
+    background-color: var(--color-sidebar); /* Usa tu color principal */
+    border-radius: var(--radius-sm);
+    animation: progress 2s ease-in-out infinite alternate;
+  }
+  
+  /* Hint inferior */
+  .en-construccion-hint {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--color-sidebar);
+    opacity: 0.6;
+    margin-top: var(--spacing-sm);
+  }
+  
+  /* Animaciones */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  
+  @keyframes progress {
+    0% { width: 40%; }
+    100% { width: 80%; }
+  }
+  
+  /* Responsive: en móviles, menos padding */
+  @media (max-width: 600px) {
+    .en-construccion-card {
+      padding: 24px 16px;
+    }
+    .en-construccion-icon-wrapper {
+      font-size: 2.5rem;
+    }
+  }
+  

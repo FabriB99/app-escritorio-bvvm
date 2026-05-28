@@ -1,64 +1,69 @@
+/* src/pages/InicioBombero/InicioBombero.css */
+
+/* 1. Contenedor Principal */
 .inicio-bombero__contenedor-principal {
   width: 100%;
-  max-width: 100vw;
   min-height: 100vh;
-  box-sizing: border-box;
+  background-color: var(--color-bg); /* Fondo general de la app */
   font-family: var(--font-main);
+  box-sizing: border-box;
 }
 
+/* 2. Grid de Tarjetas */
 .inicio-bombero__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 40px 60px;
+  /* Usamos la misma lógica de auto-fill que en Unidades.css para consistencia */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: clamp(20px, 3vw, 40px); /* Espaciado fluido */
   justify-items: center;
   width: 100%;
-  max-width: 100%;
-  margin: 30px auto 0;
-  padding: 0 20px 40px;
+  max-width: 1200px; /* Limitamos el ancho máximo para que no se estire demasiado en pantallas grandes */
+  margin: var(--spacing-xl) auto 0;
+  padding: 0 var(--spacing-lg) var(--spacing-xl);
   box-sizing: border-box;
 }
 
+/* 3. Tarjeta Base (Estilo idéntico a .card de Unidades.css) */
 .inicio-bombero__card {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 28px 20px;
-  width: 280px;
-  border: 1px solid rgba(200, 200, 200, 0.3);
-  border-left: 8px solid var(--color-sidebar);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-left-color var(--transition-base);
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  width: 100%;
+  min-width: 0; /* Permite que el grid maneje el ancho */
+  max-width: 320px; /* Ancho máximo cómodo para lectura */
+  
+  /* Borde y Sombra consistentes con Unidades.css */
+  border: 1px solid #e8ecf0;
+  border-left: 4px solid var(--color-sidebar); /* Borde semántico izquierdo */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-fast);
+  
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
   text-align: center;
-  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
 }
 
+/* Estado Hover (Consistente con .card:hover) */
 .inicio-bombero__card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(44, 62, 80, 0.12);
   border-left-color: var(--color-accent);
+  border-color: rgba(44, 62, 80, 0.15);
+  z-index: 1;
 }
 
-.inicio-bombero__card h3 {
-  font-size: 19px;
-  font-weight: 700;
-  color: #203142;
-  margin: 0;
-}
-
-.inicio-bombero__card p {
-  font-size: 14px;
-  color: #394d61;
-  margin: 0;
-  line-height: 1.5;
-}
-
+/* 4. Tipografía y Elementos Internos */
 .inicio-bombero__icono {
   color: var(--color-sidebar);
+  margin-bottom: var(--spacing-md);
   transition: color var(--transition-fast);
 }
 
@@ -66,15 +71,78 @@
   color: var(--color-accent);
 }
 
-.inicio-bombero__card--disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  pointer-events: none;
+.inicio-bombero__card h3 {
+  margin: 0 0 var(--spacing-sm);
+  /* Usamos clamp para tipografía fluida como en Unidades.css */
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--color-sidebar);
+  line-height: 1.3;
 }
 
-.inicio-bombero__aviso {
-  color: #e6a817;
+.inicio-bombero__card p {
   font-size: 13px;
   font-weight: 500;
-  margin-top: 4px;
+  color: #506680; /* Gris medio consistente */
+  margin: 0;
+  line-height: 1.5;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* 5. Estado Deshabilitado */
+.inicio-bombero__card--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: #f9f9f9; /* Un poco más gris para indicar inactividad */
+  border-left-color: var(--color-border);
+}
+
+.inicio-bombero__card--disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 6. Aviso de PIN (Consistente con badges/labels) */
+.inicio-bombero__aviso {
+  margin-top: var(--spacing-md);
+  padding: 6px 12px;
+  background-color: rgba(241, 193, 0, 0.15); /* Fondo amarillo suave */
+  color: #9a7a00; /* Texto amarillo oscuro */
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border: 1px solid rgba(241, 193, 0, 0.3);
+}
+
+/* 7. Responsividad para Full HD y superiores */
+@media (min-width: 1366px) and (max-width: 1919px) {
+  .inicio-bombero__grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .inicio-bombero__grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 28px;
+    max-width: 1400px;
+  }
+  .inicio-bombero__card h3 { font-size: 1.4rem; }
+}
+
+@media (min-width: 2560px) {
+  .inicio-bombero__grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 32px;
+    max-width: 1600px;
+  }
+  .inicio-bombero__card h3 { font-size: 1.5rem; }
+  .inicio-bombero__card p { font-size: 14px; }
 }

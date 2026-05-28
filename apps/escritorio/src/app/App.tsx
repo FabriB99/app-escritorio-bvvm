@@ -54,6 +54,7 @@ import AuthRedirect from '../routes/AuthRedirect';
 
 import { useUser } from '../context/UserContext';
 import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
+import EnConstruccion from '../pages/EnConstruccion/EnConstruccion';
 
 import { UsuarioBibliotecaProvider } from '../context/UsuarioBibliotecaContext';
 
@@ -106,6 +107,21 @@ const App: React.FC = () => {
               <UsuarioBibliotecaProvider>
                 <VistaPreviaArchivo />
               </UsuarioBibliotecaProvider>
+            }
+          />
+
+          {/* Página en Construcción */}
+          <Route
+            path="/mis-estadisticas"
+            element={
+              <RutaProtegida rolesPermitidos={['bombero']}>
+                <MainLayout>
+                  <EnConstruccion 
+                    titulo="Mis Estadísticas" 
+                    mensaje="Estamos preparando tu panel de estadísticas. Pronto estará disponible." 
+                  />
+                </MainLayout>
+              </RutaProtegida>
             }
           />
 

@@ -236,7 +236,9 @@ const renderLink = (to: string, text: string) => {
                 className={`nav-section-title nav-section-single ${location.pathname.includes('/estadisticas/') ? 'active' : ''}`}
                 onClick={() => {
                   handleSectionClick(null);
-                  navigate(`/estadisticas/${miembroActivo.id}`);
+                  //navigate(`/estadisticas/${miembroActivo.id}`);
+                  navigate(`/mis-estadisticas`);
+                  
                 }}>
                 <span className="nav-section-icon"><BarChart2 size={16} /></span>
                 <span className="nav-section-text">Mis Estadísticas</span>
