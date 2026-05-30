@@ -2,19 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../../app/firebase-config";
 import { signOut } from "firebase/auth";
-import {
-  Home,
-  LogOut,
-  ChevronDown,
-  ChevronUp,
-  LayoutDashboard,
-  Truck,
-  Users,
-  Shield,
-  BookOpen,
-  User,
-  BarChart2,
-} from "lucide-react";
+import { Home, LogOut, ChevronDown, ChevronUp, LayoutDashboard, Truck, Users, Shield, BookOpen, User, BarChart2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import "./Sidebar.css";
 
@@ -86,7 +74,10 @@ const SECCIONES = [
     icon: <Shield size={16} />,
     links: [
       { text: "Choferes", to: "/choferes" },
-      { text: "Áreas Protegidas", to: "/areas-protegidas" }
+      { text: "Áreas Protegidas", to: "/areas-protegidas" },
+      { text: "Control Intervenciones", to: "/p-intervenciones" },
+      { text: "Control Mantenimiento", to: "/p-mantenimiento" },
+      { text: "Control Capacitación", to: "/p-capacitaciones" }
     ],
     rolesPermitidos: ["admin", "jefatura", "guardia"]
   },

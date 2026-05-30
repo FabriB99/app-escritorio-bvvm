@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import MainLayout from '../components/MainLayout/MainLayout';
 import Inicio from '../pages/Inicio/Inicio';
-import InicioBombero from '../pages/Inicio/InicioBombero'
+import InicioBombero from '../pages/Inicio/InicioBombero';
 import Login from '../pages/Login/Login';
 import LoginBiblioteca from '../pages/Login/LoginBiblioteca';
 
@@ -23,6 +23,8 @@ import Choferes from '../pages/Choferes/VistaChoferes';
 import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista';
 import AgregarArea from "../pages/AreasProtegidas/AgregarArea";
 import EditarArea from "../pages/AreasProtegidas/EditarArea";
+import PCapacitaciones from "../pages/Guardia/ParteCapacitaciones"; // Asumo que este es el formulario de Crear/Editar
+import ListadoCapacitaciones from "../pages/Guardia/ListadoCapacitaciones";
 
 // Admin
 import AdminPanel from "../pages/Admin/PanelAdmin";
@@ -76,7 +78,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Inicio />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Biblioteca Virtual: login y rutas protegidas por dni, con contexto propio */}
+          {/* Biblioteca Virtual */}
           <Route
             path="/biblioteca-login"
             element={
@@ -119,6 +121,33 @@ const App: React.FC = () => {
                   <EnConstruccion 
                     titulo="Mis Estadísticas" 
                     mensaje="Estamos preparando tu panel de estadísticas. Pronto estará disponible." 
+                  />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/p-intervenciones"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
+                <MainLayout>
+                  <EnConstruccion 
+                    titulo="Control Intervenciones" 
+                    mensaje="Estamos preparando el control de intervenciones. Pronto estará disponible." 
+                  />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/p-mantenimiento"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
+                <MainLayout>
+                  <EnConstruccion 
+                    titulo="Control Mantenimiento" 
+                    mensaje="Estamos preparando el control de mantenimientos. Pronto estará disponible." 
                   />
                 </MainLayout>
               </RutaProtegida>
@@ -217,7 +246,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
           <Route
             path="/agregar-area"
             element={
@@ -228,13 +256,35 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
           <Route
             path="/editar-area/:id"
             element={
               <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
                 <MainLayout>
                   <EditarArea />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          {/* ─── Guardia / Capacitaciones ───────────────────────────────── */}
+          <Route
+            path="/p-capacitaciones"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <PCapacitaciones />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+          
+          <Route
+            path="/listado-capacitaciones"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
+                <MainLayout>
+                  <ListadoCapacitaciones />
                 </MainLayout>
               </RutaProtegida>
             }
@@ -282,7 +332,7 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Biblioteca Virtual administración (admin, jefatura, graduados) */}
+          {/* Biblioteca Virtual administración */}
           <Route
             path="/editar-biblioteca"
             element={
@@ -337,9 +387,9 @@ const App: React.FC = () => {
             path="/editar-biblioteca/registro"
             element={
               <RutaProtegida rolesPermitidos={['admin']}>
-                  <MainLayout>
-                    <RegistroAccesos />
-                  </MainLayout>
+                <MainLayout>
+                  <RegistroAccesos />
+                </MainLayout>
               </RutaProtegida>
             }
           />
@@ -375,7 +425,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
           <Route
             path="/admin/identidades"
             element={
@@ -386,7 +435,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
           <Route
             path="/admin/grados"
             element={
@@ -397,7 +445,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
           <Route
             path="/admin/crear-identidad"
             element={

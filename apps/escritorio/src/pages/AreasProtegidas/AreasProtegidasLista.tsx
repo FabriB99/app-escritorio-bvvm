@@ -72,7 +72,6 @@ const AreasProtegidasLista: React.FC = () => {
     <div className="apla-lista-container">
       <Header
         title="Áreas Protegidas"
-        onBack={() => navigate(-1)}
         extraButtons={
           puedeEditar
             ? [

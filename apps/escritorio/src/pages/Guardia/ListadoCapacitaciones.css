@@ -1,0 +1,770 @@
+/* src/pages/Guardia/ListadoCapacitaciones.css */
+/* Mismo lenguaje visual que Unidades.css / ParteCapacitaciones.css */
+
+/* ── Página ──────────────────────────────────────────────────────────────── */
+
+.listado-cap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  
+  .listado-cap__loading,
+  .listado-cap__empty {
+    text-align: center;
+    padding: 48px 24px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: #506680;
+  }
+  
+  .listado-cap__empty p {
+    margin-bottom: 16px;
+  }
+  
+  .btn-nueva {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: var(--color-accent, #e63946);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm, 8px);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  /* ── Stats row ───────────────────────────────────────────────────────────── */
+  
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: var(--spacing-md, 16px);
+    flex-wrap: wrap;
+  }
+  
+  .stat-card {
+    flex: 1;
+    min-width: 90px;
+    background: #ffffff;
+    border: 1px solid #e8ecf0;
+    border-radius: var(--radius-md, 10px);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--font-main);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  
+  .stat-card--ok    { border-left: 3px solid #2e8b57; }
+  .stat-card--pending { border-left: 3px solid #f1c100; }
+  
+  .stat-card__num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-sidebar, #2C3E50);
+    line-height: 1;
+  }
+  
+  .stat-card--ok .stat-card__num    { color: #1e6b45; }
+  .stat-card--pending .stat-card__num { color: #9a7a00; }
+  
+  .stat-card__label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #506680;
+  }
+  
+  /* ── Grupo por año ───────────────────────────────────────────────────────── */
+  
+  .anio-grupo {
+    margin-bottom: 12px;
+  }
+  
+  .anio-grupo__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--color-sidebar, #2C3E50);
+    border: none;
+    border-radius: var(--radius-md, 10px);
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: background var(--transition-fast, 0.15s ease);
+  }
+  
+  .anio-grupo__header:hover {
+    background: #243342;
+  }
+  
+  .anio-grupo__title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .anio-grupo__year {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+  
+  .anio-grupo__count {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+  }
+  
+  .anio-grupo__auth {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.1);
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  
+  .anio-grupo__chevron {
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+  }
+  
+  .anio-grupo__body {
+    padding: 10px 0 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  /* ── Card de capacitación ────────────────────────────────────────────────── */
+  
+  .cap-card {
+    background: #ffffff;
+    border: 1px solid #e8ecf0;
+    border-left: 3px solid var(--color-border, #dde3ea);
+    border-radius: var(--radius-md, 10px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+    font-family: var(--font-main);
+    transition:
+      border-color var(--transition-fast, 0.15s ease),
+      box-shadow var(--transition-fast, 0.15s ease);
+  }
+  
+  .cap-card:hover {
+    box-shadow: 0 4px 16px rgba(44,62,80,0.1);
+  }
+  
+  .cap-card--autorizada {
+    border-left-color: #2e8b57;
+  }
+  
+  /* Cabecera */
+  .cap-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    gap: 12px;
+  }
+  
+  .cap-card__head-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  
+  .cap-card__fechas {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  
+  .cap-card__fecha {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-sidebar, #2C3E50);
+  }
+  
+  .cap-card__horas {
+    font-size: 11px;
+    color: #506680;
+  }
+  
+  .cap-card__lugar {
+    font-size: 13px;
+    color: #506680;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+  
+  .cap-card__head-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  
+  .cap-card__nivel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #506680;
+  }
+  
+  .cap-card__toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #506680;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: color var(--transition-fast, 0.15s ease);
+  }
+  
+  .cap-card__toggle:hover { color: var(--color-sidebar, #2C3E50); }
+  
+  /* Cuerpo expandible */
+  .cap-card__body {
+    padding: 0 18px 16px;
+    border-top: 1px solid #f0f3f6;
+  }
+  
+  .cap-card__descripcion {
+    font-size: 13px;
+    color: var(--color-text-dark, #1f2d3a);
+    line-height: 1.55;
+    margin: 14px 0;
+  }
+  
+  /* Grid de detalles */
+  .cap-card__detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px 20px;
+    margin-bottom: 14px;
+  }
+  
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .detail-item--full {
+    grid-column: 1 / -1;
+  }
+  
+  .detail-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #506680;
+  }
+  
+  .detail-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-sidebar, #2C3E50);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  /* Tags de destino y participantes */
+  .detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 2px;
+  }
+  
+  .detail-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    background: var(--color-bg-content, #f7f9fb);
+    border: 1px solid var(--color-border, #dde3ea);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-dark, #1f2d3a);
+  }
+  
+  .detail-tag--miembro {
+    background: rgba(44, 62, 80, 0.06);
+    border-color: rgba(44, 62, 80, 0.15);
+    color: var(--color-sidebar, #2C3E50);
+  }
+  
+  .detail-tag--guardia {
+    background: rgba(241, 193, 0, 0.08);
+    border-color: rgba(241, 193, 0, 0.3);
+    color: #6b5200;
+  }
+  
+  /* Orden operativo badge */
+  .orden-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    background: rgba(230, 57, 70, 0.08);
+    color: var(--color-accent, #e63946);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  
+  .orden-badge--sm {
+    font-size: 10px;
+    padding: 1px 5px;
+  }
+  
+  /* Autorización y auditoría */
+  .cap-card__autorizacion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #1e6b45;
+    background: rgba(46, 139, 87, 0.07);
+    border: 1px solid rgba(46, 139, 87, 0.2);
+    border-radius: var(--radius-sm, 8px);
+    padding: 8px 12px;
+    margin-top: 12px;
+  }
+  
+  .cap-card__auditoria {
+    font-size: 11px;
+    color: #506680;
+    margin-top: 6px;
+    padding-left: 2px;
+  }
+  
+  /* Acciones */
+  .cap-card__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm, 8px);
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition:
+      background var(--transition-fast, 0.15s ease),
+      color var(--transition-fast, 0.15s ease),
+      border-color var(--transition-fast, 0.15s ease),
+      transform var(--transition-fast, 0.15s ease);
+  }
+  
+  .btn-action:hover { transform: translateY(-1px); }
+  .btn-action:active { transform: translateY(0); }
+  
+  .btn-action--autorizar {
+    background: rgba(46, 139, 87, 0.1);
+    color: #1e6b45;
+    border-color: rgba(46, 139, 87, 0.3);
+  }
+  .btn-action--autorizar:hover {
+    background: rgba(46, 139, 87, 0.18);
+  }
+  
+  .btn-action--editar {
+    background: rgba(44, 62, 80, 0.07);
+    color: var(--color-sidebar, #2C3E50);
+    border-color: rgba(44, 62, 80, 0.2);
+  }
+  .btn-action--editar:hover {
+    background: rgba(44, 62, 80, 0.13);
+  }
+  
+  .btn-action--eliminar {
+    background: rgba(230, 57, 70, 0.07);
+    color: #b32e2e;
+    border-color: rgba(230, 57, 70, 0.2);
+  }
+  .btn-action--eliminar:hover {
+    background: rgba(230, 57, 70, 0.14);
+  }
+  
+  /* ── Badges ──────────────────────────────────────────────────────────────── */
+  
+  .badge-tipo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+  
+  .tipo--capacitacion {
+    background: rgba(44, 62, 80, 0.09);
+    color: var(--color-sidebar, #2C3E50);
+    border: 1px solid rgba(44, 62, 80, 0.2);
+  }
+  
+  .tipo--representacion {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+  
+  .tipo--organizativa {
+    background: rgba(241, 193, 0, 0.12);
+    color: #9a7a00;
+    border: 1px solid rgba(241, 193, 0, 0.35);
+  }
+  
+  .badge-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: var(--font-main);
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  
+  .badge-estado--ok {
+    background: rgba(46, 139, 87, 0.1);
+    color: #1e6b45;
+    border: 1px solid rgba(46, 139, 87, 0.3);
+  }
+  
+  .badge-estado--pending {
+    background: rgba(241, 193, 0, 0.1);
+    color: #9a7a00;
+    border: 1px solid rgba(241, 193, 0, 0.3);
+  }
+  
+  /* ── Modales ─────────────────────────────────────────────────────────────── */
+  
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 45, 58, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    font-family: var(--font-main);
+  }
+  
+  .modal-content {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e8ecf0;
+    box-shadow: var(--shadow-dropdown, 0 8px 32px rgba(0,0,0,0.14));
+    width: 90%;
+    max-width: 480px;
+  }
+  
+  .modal-content--sm {
+    max-width: 380px;
+  }
+  
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #f0f3f6;
+  }
+  
+  .modal-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-sidebar, #2C3E50);
+    margin: 0;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #506680;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: color var(--transition-fast, 0.15s ease);
+  }
+  .modal-close:hover { color: var(--color-accent, #e63946); }
+  
+  .modal-body {
+    padding: 16px 22px;
+  }
+  
+  .modal-desc {
+    font-size: 13px;
+    color: var(--color-text-dark, #1f2d3a);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  
+  .modal-firmante {
+    font-size: 12px;
+    color: #506680;
+    background: var(--color-bg-content, #f7f9fb);
+    border: 1px solid var(--color-border, #dde3ea);
+    border-radius: var(--radius-sm, 8px);
+    padding: 8px 12px;
+  }
+  
+  /* form-group dentro del modal */
+  .modal-body .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .modal-body .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: var(--color-sidebar, #2C3E50);
+  }
+  
+  .modal-body .form-group textarea {
+    font-family: var(--font-main);
+    font-size: 13px;
+    color: var(--color-text-dark, #1f2d3a);
+    background: var(--color-bg-content, #f7f9fb);
+    border: 1px solid var(--color-border, #dde3ea);
+    border-radius: var(--radius-sm, 8px);
+    padding: 8px 12px;
+    resize: vertical;
+    outline: none;
+    transition: border-color var(--transition-fast, 0.15s ease);
+  }
+  
+  .modal-body .form-group textarea:focus {
+    border-color: var(--color-sidebar, #2C3E50);
+    background: #ffffff;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px 18px;
+    border-top: 1px solid #f0f3f6;
+  }
+  
+  .btn-cancelar {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--color-border, #dde3ea);
+    border-radius: var(--radius-sm, 8px);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 600;
+    color: #506680;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast, 0.15s ease),
+      color var(--transition-fast, 0.15s ease);
+  }
+  .btn-cancelar:hover {
+    background: var(--color-bg-content, #f7f9fb);
+    color: var(--color-sidebar, #2C3E50);
+  }
+  
+  .btn-autorizar-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    background: rgba(46, 139, 87, 0.12);
+    color: #1e6b45;
+    border: 1px solid rgba(46, 139, 87, 0.35);
+    border-radius: var(--radius-sm, 8px);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast, 0.15s ease),
+      transform var(--transition-fast, 0.15s ease);
+  }
+  .btn-autorizar-confirm:hover {
+    background: rgba(46, 139, 87, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  .btn-eliminar-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    background: rgba(230, 57, 70, 0.1);
+    color: #b32e2e;
+    border: 1px solid rgba(230, 57, 70, 0.3);
+    border-radius: var(--radius-sm, 8px);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast, 0.15s ease),
+      transform var(--transition-fast, 0.15s ease);
+  }
+  .btn-eliminar-confirm:hover {
+    background: rgba(230, 57, 70, 0.18);
+    transform: translateY(-1px);
+  }
+  
+  /* ── Responsive ──────────────────────────────────────────────────────────── */
+  
+  @media (max-width: 600px) {
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  
+    .cap-card__head {
+      flex-wrap: wrap;
+    }
+  
+    .cap-card__lugar {
+      max-width: 100%;
+    }
+  
+    .cap-card__detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Modificaciones para el Modal de Edición Grande (.modal-content--lg) ── */
+
+/* Overlay con desenfoque para aislar visualmente el formulario */
+.modal-overlay--edicion {
+    backdrop-filter: blur(4px);
+    background: rgba(31, 45, 58, 0.6);
+    padding: 20px;
+  }
+  
+  /* Contenedor del formulario adaptado para contener muchos inputs */
+  .modal-content--lg {
+    max-width: 840px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideUp 0.25s ease-out;
+  }
+  
+  /* Animación de entrada suave */
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Personalización del contenedor del formulario adentro del modal */
+  .modal-content--lg .modal-body {
+    padding: 24px;
+    background: #f8fafc; /* Fondo sutilmente grisáceo para que resalten las tarjetas blancas */
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+  }
+  
+  /* Estilos específicos para aplastar los márgenes del componente embebido */
+  .modal-content--lg .parte-capacitaciones {
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  /* Hacemos que las tarjetas internas del formulario se acoplen mejor al modal */
+  .modal-content--lg .parte-capacitaciones .form-card {
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+  
+  /* Eliminamos el card de acciones redundante abajo del formulario si está en el modal */
+  .modal-content--lg .parte-capacitaciones .form-card--actions {
+    margin-bottom: 0;
+    padding: 12px 0 0 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+  
+  /* Ajuste fino de la barra de scroll para navegadores basados en Webkit (Chrome, Edge, Safari) */
+  .modal-content--lg .modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .modal-content--lg .modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  
+  .modal-content--lg .modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  .modal-content--lg .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  
+  /* ── Responsive para el Modal Grande ─────────────────────────────────────── */
+  
+  @media (max-width: 768px) {
+    .modal-overlay--edicion {
+      padding: 10px;
+    }
+  
+    .modal-content--lg {
+      max-width: 100%;
+      max-height: 96vh;
+    }
+  
+    .modal-content--lg .modal-body {
+      padding: 16px;
+    }
+  }

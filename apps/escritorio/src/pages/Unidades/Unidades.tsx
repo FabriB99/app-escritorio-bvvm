@@ -1,9 +1,9 @@
-// Unidades.tsx
+// src/pages/Unidades/Unidades.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../../app/firebase-config";
-import { deleteDoc, doc, collection, onSnapshot } from 'firebase/firestore';
-import { Plus, Filter, X } from 'lucide-react';
+import { deleteDoc, doc, collection, onSnapshot, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { Plus, Filter, X, FileSpreadsheet } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import { mostrarToast } from '../../utils/toast';
 import { useUser } from '../../context/UserContext';
@@ -18,6 +18,13 @@ interface Unidad {
   ultima_revision: any;
   tipo: string;
   estado?: string;
+}
+
+interface Elemento {
+  id: string;
+  nombre: string;
+  cantidad: string;
+  estado: string;
 }
 
 const TIPOS_UNIDAD = [
@@ -35,7 +42,7 @@ const TIPOS_UNIDAD = [
 
 const Unidades: React.FC = () => {
   const { user } = useUser();
-  const navigate = useNavigate(); // <-- useNavigate agregado
+  const navigate = useNavigate();
   const [units, setUnits] = useState<Unidad[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [unidadAEliminar, setUnidadAEliminar] = useState<string | null>(null);
@@ -89,19 +96,102 @@ const Unidades: React.FC = () => {
 
   const unidadesFiltradas = units.filter(u => !filtroTipo || u.tipo === filtroTipo);
 
+  // Lógica de Exportación a Excel
+  const handleExportarExcel = async () => {
+    if (units.length === 0) {
+      mostrarToast("No hay unidades para exportar.");
+      return;
+    }
+
+    mostrarToast("Cargando datos detallados...");
+
+    try {
+      // 1. Cargar elementos de todas las unidades en paralelo
+      const promesas = units.map(async (unidad) => {
+        const q = query(
+          collection(db, 'elementos'),
+          where('unidad_id', '==', unidad.id),
+          orderBy('nombre')
+        );
+        const querySnapshot = await getDocs(q);
+        
+        const elementos: Elemento[] = [];
+        querySnapshot.forEach((doc) => {
+          elementos.push({ id: doc.id, ...doc.data() } as Elemento);
+        });
+        
+        return { unidadId: unidad.id, elementos };
+      });
+
+      const resultados = await Promise.all(promesas);
+      
+      // 2. Importar xlsx dinámicamente
+      const xlsx = await import('xlsx');
+      const wb = xlsx.utils.book_new();
+
+      // --- Hoja 1: Resumen Unidades ---
+      const datosResumen = units.map(u => ({
+        'ID': u.id,
+        'Nombre': u.nombre,
+        'Tipo': u.tipo,
+        'Modelo': u.modelo,
+        'Patente': u.patente,
+        'Estado': u.estado
+      }));
+      const wsResumen = xlsx.utils.json_to_sheet(datosResumen);
+      wsResumen['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+      xlsx.utils.book_append_sheet(wb, wsResumen, "Resumen Unidades");
+
+      // --- Hoja 2: Inventario Detallado ---
+      const datosInventario: any[] = [];
+      resultados.forEach(item => {
+        const unidad = units.find(u => u.id === item.unidadId);
+        if (!unidad) return;
+
+        item.elementos.forEach(elem => {
+          datosInventario.push({
+            'ID Unidad': unidad.id,
+            'Nombre Unidad': unidad.nombre,
+            'Elemento': elem.nombre,
+            'Cantidad': elem.cantidad,
+            'Estado': elem.estado
+          });
+        });
+      });
+
+      const wsInventario = xlsx.utils.json_to_sheet(datosInventario);
+      wsInventario['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 30 }, { wch: 10 }, { wch: 15 }];
+      xlsx.utils.book_append_sheet(wb, wsInventario, "Inventario Detallado");
+
+      // 3. Descargar
+      xlsx.writeFile(wb, `Inventario_Unidades_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      mostrarToast("Archivo Excel descargado exitosamente.");
+
+    } catch (error) {
+      console.error("Error al exportar:", error);
+      mostrarToast("Error al generar el archivo Excel.");
+    }
+  };
+
   // Botones del Header
-const headerButtons = [
-  ...(user?.rol === 'admin' ? [{
-    icon: Plus,
-    onClick: () => navigate("/crear-unidad"),
-    ariaLabel: "Agregar unidad"
-  }] : []),
-  {
-    icon: Filter,
-    onClick: () => setIsFilterOpen(!isFilterOpen),
-    ariaLabel: "Filtrar unidades"
-  }
-];
+  const headerButtons = [
+    ...(user?.rol === 'admin' ? [{
+      icon: Plus,
+      onClick: () => navigate("/crear-unidad"),
+      ariaLabel: "Agregar unidad"
+    }] : []),
+    {
+      icon: Filter,
+      onClick: () => setIsFilterOpen(!isFilterOpen),
+      ariaLabel: "Filtrar unidades"
+    },
+    ...(user?.rol === 'admin' ? [{
+      icon: FileSpreadsheet,
+      onClick: handleExportarExcel,
+      ariaLabel: "Exportar a Excel",
+      className: "btn-exportar-header"
+    }] : [])
+  ];
 
   return (
     <>

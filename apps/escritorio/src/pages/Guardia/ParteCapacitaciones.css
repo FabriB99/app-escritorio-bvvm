@@ -1,0 +1,513 @@
+/* src/pages/Guardia/ParteCapacitaciones.css */
+/* Mismo lenguaje visual que Unidades.css — variables de variables.css de BVVM */
+
+/* ── Página ──────────────────────────────────────────────────────────────── */
+
+.parte-capacitaciones {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+
+.form-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--spacing-md, 16px);
+  font-family: var(--font-main);
+}
+
+.form-card--actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 24px;
+}
+
+/* ── Títulos ─────────────────────────────────────────────────────────────── */
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--color-sidebar, #2C3E50);
+  border-bottom: 1px solid #e8ecf0;
+  padding-bottom: 8px;
+  margin: 0 0 16px;
+}
+
+.subsection-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #506680;
+  margin-bottom: 10px;
+}
+
+.seccion-divider {
+  border: none;
+  border-top: 1px solid #e8ecf0;
+  margin: 18px 0;
+}
+
+/* ── Grids ───────────────────────────────────────────────────────────────── */
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-grid-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* Fila de unidad: auto para el radio, resto 1fr */
+.unidad-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* Si no usa unidad, la fila solo muestra el radio */
+.unidad-row > .form-group:first-child {
+  min-width: 130px;
+}
+
+@media (max-width: 720px) {
+  .form-grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .unidad-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .form-grid-2,
+  .form-grid-4,
+  .unidad-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Form elements ───────────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--color-sidebar, #2C3E50);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea {
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark, #1f2d3a);
+  background: var(--color-bg-content, #f7f9fb);
+  border: 1px solid var(--color-border, #dde3ea);
+  border-radius: var(--radius-sm, 8px);
+  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color var(--transition-fast, 0.15s ease);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-sidebar, #2C3E50);
+  background: #ffffff;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #506680;
+  margin-top: 4px;
+}
+
+/* ── Checkboxes ──────────────────────────────────────────────────────────── */
+
+.checkboxes-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px 20px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark, #1f2d3a);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-sidebar, #2C3E50);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Radios ──────────────────────────────────────────────────────────────── */
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-dark, #1f2d3a);
+  cursor: pointer;
+  user-select: none;
+}
+
+.radio-label input[type="radio"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-sidebar, #2C3E50);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Pill: dictada / recibida */
+.radio-label--pill {
+  padding: 8px 20px;
+  border: 1px solid var(--color-border, #dde3ea);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--color-bg-content, #f7f9fb);
+  transition:
+    background var(--transition-fast, 0.15s ease),
+    border-color var(--transition-fast, 0.15s ease),
+    color var(--transition-fast, 0.15s ease);
+}
+
+.radio-label--pill:has(input:checked) {
+  background: var(--color-sidebar, #2C3E50);
+  border-color: var(--color-sidebar, #2C3E50);
+  color: #ffffff;
+}
+
+/* ── Autocomplete ────────────────────────────────────────────────────────── */
+
+.autocomplete-wrap {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #ffffff;
+  border: 1px solid var(--color-border, #dde3ea);
+  border-radius: var(--radius-sm, 8px);
+  box-shadow: var(--shadow-dropdown, 0 4px 16px rgba(0,0,0,0.1));
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: var(--font-main);
+}
+
+.autocomplete-dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background var(--transition-fast, 0.15s ease);
+}
+
+.autocomplete-dropdown li:hover {
+  background: var(--color-bg-content, #f7f9fb);
+}
+
+.dropdown-orden {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--color-accent, #e63946);
+  background: rgba(230, 57, 70, 0.08);
+  border-radius: 4px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.dropdown-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-sidebar, #2C3E50);
+}
+
+/* ── Miembro tag (selección única) ───────────────────────────────────────── */
+
+.miembro-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(44, 62, 80, 0.06);
+  border: 1px solid rgba(44, 62, 80, 0.18);
+  border-radius: var(--radius-sm, 8px);
+  font-family: var(--font-main);
+}
+
+.miembro-tag__info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.miembro-tag__orden {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-accent, #e63946);
+  background: rgba(230, 57, 70, 0.08);
+  border-radius: 4px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.miembro-tag__nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-sidebar, #2C3E50);
+}
+
+.miembro-tag__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: #506680;
+  padding: 0 2px;
+  flex-shrink: 0;
+  transition: color var(--transition-fast, 0.15s ease);
+}
+
+.miembro-tag__remove:hover {
+  color: var(--color-accent, #e63946);
+}
+
+/* ── Chips (selección múltiple) ──────────────────────────────────────────── */
+
+.chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.miembro-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 12px;
+  background: rgba(44, 62, 80, 0.08);
+  border: 1px solid rgba(44, 62, 80, 0.2);
+  border-radius: 20px;
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-sidebar, #2C3E50);
+}
+
+.miembro-chip button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  color: #506680;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast, 0.15s ease);
+}
+
+.miembro-chip button:hover {
+  color: var(--color-accent, #e63946);
+}
+
+/* ── Botón guardar ───────────────────────────────────────────────────────── */
+
+.btn-guardar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background-color: var(--color-accent, #e63946);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast, 0.15s ease),
+    transform var(--transition-fast, 0.15s ease);
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background-color: #c62f3a;
+  transform: translateY(-1px);
+}
+
+.btn-guardar:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-guardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Tipo de actividad ───────────────────────────────────────────────────── */
+
+.tipo-actividad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .tipo-actividad-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tipo-actividad-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border, #dde3ea);
+  border-radius: var(--radius-md, 10px);
+  background: var(--color-bg-content, #f7f9fb);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast, 0.15s ease),
+    background var(--transition-fast, 0.15s ease),
+    box-shadow var(--transition-fast, 0.15s ease);
+  user-select: none;
+}
+
+.tipo-actividad-card input[type="radio"] {
+  display: none;
+}
+
+.tipo-actividad-card:hover {
+  border-color: rgba(44, 62, 80, 0.35);
+  background: #ffffff;
+}
+
+.tipo-actividad-card--active {
+  border-color: var(--color-sidebar, #2C3E50);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
+}
+
+.tipo-actividad-card__titulo {
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-sidebar, #2C3E50);
+}
+
+.tipo-actividad-card--active .tipo-actividad-card__titulo {
+  color: var(--color-sidebar, #2C3E50);
+}
+
+.tipo-actividad-card__desc {
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 400;
+  color: #506680;
+  line-height: 1.4;
+}
+
+/* ── Subsection hint (viaje) ─────────────────────────────────────────────── */
+
+.subsection-hint {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #506680;
+  margin-left: 8px;
+}
+
+/* ── Label count (participantes) ─────────────────────────────────────────── */
+
+.label-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 7px;
+  background: var(--color-sidebar, #2C3E50);
+  color: #ffffff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: middle;
+}
