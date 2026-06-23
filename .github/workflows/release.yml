@@ -1,12 +1,9 @@
 name: "Publicar Versión Automática"
 
-# Nota: no existe el tag @v2 en tauri-apps/tauri-action; la línea oficial es @v0
-# y es la que usa la documentación de Tauri v2 para builds y release.
-
 on:
   push:
     tags:
-      - "v*" # Se activa al subir un tag como v0.2.8
+      - "v*"
 
 jobs:
   publish-tauri:
@@ -27,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22        # ← cambiado de 20 a 22 (LTS actual)
           cache: npm
           cache-dependency-path: apps/escritorio/package-lock.json
 
@@ -43,14 +40,12 @@ jobs:
         working-directory: apps/escritorio
         run: npm ci
 
-      # Firma: el CLI de Tauri v2 lee TAURI_SIGNING_PRIVATE_KEY (+ password opcional).
-      # Los secretos pueden llamarse como en la doc oficial o con los nombres legacy.
       - name: Build and Release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY || secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD || secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: apps/escritorio
           tagName: v__VERSION__
@@ -58,7 +53,3 @@ jobs:
           releaseBody: "Actualización automática del sistema de Control de Bomberos."
           releaseDraft: false
           prerelease: false
-          # Subir .sig junto al instalador (por defecto es true; se deja explícito).
-          uploadUpdaterSignatures: true
-          # Si generás MSI y NSIS, el JSON del updater puede preferir uno u otro.
-          updaterJsonPreferNsis: false
