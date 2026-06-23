@@ -9,6 +9,7 @@ import { mostrarToast } from '../../utils/toast';
 import { useUser } from '../../context/UserContext';
 import Header from "../../components/Header";
 import './Unidades.css';
+import * as xlsx from 'xlsx';
 
 interface Unidad {
   id: string;
@@ -126,7 +127,6 @@ const Unidades: React.FC = () => {
       const resultados = await Promise.all(promesas);
       
       // 2. Importar xlsx dinámicamente
-      const xlsx = await import('xlsx');
       const wb = xlsx.utils.book_new();
 
       // --- Hoja 1: Resumen Unidades ---
