@@ -1,0 +1,171 @@
+/* src/pages/Guardia/Dashboard/WidgetNovedades.css */
+
+/* Contenedor principal del modal sólido */
+.modal-solido-container {
+    background-color: #f1f5f9; 
+    border-radius: 12px;
+    width: 95%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: var(--font-main);
+    margin: auto;
+  }
+  
+  /* Header Blanco y Limpio */
+  .modal-solido-header {
+    background-color: #ffffff;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .modal-solido-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-sidebar, #1e293b);
+  }
+  
+  .btn-icon-close {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  
+  .btn-icon-close:hover {
+    background-color: #f1f5f9;
+    color: #ef4444;
+  }
+  
+  /* Cuerpo del Modal */
+  .modal-solido-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Grillas */
+  .form-row-solido {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .form-col-solido {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  @media (max-width: 600px) {
+    .form-row-solido {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+  
+  /* Labels */
+  .label-wrap-solido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .label-wrap-solido label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Inputs Blancos (Destacan sobre el fondo gris) */
+  .input-solido {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff; 
+    color: #0f172a;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .input-solido:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+  
+  /* Botones Principales */
+  .modal-solido-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  
+  .btn-solido-primary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background-color: #3b82f6; /* Azul Novedades */
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  
+  .btn-solido-primary:hover:not(:disabled) {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+  }
+  
+  .btn-solido-primary:disabled {
+    background-color: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  
+  .btn-solido-secondary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #e2e8f0; 
+    color: #475569;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-solido-secondary:hover {
+    background-color: #cbd5e1;
+  }

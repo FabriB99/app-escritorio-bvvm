@@ -1,0 +1,296 @@
+/* src/pages/Guardia/ElementosMedicosHospital/ParteElementoMedico.css */
+
+/* ==========================================================================
+   ESTRUCTURA DEL MODAL SÓLIDO (Sin Transparencias ni Glass)
+   ========================================================================== */
+   .modal-solido-container {
+    background-color: #f1f5f9; /* El fondo gris clarito de tu captura */
+    border-radius: 12px;
+    width: 95%;
+    max-width: 680px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Para que el header blanco respete los bordes redondos */
+    font-family: var(--font-main);
+  }
+  
+  /* Header Blanco y Limpio */
+  .modal-solido-header {
+    background-color: #ffffff;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .modal-solido-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-sidebar, #1e293b);
+  }
+  
+  .btn-icon-close {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  
+  .btn-icon-close:hover {
+    background-color: #f1f5f9;
+    color: #ef4444;
+  }
+  
+  /* Cuerpo del Modal */
+  .modal-solido-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Grillas */
+  .form-row-solido {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .form-col-solido {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  
+  .col-main { flex: 3; }
+  .col-side { flex: 1; max-width: 100px; }
+  
+  @media (max-width: 600px) {
+    .form-row-solido {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-side { max-width: 100%; }
+  }
+  
+  /* Labels y Botones de Editar */
+  .label-wrap-solido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .label-wrap-solido label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  
+  .btn-editar-solido {
+    background: transparent;
+    border: none;
+    color: #3b82f6;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .btn-editar-solido:hover {
+    color: #1e3a8a;
+    text-decoration: underline;
+  }
+  
+  /* Inputs Blancos (Destacan sobre el fondo gris) */
+  .input-solido {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff; /* Blanco puro */
+    color: #0f172a;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .input-solido:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+  
+  .txt-centro { text-align: center; }
+  .textarea-solido { resize: vertical; min-height: 80px; }
+  
+  /* Botones Principales (Rojo y Gris) */
+  .modal-solido-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  
+  .btn-solido-primary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background-color: #ef4444; /* Rojo brillante como tu captura */
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  
+  .btn-solido-primary:hover:not(:disabled) {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+  }
+  
+  .btn-solido-primary:disabled {
+    background-color: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  
+  .btn-solido-secondary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #e2e8f0; /* Gris claro de cancelar */
+    color: #475569;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-solido-secondary:hover {
+    background-color: #cbd5e1;
+  }
+  
+  /* ==========================================================================
+     AUTOCOMPLETES Y LISTAS INTERNAS
+     ========================================================================== */
+  .autocomplete-wrap { position: relative; width: 100%; }
+  
+  .autocomplete-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 110;
+  }
+  
+  .autocomplete-dropdown li {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  
+  .autocomplete-dropdown li:hover { background-color: #f1f5f9; }
+  
+  .tag-seleccionado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    height: 44px;
+    box-sizing: border-box;
+  }
+  
+  .tag-texto { font-size: 14px; font-weight: 700; color: #1e293b; }
+  .tag-cerrar { background: transparent; border: none; color: #64748b; font-size: 18px; cursor: pointer; padding: 0; font-weight: bold; }
+  .tag-cerrar:hover { color: #ef4444; }
+  
+  /* Botones Gestión Modal */
+  .btn-solido-add {
+    background-color: #1e293b;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  
+  .lista-solida-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+  
+  .lista-solida-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  
+  .lista-solida-item:last-child { border-bottom: none; }
+  
+  .btn-solido-danger {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+  }
+  
+  .btn-solido-danger:hover {
+    color: #ef4444;
+    background-color: #fee2e2;
+  }

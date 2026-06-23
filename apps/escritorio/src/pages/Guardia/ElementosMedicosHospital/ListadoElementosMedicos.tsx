@@ -1,6 +1,5 @@
 // src/pages/Guardia/ElementosMedicosHospital/ListadoElementosMedicos.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { db } from '../../../app/firebase-config';
 import {
   collection, getDocs, doc, updateDoc, setDoc, getDoc, Timestamp, orderBy, query,
@@ -11,7 +10,10 @@ import { ToastContainer } from 'react-toastify';
 import { mostrarToast } from '../../../utils/toast';
 import Header from '../../../components/Header';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
-import ParteElementoMedico from './ParteElementoMedico';
+
+// Cambiamos la importación vieja por el nuevo modal premium
+import ModalRegistrarElemento from './ModalRegistrarElemento';
+
 import type { ElementoMedicoHospital, ConfigLista, EstadoElemento } from './types';
 import './ListadoElementosMedicos.css';
 
@@ -209,13 +211,13 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
               className={`config-tab ${tab === 'elementos' ? 'config-tab--active' : ''}`}
               onClick={() => setTab('elementos')}
             >
-              Elementos médicos
+              Elementos
             </button>
             <button
               className={`config-tab ${tab === 'hospitales' ? 'config-tab--active' : ''}`}
               onClick={() => setTab('hospitales')}
             >
-              Hospitales / Clínicas
+              Centro médico
             </button>
           </div>
 
@@ -269,8 +271,7 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
 type FiltroEstado = 'todos' | EstadoElemento;
 
 const ListadoElementosMedicos: React.FC = () => {
-  const navigate = useNavigate();
-  const { user } = useUser();
+  const { user } = useUser(); // Eliminamos navigate que no se usaba
   const esAdmin = (user as any)?.role === 'admin';
 
   const [registros, setRegistros] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
@@ -422,22 +423,12 @@ const ListadoElementosMedicos: React.FC = () => {
         )}
       </div>
 
-      {/* Modal nuevo registro */}
+      {/* Renderizado directo del nuevo Modal Premium */}
       {modalNuevo && (
-        <div className="modal-overlay">
-          <div className="modal-container modal-container--lg">
-            <div className="modal-header">
-              <h3 className="modal-title">Registrar elemento médico</h3>
-              <button className="btn-icon-modal" onClick={() => setModalNuevo(false)}><X size={18} /></button>
-            </div>
-            <div className="modal-body modal-body--form">
-              <ParteElementoMedico
-                isModal
-                onGuardado={() => { setModalNuevo(false); cargarRegistros(); }}
-              />
-            </div>
-          </div>
-        </div>
+        <ModalRegistrarElemento
+          onClose={() => setModalNuevo(false)}
+          onGuardado={() => { setModalNuevo(false); cargarRegistros(); }}
+        />
       )}
 
       {/* Modal recuperación */}

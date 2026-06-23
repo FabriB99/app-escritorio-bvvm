@@ -5,8 +5,11 @@ import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, Timestamp
 import { useUser } from '../../../context/UserContext';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import { mostrarToast } from '../../../utils/toast';
-import { CheckCircle, ClipboardList, Plus } from 'lucide-react';
+import { CheckCircle, ClipboardList, Plus, X, Save } from 'lucide-react';
 import type { NovedadGuardia } from './types';
+
+// Importación limpia local
+import './WidgetNovedades.css';
 
 const WidgetNovedades: React.FC = () => {
   const { user } = useUser();
@@ -31,7 +34,8 @@ const WidgetNovedades: React.FC = () => {
     };
   }, []);
 
-  const handleCrearNovedad = async () => {
+  const handleCrearNovedad = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!user || !titulo.trim()) return;
     try {
       const operador = await buildOperador(user.uid);
@@ -94,80 +98,131 @@ const WidgetNovedades: React.FC = () => {
   };
 
   return (
-    <div className="widget-card">
-      <div className="widget-header">
-        <h3 className="widget-title">
-          <ClipboardList size={20} />
-          Novedades de Guardia
-        </h3>
-        <button 
-          onClick={() => setMostrarForm(!mostrarForm)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-sidebar)', padding: '4px' }}
-          title="Agregar novedad"
-        >
-          <Plus size={20} />
-        </button>
+    <>
+      <div className="widget-card" style={{ borderTopColor: '#475569' }}>
+        <div className="widget-header">
+          <h3 className="widget-title">
+            <ClipboardList size={20} color="#475569" />
+            Novedades de Guardia
+          </h3>
+          <button 
+            onClick={() => setMostrarForm(true)}
+            className="btn-icon-modal"
+            title="Agregar novedad"
+          >
+            <Plus size={20} />
+          </button>
+        </div>
+
+        {cargando ? (
+          <p className="widget-loading">Cargando...</p>
+        ) : novedades.length === 0 ? (
+          <p style={{ color: '#506680', fontSize: '14px', textAlign: 'center', padding: '16px 0' }}>Sin novedades pendientes por ahora.</p>
+        ) : (
+          <ul className="widget-list">
+            {novedades.map(nov => (
+              <li key={nov.id} className={`widget-list-item prioridad-${nov.prioridad}`}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <strong>{nov.titulo}</strong>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', alignItems: 'center' }}>
+                    <span className={`badge-prioridad badge-${nov.prioridad}`}>
+                      {nov.prioridad}
+                    </span>
+                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '800', letterSpacing: '0.5px' }}>
+                      • {nov.categoria.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleResolver(nov)} 
+                  title="Marcar como resuelto"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#10b981', padding: '4px', transition: 'transform 0.2s' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <CheckCircle size={22} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {mostrarForm && (
-        <div style={{ background: 'var(--color-bg-content)', padding: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}>
-          <input 
-            type="text" 
-            placeholder="¿Qué hay pendiente?" 
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box', fontFamily: 'inherit' }}
-          />
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <select value={prioridad} onChange={(e) => setPrioridad(e.target.value as any)} style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '13px' }}>
-              <option value="baja">Baja</option>
-              <option value="media">Media</option>
-              <option value="alta">Alta</option>
-            </select>
-            <select value={categoria} onChange={(e) => setCategoria(e.target.value as any)} style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '13px', flex: 1 }}>
-              <option value="vehiculos">Vehículos</option>
-              <option value="mantenimiento">Mantenimiento</option>
-              <option value="administrativo">Administrativo</option>
-              <option value="otro">Otro</option>
-            </select>
-            <button onClick={handleCrearNovedad} style={{ padding: '6px 12px', backgroundColor: 'var(--color-sidebar)', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-              Agregar
-            </button>
+        <div className="modal-overlay" style={{ zIndex: 9999 }}>
+          <div className="modal-solido-container" style={{ maxWidth: '500px' }}>
+            
+            <div className="modal-solido-header">
+              <h3 className="modal-solido-title">Registrar Nueva Novedad</h3>
+              <button type="button" className="btn-icon-close" onClick={() => setMostrarForm(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCrearNovedad} className="modal-solido-body">
+              
+              <div className="form-col-solido">
+                <div className="label-wrap-solido">
+                  <label>NOVEDAD / PENDIENTE</label>
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="Escribir acá..." 
+                  value={titulo}
+                  onChange={(e) => setTitulo(e.target.value)}
+                  className="input-solido"
+                  required
+                />
+              </div>
+
+              <div className="form-row-solido">
+                <div className="form-col-solido">
+                  <div className="label-wrap-solido">
+                    <label>PRIORIDAD</label>
+                  </div>
+                  <select 
+                    value={prioridad} 
+                    onChange={(e) => setPrioridad(e.target.value as any)} 
+                    className="input-solido"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
+                  </select>
+                </div>
+                <div className="form-col-solido">
+                  <div className="label-wrap-solido">
+                    <label>CATEGORÍA</label>
+                  </div>
+                  <select 
+                    value={categoria} 
+                    onChange={(e) => setCategoria(e.target.value as any)} 
+                    className="input-solido"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="vehiculos">Vehículos</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="administrativo">Administrativo</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="modal-solido-actions">
+                <button type="submit" className="btn-solido-primary">
+                  <Save size={18} /> Guardar Novedad
+                </button>
+                <button type="button" className="btn-solido-secondary" onClick={() => setMostrarForm(false)}>
+                  Cancelar
+                </button>
+              </div>
+
+            </form>
           </div>
         </div>
       )}
-
-      {cargando ? (
-        <p className="widget-loading">Cargando...</p>
-      ) : novedades.length === 0 ? (
-        <p style={{ color: '#506680', fontSize: '14px' }}>Sin novedades pendientes por ahora.</p>
-      ) : (
-        <ul className="widget-list">
-          {novedades.map(nov => (
-            <li key={nov.id} className={`widget-list-item prioridad-${nov.prioridad}`}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <strong>{nov.titulo}</strong>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '6px', alignItems: 'center' }}>
-                  <span className={`badge-prioridad badge-${nov.prioridad}`}>
-                    {nov.prioridad}
-                  </span>
-                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '600' }}>
-                    • {nov.categoria.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-              <button 
-                onClick={() => handleResolver(nov)} 
-                title="Marcar como resuelto"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#2e8b57', padding: '4px' }}
-              >
-                <CheckCircle size={22} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    </>
   );
 };
 

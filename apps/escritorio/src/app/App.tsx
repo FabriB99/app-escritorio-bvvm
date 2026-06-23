@@ -154,6 +154,7 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
+          
           <Route
             path="/dashboard-guardia"
             element={
@@ -164,8 +165,6 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
-
-          
 
           {/* Rutas unidades con auth */}
           <Route
@@ -248,7 +247,18 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
+          <Route
+            path="/vencimientos"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
+                <MainLayout>
+                  <Vencimientos />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
 
+          {/* Rutas Áreas Protegidas */}
           <Route
             path="/areas-protegidas"
             element={
@@ -298,6 +308,18 @@ const App: React.FC = () => {
               <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
                 <MainLayout>
                   <ListadoCapacitaciones />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          {/* Choferes */}
+          <Route
+            path="/choferes"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
+                <MainLayout>
+                  <Choferes />
                 </MainLayout>
               </RutaProtegida>
             }
@@ -402,26 +424,6 @@ const App: React.FC = () => {
               <RutaProtegida rolesPermitidos={['admin']}>
                 <MainLayout>
                   <RegistroAccesos />
-                </MainLayout>
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/vencimientos"
-            element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
-                <MainLayout>
-                  <Vencimientos />
-                </MainLayout>
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/choferes"
-            element={
-              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
-                <MainLayout>
-                  <Choferes />
                 </MainLayout>
               </RutaProtegida>
             }
