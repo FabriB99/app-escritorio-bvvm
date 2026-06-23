@@ -73,6 +73,7 @@ const SECCIONES = [
     title: "Gestión de Guardia",
     icon: <Shield size={16} />,
     links: [
+      { text: "Novedades", to: "/dashboard-guardia" },
       { text: "Choferes", to: "/choferes" },
       { text: "Áreas Protegidas", to: "/areas-protegidas" },
       { text: "Control Intervenciones", to: "/p-intervenciones" },

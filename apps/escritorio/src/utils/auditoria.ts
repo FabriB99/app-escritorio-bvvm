@@ -1,76 +1,147 @@
 // src/utils/auditoria.ts
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+//
+// Sistema de auditoría centralizado para BVVM.
+//
+// PRINCIPIO CLAVE: toda la información del operador se resuelve y se guarda
+// en el momento de ESCRIBIR el log. El panel de auditoría lee el documento
+// tal cual está — nunca necesita hacer lookups secundarios.
+//
+// Estructura del documento en Firestore (colección: "auditoria"):
+// {
+//   fecha:      Timestamp     — cuándo ocurrió
+//   accion:     string        — "crear" | "editar" | "eliminar" | "autorizar"
+//   coleccion:  string        — qué colección fue afectada
+//   docId:      string        — ID del documento afectado
+//   docResumen: string        — descripción legible del doc (ej: "Capacitación 22/05/2026")
+//   operador: {
+//     uid:      string        — uid de Firebase Auth
+//     nombre:   string        — nombre completo
+//     rol:      string        — rol en el sistema
+//   }
+//   detalles: {
+//     descripcion?: string    — texto libre opcional
+//     cambios?: [{            — solo en "editar"
+//       campo:    string
+//       anterior: any
+//       nuevo:    any
+//     }]
+//     snapshot?: object       — copia del doc completo (solo en "eliminar")
+//   }
+// }
+
+import { addDoc, collection, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db } from "../app/firebase-config";
 
-export type AccionAuditoria = "crear" | "editar" | "eliminar";
+// ─── Tipos públicos ───────────────────────────────────────────────────────────
+
+export type AccionAuditoria = "crear" | "editar" | "eliminar" | "autorizar";
 
 export interface CampoModificado {
-  campo: string;         // Ej: "lugar", "horas", "fecha"
-  anterior: any;        // Valor antes de la edición
-  nuevo: any;           // Valor después de la edición
+  campo: string;
+  anterior: any;
+  nuevo: any;
+}
+
+export interface Operador {
+  uid: string;
+  nombre: string;
+  rol: string;
 }
 
 export interface RegistroAuditoria {
-  coleccion: string;        // Ej: "capacitaciones", "legajos"
-  accion: AccionAuditoria;  // "crear" | "editar" | "eliminar"
-  tipoCambio?: string;      // Opcional: "alta_curso", "autorizacion", etc.
-  docId: string;            // ID del documento afectado
-  
-  operador: { 
-    uid: string; 
-    rol: string; 
-    nombre?: string;        // Opcional: displayName del usuario
-  };
-  
+  accion: AccionAuditoria;
+  coleccion: string;
+  docId: string;
+  docResumen: string;   // texto legible — ej: "Capacitación 22/05/2026 — Cuartel"
+  operador: Operador;
   detalles?: {
-    descripcionBreve?: string;     // Corregido: sin espacio intermedio
-    cambios?: CampoModificado[];
-    valoresCreados?: any;
+    descripcion?: string;
+    cambios?: CamboModificado[];
+    snapshot?: Record<string, any>;
   };
 }
 
-/**
- * Helper para calcular la diferencia exacta entre dos objetos (Diff).
- * Omite campos internos irrelevantes y detecta qué propiedades cambiaron.
- */
-export const calcularDiff = (anterior: any, nuevo: any): CampoModificado[] => {
-  const cambios: CampoModificado[] = [];
-  if (!anterior || !nuevo) return cambios;
+// Alias para no romper si alguien lo importa con typo (ver abajo)
+type CamboModificado = CampoModificado;
 
-  const todasLasKeys = Array.from(new Set([...Object.keys(anterior), ...Object.keys(nuevo)]));
+// ─── buildOperador ────────────────────────────────────────────────────────────
+//
+// Lee el documento del usuario desde Firestore y construye el objeto Operador.
+// Llamar esto ANTES de registrarAuditoria garantiza que nombre y rol
+// siempre estén presentes en el log, sin depender de lookups posteriores.
+//
+// Uso:
+//   const operador = await buildOperador(user.uid);
+//   await registrarAuditoria({ ..., operador });
 
-  for (const key of todasLasKeys) {
-    if (key === "fechaCreacion" || key === "fechaEdicion" || key === "id") continue;
-
-    const valAnterior = anterior[key];
-    const valNuevo = nuevo[key];
-
-    const strAnterior = typeof valAnterior === "object" ? JSON.stringify(valAnterior) : valAnterior;
-    const strNuevo = typeof valNuevo === "object" ? JSON.stringify(valNuevo) : valNuevo;
-
-    if (strAnterior !== strNuevo) {
-      cambios.push({
-        campo: key,
-        anterior: valAnterior !== undefined ? valAnterior : null,
-        nuevo: valNuevo !== undefined ? valNuevo : null,
-      });
+export const buildOperador = async (uid: string): Promise<Operador> => {
+  try {
+    const snap = await getDoc(doc(db, "usuarios", uid));
+    if (snap.exists()) {
+      const d = snap.data() as Record<string, any>;
+      const nombre = [d.nombre, d.apellido].filter(Boolean).join(" ").trim();
+      return {
+        uid,
+        nombre: nombre || `uid:${uid}`,
+        rol: d.rol ?? "desconocido",
+      };
     }
+  } catch (err) {
+    // Sin permisos o doc no existe — usamos fallback
+    console.warn("buildOperador: no se pudo leer usuarios/" + uid, err);
   }
-
-  return cambios;
+  return { uid, nombre: `uid:${uid}`, rol: "desconocido" };
 };
 
-/**
- * Registra una acción en la colección centralizada de auditoría en Firestore.
- */
-export const registrarAuditoria = async (registro: RegistroAuditoria) => {
-  try {
-    await addDoc(collection(db, "auditoria"), {
-      ...registro,
-      fecha: serverTimestamp(),
-    });
-  } catch (err) {
-    console.error("Error registrando auditoría:", err);
-    throw err;
-  }
+// ─── calcularDiff ─────────────────────────────────────────────────────────────
+//
+// Compara dos versiones de un objeto y devuelve solo los campos que cambiaron.
+// Ignora campos de metadatos internos.
+//
+// Uso:
+//   const cambios = calcularDiff(docAntes, docDespues);
+//   await registrarAuditoria({ accion: "editar", detalles: { cambios } });
+
+const CAMPOS_IGNORADOS = new Set([
+  "fechaCreacion", "fechaEdicion", "creadoPor", "id",
+  "autorizacion",  // la autorización tiene su propio log
+]);
+
+export const calcularDiff = (
+  anterior: Record<string, any>,
+  nuevo: Record<string, any>
+): CampoModificado[] => {
+  if (!anterior || !nuevo) return [];
+
+  const keys = Array.from(
+    new Set([...Object.keys(anterior), ...Object.keys(nuevo)])
+  ).filter(k => !CAMPOS_IGNORADOS.has(k));
+
+  return keys.reduce<CampoModificado[]>((acc, key) => {
+    const va = anterior[key];
+    const vn = nuevo[key];
+    const sa = JSON.stringify(va ?? null);
+    const sn = JSON.stringify(vn ?? null);
+    if (sa !== sn) {
+      acc.push({ campo: key, anterior: va ?? null, nuevo: vn ?? null });
+    }
+    return acc;
+  }, []);
+};
+
+// ─── registrarAuditoria ───────────────────────────────────────────────────────
+//
+// Escribe el log en Firestore. Lanza error si falla — el caller decide
+// si interrumpe la operación o solo loguea.
+
+export const registrarAuditoria = async (registro: RegistroAuditoria): Promise<void> => {
+  await addDoc(collection(db, "auditoria"), {
+    fecha:      serverTimestamp(),
+    accion:     registro.accion,
+    coleccion:  registro.coleccion,
+    docId:      registro.docId,
+    docResumen: registro.docResumen,
+    operador:   registro.operador,
+    detalles:   registro.detalles ?? null,
+  });
 };

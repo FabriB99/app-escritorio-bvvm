@@ -23,8 +23,9 @@ import Choferes from '../pages/Choferes/VistaChoferes';
 import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista';
 import AgregarArea from "../pages/AreasProtegidas/AgregarArea";
 import EditarArea from "../pages/AreasProtegidas/EditarArea";
-import PCapacitaciones from "../pages/Guardia/ParteCapacitaciones"; // Asumo que este es el formulario de Crear/Editar
-import ListadoCapacitaciones from "../pages/Guardia/ListadoCapacitaciones";
+import ListadoCapacitaciones from '../pages/Guardia/Capacitaciones/ListadoCapacitaciones';
+import ParteCapacitaciones from '../pages/Guardia/Capacitaciones/ParteCapacitaciones';
+import DashboardGuardia from "../pages/Guardia/Dashboard/DashboardGuardia";
 
 // Admin
 import AdminPanel from "../pages/Admin/PanelAdmin";
@@ -153,6 +154,18 @@ const App: React.FC = () => {
               </RutaProtegida>
             }
           />
+          <Route
+            path="/dashboard-guardia"
+            element={
+              <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia', 'graduados']}>
+                <MainLayout>
+                  <DashboardGuardia />
+                </MainLayout>
+              </RutaProtegida>
+            }
+          />
+
+          
 
           {/* Rutas unidades con auth */}
           <Route
@@ -273,7 +286,7 @@ const App: React.FC = () => {
             element={
               <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'guardia']}>
                 <MainLayout>
-                  <PCapacitaciones />
+                  <ParteCapacitaciones />
                 </MainLayout>
               </RutaProtegida>
             }

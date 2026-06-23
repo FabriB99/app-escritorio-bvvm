@@ -1,13 +1,13 @@
-// src/pages/Guardia/ParteCapacitaciones.tsx
+// src/pages/Guardia/Capacitaciones/ParteCapacitaciones.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { db } from '../../app/firebase-config';
+import { db } from '../../../app/firebase-config';
 import { collection, addDoc, getDocs, doc, getDoc, updateDoc, Timestamp, DocumentData } from 'firebase/firestore';
-import { useUser } from '../../context/UserContext';
+import { useUser } from '../../../context/UserContext';
 import { Save, List } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
-import { mostrarToast } from '../../utils/toast';
-import Header from '../../components/Header';
+import { mostrarToast } from '../../../utils/toast';
+import Header from '../../../components/Header';
 import './ParteCapacitaciones.css';
 
 // ─── Tipos e Interfaces ───────────────────────────────────────────────────────

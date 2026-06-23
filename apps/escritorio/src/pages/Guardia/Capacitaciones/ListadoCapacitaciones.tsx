@@ -1,16 +1,16 @@
-// src/pages/Guardia/ListadoCapacitaciones.tsx
+// src/pages/Guardia/Capacitaciones/ListadoCapacitaciones.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../app/firebase-config';
+import { db } from '../../../app/firebase-config';
 import {
   collection, getDocs, query, orderBy, doc,
   updateDoc, deleteDoc, addDoc, Timestamp, getDoc
 } from 'firebase/firestore';
-import { useUser } from '../../context/UserContext';
+import { useUser } from '../../../context/UserContext';
 import { Plus, Pencil, Trash2, CheckCircle, ChevronDown, ChevronRight, X } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
-import { mostrarToast } from '../../utils/toast';
-import Header from '../../components/Header';
+import { mostrarToast } from '../../../utils/toast';
+import Header from '../../../components/Header';
 import PCapacitaciones from './ParteCapacitaciones'; // 🛠️ Importamos el formulario para usarlo en el modal
 import './ListadoCapacitaciones.css';
 

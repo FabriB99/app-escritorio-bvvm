@@ -1,0 +1,393 @@
+/* src/pages/Guardia/Dashboard/DashboardGuardia.css */
+
+/* ==========================================================================
+   1. LAYOUT PRINCIPAL
+   ========================================================================== */
+   .dashboard-page-wrapper .dashboard-layout-principal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg, 24px); 
+    width: 100%;
+    padding-bottom: var(--spacing-lg);
+    box-sizing: border-box;
+  }
+  
+  .dashboard-page-wrapper .dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: clamp(var(--spacing-sm), 2vw, var(--spacing-lg));
+    align-items: start;
+    justify-items: stretch;
+    width: 100%;
+  }
+    
+  /* ==========================================================================
+     2. TARJETA DEL CLIMA (Formato Compacto)
+     ========================================================================== */
+  .dashboard-page-wrapper .widget-clima-compacto {
+    border-top-color: #3b82f6;
+    padding: 12px 14px !important; 
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; 
+  }
+  
+  /* Fila Superior: Temp y Brújula */
+  .dashboard-page-wrapper .widget-clima-compacto .clima-row-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-bloque-temp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-textos-temp {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-temp-grande {
+    font-size: 2.2rem; 
+    font-weight: 800;
+    color: var(--color-sidebar);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-st-chica {
+    font-size: 15px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-bloque-brujula {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-textos-viento {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 60px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .viento-card-rumbo {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-sidebar);
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .viento-card-kmh {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-sidebar);
+    line-height: 1.1;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .viento-card-kmh small {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 700;
+  }
+  
+  /* Divisor horizontal fino */
+  .dashboard-page-wrapper .widget-clima-compacto .clima-linea-separadora {
+    height: 1px;
+    width: 100%;
+    background-color: #f1f5f9;
+    margin: 2px 0;
+  }
+  
+  /* Fila Inferior: Grilla 2x2 */
+  .dashboard-page-wrapper .widget-clima-compacto .clima-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 0; 
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-grid:nth-child(odd) {
+    border-right: 1px solid #f1f5f9; 
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-textos {
+    display: flex;
+    flex-direction: column;
+    width: 75px; 
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-textos span {
+    font-size: 10px; 
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1px;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-textos strong {
+    font-size: 16px; 
+    font-weight: 800;
+    color: var(--color-sidebar);
+    display: flex;
+    align-items: center;
+  }
+  
+  .dashboard-page-wrapper .widget-clima-compacto .clima-item-textos small {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-left: 2px;
+  }
+  
+  /* ==========================================================================
+     3. WIDGETS ESTÁNDAR (Novedades, Elementos)
+     ========================================================================== */
+  .dashboard-page-wrapper .widget-card {
+    background: var(--color-text-white, #ffffff);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-sm);
+    width: 100%;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-sidebar-dark) 8%, transparent);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-top: 3px solid var(--color-border);
+    font-family: var(--font-main);
+    box-sizing: border-box;
+    isolation: isolate;
+    gap: var(--spacing-md);
+  }
+  
+  .dashboard-page-wrapper .widget-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--color-sidebar) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-sidebar) 15%, transparent);
+    z-index: 1;
+  }
+  
+  .dashboard-page-wrapper .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .dashboard-page-wrapper .widget-title {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: var(--color-sidebar);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .dashboard-page-wrapper .widget-loading {
+    font-size: 13px;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-text-dark) 65%, var(--color-text-muted));
+    text-align: center;
+    padding: var(--spacing-md) 0;
+  }
+  
+  .dashboard-page-wrapper .widget-error {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-align: center;
+    padding: var(--spacing-md) 0;
+  }
+  
+  /* ==========================================================================
+     4. LISTAS Y BADGES DENTRO DE LOS WIDGETS
+     ========================================================================== */
+  .dashboard-page-wrapper .widget-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .dashboard-page-wrapper .widget-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--spacing-sm);
+    background-color: var(--color-bg-content);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-border);
+    font-size: 13px;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-text-dark) 65%, var(--color-text-muted));
+    line-height: 1.45;
+  }
+  
+  .dashboard-page-wrapper .widget-list-item strong {
+    color: var(--color-sidebar);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  
+  .dashboard-page-wrapper .badge-prioridad {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: var(--spacing-xs) 10px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    margin-top: var(--spacing-xs);
+    text-align: center;
+  }
+  
+  /* Estados basados en la lógica de unidades.css */
+  .dashboard-page-wrapper .badge-alta { background-color: rgba(179, 46, 46, 0.12); color: #8b2323; border: 1px solid rgba(179, 46, 46, 0.45); }
+  .dashboard-page-wrapper .prioridad-alta { border-left-color: #b32e2e; }
+  
+  .dashboard-page-wrapper .badge-media { background-color: rgba(241, 193, 0, 0.15); color: #9a7a00; border: 1px solid rgba(241, 193, 0, 0.55); }
+  .dashboard-page-wrapper .prioridad-media { border-left-color: #f1c100; }
+  
+  .dashboard-page-wrapper .badge-baja { background-color: rgba(46, 139, 87, 0.12); color: #1e6b45; border: 1px solid rgba(46, 139, 87, 0.45); }
+  .dashboard-page-wrapper .prioridad-baja { border-left-color: #2e8b57; }
+  
+  /* ==========================================================================
+     5. VENTANA MODAL (POP-UP)
+     ========================================================================== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(31, 45, 58, 0.6); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    backdrop-filter: blur(2px); 
+  }
+    
+  .modal-container {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 550px; 
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    animation: modalAparecer 0.3s ease-out; 
+  }
+    
+  @keyframes modalAparecer {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+    
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: #f8fafc;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+    
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-sidebar);
+    margin: 0;
+  }
+    
+  .btn-icon-modal {
+    background: transparent;
+    border: none;
+    color: #506680;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+  }
+    
+  .btn-icon-modal:hover {
+    background-color: rgba(230, 57, 70, 0.1);
+    color: #e63946; 
+  }
+    
+  .modal-body--form {
+    padding: 1.5rem;
+  }
+  
+  /* ==========================================================================
+     6. RESPONSIVE DESIGN
+     ========================================================================== */
+  @media (max-width: 900px) {
+    .dashboard-page-wrapper .clima-separador {
+      display: none;
+    }
+  }
+  
+  @media (min-width: 1366px) and (max-width: 1919px) {
+    .dashboard-page-wrapper .dashboard-container {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+      gap: var(--spacing-md);
+    }
+  }
+  
+  @media (min-width: 1920px) and (max-width: 2559px) {
+    .dashboard-page-wrapper .dashboard-container {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+      gap: var(--spacing-lg);
+    }
+  
+    .dashboard-page-wrapper .widget-title {
+      font-size: 1.4rem;
+    }
+  }
+  
+  @media (min-width: 2560px) {
+    .dashboard-page-wrapper .dashboard-container {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 450px), 1fr));
+      gap: 26px;
+    }
+  
+    .dashboard-page-wrapper .widget-title {
+      font-size: 1.5rem;
+    }
+  }
