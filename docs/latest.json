@@ -1,11 +1,11 @@
 {
-  "version": "0.3.0",
-  "notes": "Mejoras en la actualización automática y en la versión en pantalla de las areas protegidas",
-  "pub_date": "2026-05-10T15:00:00Z",
+  "version": "0.3.1",
+  "notes": "Modificaciones en la sección de Guardia",
+  "pub_date": "2026-06-23T19:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSHpxc3J2QUhianlWNjkxUFNnTFNjbEx2U2kvRTYzTmZJT1BlODREajhGM3NqczVub0FvenZHbmx0amxWeFh4aFRUWmpHV0RWdkxDUHI5T0tBaFNrb3dvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc4NDM1OTkzCWZpbGU6Q29udHJvbC1CVlZNXzAuMy4wX3g2NF9lbi1VUy5tc2kKYWpvcWhFMVluOFk1ck5nL3ZoREtaVElXaDl3ZlIvMnJJMjZYYjI2NVhWQUhLMWVLQzFXYUdNZjJsam12eGd2OGl1dzcrSDAzOEtQSnB5c0ZyWGJqQ1E9PQo=",
-      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.3.0/Control-BVVM_0.3.0_x64_en-US.msi"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDN1NDF2QVpNSmVKRkV1WjhnMytiU1oxODQ4QytKaWQySmdVbGxLUTJYYnZJN24rZzEzR1RFQk9aWlFTNTVEdFhQQ1A1d2sxWFRmeTNOb2tEajhOQUFZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyMjUxNDkzCWZpbGU6Q29udHJvbC1CVlZNXzAuMy4xX3g2NF9lbi1VUy5tc2kKK1dNWUJmdHM5S2IvbGg1M0V1N1U3YTNZUDVYeUVRcjdER3ppbTUrU1BET1dhMkZhaVVudjBZK2xnSFZKSzNhLzE3SzZla3dTaHBSNGsybzFYaFlwQUE9PQo=",
+      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.3.1/Control-BVVM_0.3.1_x64_en-US.msi"
     }
   }
 }
