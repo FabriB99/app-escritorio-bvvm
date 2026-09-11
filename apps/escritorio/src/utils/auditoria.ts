@@ -29,7 +29,7 @@
 //   }
 // }
 
-import { addDoc, collection, serverTimestamp, getDoc, doc } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../app/firebase-config";
 
 // ─── Tipos públicos ───────────────────────────────────────────────────────────
@@ -74,23 +74,21 @@ type CamboModificado = CampoModificado;
 //   const operador = await buildOperador(user.uid);
 //   await registrarAuditoria({ ..., operador });
 
-export const buildOperador = async (uid: string): Promise<Operador> => {
-  try {
-    const snap = await getDoc(doc(db, "usuarios", uid));
-    if (snap.exists()) {
-      const d = snap.data() as Record<string, any>;
-      const nombre = [d.nombre, d.apellido].filter(Boolean).join(" ").trim();
-      return {
-        uid,
-        nombre: nombre || `uid:${uid}`,
-        rol: d.rol ?? "desconocido",
-      };
-    }
-  } catch (err) {
-    // Sin permisos o doc no existe — usamos fallback
-    console.warn("buildOperador: no se pudo leer usuarios/" + uid, err);
+interface MiembroActivo {
+  id: string;
+  nombre: string;
+  apellido: string;
+}
+
+export const buildOperador = (miembroActivo: MiembroActivo | null, rol?: string): Operador => {
+  if (!miembroActivo) {
+    return { uid: "desconocido", nombre: "Sin identificar", rol: rol ?? "desconocido" };
   }
-  return { uid, nombre: `uid:${uid}`, rol: "desconocido" };
+  return {
+    uid: miembroActivo.id,
+    nombre: `${miembroActivo.nombre} ${miembroActivo.apellido}`.trim(),
+    rol: rol ?? "desconocido",
+  };
 };
 
 // ─── calcularDiff ─────────────────────────────────────────────────────────────

@@ -40,39 +40,42 @@ const CrearUnidad: React.FC = () => {
     };
 
     const crearUnidad = async () => {
-        if (!nombre || !modelo || !patente || !tipo) return;
-
-        const unidadRef = await addDoc(collection(db, 'unidades'), {
-            nombre,
-            modelo,
-            patente,
-            tipo,
-            estado,
-            ultima_revision: null,
-            kilometraje: '',
-            combustible: ''
-        });
-
-        for (let i = 0; i < ubicaciones.length; i++) {
-            const ubicacion = ubicaciones[i];
-
-            const ubicacionRef = await addDoc(collection(db, 'ubicaciones'), {
-                nombre: ubicacion.nombre,
-                unidad_id: unidadRef.id,
-                orden: i // 👈 este es el nuevo campo que guarda el orden
-            });
-
-            for (const elemento of ubicacion.elementos) {
-                await addDoc(collection(db, 'elementos'), {
-                    nombre: elemento.nombre,
-                    cantidad: elemento.cantidad,
-                    estado: 'Desconocido',
-                    ubicacion_id: ubicacionRef.id
-                });
-            }
+        if (!nombre || !modelo || !patente || !tipo) {
+            mostrarToast("Completá todos los campos obligatorios.");
+            return;
         }
-
-        mostrarToast("Unidad creada con éxito.", () => navigate(`/unidades`));
+    
+        try {
+            const unidadRef = await addDoc(collection(db, 'unidades'), {
+                nombre, modelo, patente, tipo, estado,
+                ultima_revision: null,
+                kilometraje: '',
+                combustible: ''
+            });
+    
+            for (let i = 0; i < ubicaciones.length; i++) {
+                const ubicacion = ubicaciones[i];
+                const ubicacionRef = await addDoc(collection(db, 'ubicaciones'), {
+                    nombre: ubicacion.nombre,
+                    unidad_id: unidadRef.id,
+                    orden: i
+                });
+    
+                for (const elemento of ubicacion.elementos) {
+                    await addDoc(collection(db, 'elementos'), {
+                        nombre: elemento.nombre,
+                        cantidad: elemento.cantidad,
+                        estado: 'Desconocido',
+                        ubicacion_id: ubicacionRef.id
+                    });
+                }
+            }
+    
+            mostrarToast("Unidad creada con éxito.", () => navigate(`/unidades`));
+        } catch (error) {
+            console.error("Error creando unidad:", error);
+            mostrarToast("Error al crear la unidad. Revisá la consola.");
+        }
     };
 
     return (

@@ -39,6 +39,8 @@ export interface ElementoMedicoHospital {
   // Recuperación
   fechaRecuperacion?: import('firebase/firestore').Timestamp;
   observacionesRecuperacion?: string;
+  resueltoPorUid?: string;
+  resueltoPorNombre?: string;
 
   // Meta
   anio: number;

@@ -12,7 +12,7 @@ import type { ElementoMedicoHospital } from '../ElementosMedicosHospital/types';
 import ModalRegistrarElemento from '../ElementosMedicosHospital/ModalRegistrarElemento';
 
 const WidgetElementosPendientes: React.FC = () => {
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const [elementos, setElementos] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
   const [cargando, setCargando] = useState(true);
   
@@ -38,13 +38,13 @@ const WidgetElementosPendientes: React.FC = () => {
   }, []);
 
   const handleRecuperar = async (elemento: ElementoMedicoHospital & { id: string }) => {
-    if (!user || !elemento.id) return;
+    if (!user || !miembroActivo || !elemento.id) return;
     try {
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
       await updateDoc(doc(db, 'elementos_medicos_hospital', elemento.id), {
         estado: 'recuperado',
         fechaResolucion: Timestamp.now(),
-        resueltoPorUid: user.uid,
+        resueltoPorUid: operador.uid,
         resueltoPorNombre: operador.nombre,
       });
 
@@ -94,6 +94,11 @@ const WidgetElementosPendientes: React.FC = () => {
                     <strong style={{ fontSize: '14px' }}>
                       {el.cantidad}x {el.elemento === 'Otro' ? el.elementoOtro : el.elemento}
                     </strong>
+                    {el.observaciones && (
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>
+                        {el.observaciones}
+                      </span>
+                    )}
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: '#64748b', backgroundColor: '#f1f5f9', padding: '3px 8px', borderRadius: '6px' }}>
                         <Building2 size={12} color="#94a3b8" />
@@ -102,6 +107,9 @@ const WidgetElementosPendientes: React.FC = () => {
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: '#64748b', backgroundColor: '#f1f5f9', padding: '3px 8px', borderRadius: '6px' }}>
                         <Truck size={12} color="#94a3b8" />
                         {el.unidadNombre}
+                      </span>
+                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                        · {el.registradoPorNombre}
                       </span>
                     </div>
                   </div>

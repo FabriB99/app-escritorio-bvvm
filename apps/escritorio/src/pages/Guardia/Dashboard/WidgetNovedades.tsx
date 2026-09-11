@@ -8,16 +8,16 @@ import { mostrarToast } from '../../../utils/toast';
 import { CheckCircle, ClipboardList, Plus, X, Save } from 'lucide-react';
 import type { NovedadGuardia } from './types';
 
-// Importación limpia local
 import './WidgetNovedades.css';
 
 const WidgetNovedades: React.FC = () => {
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const [novedades, setNovedades] = useState<NovedadGuardia[]>([]);
   const [cargando, setCargando] = useState(true);
-  
+
   const [mostrarForm, setMostrarForm] = useState(false);
   const [titulo, setTitulo] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [prioridad, setPrioridad] = useState<'alta' | 'media' | 'baja'>('media');
   const [categoria, setCategoria] = useState<NovedadGuardia['categoria']>('vehiculos');
 
@@ -36,17 +36,17 @@ const WidgetNovedades: React.FC = () => {
 
   const handleCrearNovedad = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!user || !titulo.trim()) return;
+    if (!user || !miembroActivo || !titulo.trim()) return;
     try {
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
       const nuevaNovedad: Omit<NovedadGuardia, 'id'> = {
         titulo: titulo.trim(),
-        descripcion: '',
+        descripcion: descripcion.trim(),
         prioridad,
         categoria,
         estado: 'pendiente',
         fechaRegistro: Timestamp.now(),
-        registradoPorUid: user.uid,
+        registradoPorUid: operador.uid,
         registradoPorNombre: operador.nombre,
       };
 
@@ -63,6 +63,7 @@ const WidgetNovedades: React.FC = () => {
 
       mostrarToast('Novedad registrada');
       setTitulo('');
+      setDescripcion('');
       setMostrarForm(false);
     } catch (err) {
       console.error(err);
@@ -71,13 +72,13 @@ const WidgetNovedades: React.FC = () => {
   };
 
   const handleResolver = async (novedad: NovedadGuardia) => {
-    if (!user || !novedad.id) return;
+    if (!user || !miembroActivo || !novedad.id) return;
     try {
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
       await updateDoc(doc(db, 'novedades_guardia', novedad.id), {
         estado: 'resuelta',
         fechaResolucion: Timestamp.now(),
-        resueltoPorUid: user.uid,
+        resueltoPorUid: operador.uid,
         resueltoPorNombre: operador.nombre,
       });
 
@@ -105,7 +106,7 @@ const WidgetNovedades: React.FC = () => {
             <ClipboardList size={20} color="#475569" />
             Novedades de Guardia
           </h3>
-          <button 
+          <button
             onClick={() => setMostrarForm(true)}
             className="btn-icon-modal"
             title="Agregar novedad"
@@ -124,17 +125,25 @@ const WidgetNovedades: React.FC = () => {
               <li key={nov.id} className={`widget-list-item prioridad-${nov.prioridad}`}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <strong>{nov.titulo}</strong>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', alignItems: 'center' }}>
+                  {nov.descripcion && (
+                    <span style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                      {nov.descripcion}
+                    </span>
+                  )}
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                     <span className={`badge-prioridad badge-${nov.prioridad}`}>
                       {nov.prioridad}
                     </span>
                     <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '800', letterSpacing: '0.5px' }}>
                       • {nov.categoria.toUpperCase()}
                     </span>
+                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      · {nov.registradoPorNombre}
+                    </span>
                   </div>
                 </div>
-                <button 
-                  onClick={() => handleResolver(nov)} 
+                <button
+                  onClick={() => handleResolver(nov)}
                   title="Marcar como resuelto"
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#10b981', padding: '4px', transition: 'transform 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -151,27 +160,40 @@ const WidgetNovedades: React.FC = () => {
       {mostrarForm && (
         <div className="modal-overlay" style={{ zIndex: 9999 }}>
           <div className="modal-solido-container" style={{ maxWidth: '500px' }}>
-            
+
             <div className="modal-solido-header">
               <h3 className="modal-solido-title">Registrar Nueva Novedad</h3>
               <button type="button" className="btn-icon-close" onClick={() => setMostrarForm(false)}>
                 <X size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={handleCrearNovedad} className="modal-solido-body">
-              
+
               <div className="form-col-solido">
                 <div className="label-wrap-solido">
                   <label>NOVEDAD / PENDIENTE</label>
                 </div>
-                <input 
-                  type="text" 
-                  placeholder="Escribir acá..." 
+                <input
+                  type="text"
+                  placeholder="Escribir acá..."
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                   className="input-solido"
                   required
+                />
+              </div>
+
+              <div className="form-col-solido">
+                <div className="label-wrap-solido">
+                  <label>OBSERVACIÓN (OPCIONAL)</label>
+                </div>
+                <textarea
+                  placeholder="Detalle adicional..."
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  className="input-solido"
+                  rows={2}
                 />
               </div>
 
@@ -180,9 +202,9 @@ const WidgetNovedades: React.FC = () => {
                   <div className="label-wrap-solido">
                     <label>PRIORIDAD</label>
                   </div>
-                  <select 
-                    value={prioridad} 
-                    onChange={(e) => setPrioridad(e.target.value as any)} 
+                  <select
+                    value={prioridad}
+                    onChange={(e) => setPrioridad(e.target.value as any)}
                     className="input-solido"
                     style={{ cursor: 'pointer' }}
                   >
@@ -195,13 +217,14 @@ const WidgetNovedades: React.FC = () => {
                   <div className="label-wrap-solido">
                     <label>CATEGORÍA</label>
                   </div>
-                  <select 
-                    value={categoria} 
-                    onChange={(e) => setCategoria(e.target.value as any)} 
+                  <select
+                    value={categoria}
+                    onChange={(e) => setCategoria(e.target.value as any)}
                     className="input-solido"
                     style={{ cursor: 'pointer' }}
                   >
                     <option value="vehiculos">Vehículos</option>
+                    <option value="edilicio">Edilicio</option>
                     <option value="mantenimiento">Mantenimiento</option>
                     <option value="administrativo">Administrativo</option>
                     <option value="otro">Otro</option>

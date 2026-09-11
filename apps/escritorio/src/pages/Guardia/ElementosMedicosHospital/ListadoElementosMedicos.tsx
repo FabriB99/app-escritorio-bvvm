@@ -42,19 +42,21 @@ interface ModalRecuperacionProps {
 }
 
 const ModalRecuperacion: React.FC<ModalRecuperacionProps> = ({ registro, onCerrar, onRecuperado }) => {
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const [observaciones, setObservaciones] = useState('');
   const [guardando, setGuardando] = useState(false);
 
   const handleRecuperar = async () => {
-    if (!user) return;
+    if (!user || !miembroActivo) return;
     setGuardando(true);
     try {
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
 
       await updateDoc(doc(db, 'elementos_medicos_hospital', registro.id), {
         estado: 'recuperado',
         fechaRecuperacion: Timestamp.now(),
+        resueltoPorUid: operador.uid,
+        resueltoPorNombre: operador.nombre,
         ...(observaciones.trim() && { observacionesRecuperacion: observaciones.trim() }),
       });
 
@@ -122,7 +124,7 @@ interface ModalConfigProps {
 }
 
 const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const [tab, setTab] = useState<'elementos' | 'hospitales'>('elementos');
   const [elementos, setElementos] = useState<string[]>([]);
   const [hospitales, setHospitales] = useState<string[]>([]);
@@ -143,11 +145,11 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
   }, []);
 
   const guardarLista = async (colDoc: string, items: string[], descripcion: string) => {
-    if (!user) return;
+    if (!user || !miembroActivo) return;
     setGuardando(true);
     try {
       await setDoc(doc(db, 'config_guardia', colDoc), { items });
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
       await registrarAuditoria({
         accion: 'editar',
         coleccion: 'config_guardia',
@@ -272,7 +274,7 @@ type FiltroEstado = 'todos' | EstadoElemento;
 
 const ListadoElementosMedicos: React.FC = () => {
   const { user } = useUser(); // Eliminamos navigate que no se usaba
-  const esAdmin = (user as any)?.role === 'admin';
+  const esAdmin = user?.rol === 'admin';
 
   const [registros, setRegistros] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -377,7 +379,7 @@ const ListadoElementosMedicos: React.FC = () => {
                   <th>Cant.</th>
                   <th>Hospital / Clínica</th>
                   <th>Unidad</th>
-                  <th>Depositado</th>
+                  <th>Depositado por</th>
                   <th>Estado</th>
                   <th>Recuperado</th>
                   <th></th>
@@ -395,14 +397,26 @@ const ListadoElementosMedicos: React.FC = () => {
                     <td className="col-centro">{r.cantidad}</td>
                     <td>{nombreHospital(r)}</td>
                     <td>{r.unidadNombre}</td>
-                    <td className="col-fecha">{formatFecha(r.fechaRegistro)}</td>
+                    <td>{r.registradoPorNombre}</td>
                     <td>
                       <span className={`badge-estado badge-estado--${r.estado}`}>
                         {r.estado === 'pendiente' ? 'Pendiente' : 'Recuperado'}
                       </span>
                     </td>
                     <td className="col-fecha">
-                      {r.estado === 'recuperado' ? formatFecha(r.fechaRecuperacion) : '—'}
+                      {r.estado === 'recuperado' ? (
+                        <>
+                          {formatFecha(r.fechaRecuperacion)}
+                          {r.resueltoPorNombre && (
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                              {r.resueltoPorNombre}
+                            </div>
+                          )}
+                          {r.observacionesRecuperacion && (
+                            <span className="elemento-obs" title={r.observacionesRecuperacion}>ℹ</span>
+                          )}
+                        </>
+                      ) : '—'}
                     </td>
                     <td className="col-accion">
                       {r.estado === 'pendiente' && (

@@ -34,7 +34,7 @@ const AutocompleteUnidad: React.FC<{unidades: Unidad[], seleccionada: UnidadRef 
         </div>
       ) : (
         <>
-          <input type="text" placeholder="Buscar móvil o unidad..." value={query} onChange={e => { setQuery(e.target.value); setAbierto(true); }} onFocus={() => setAbierto(true)} className="input-solido" />
+          <input type="text" placeholder="Unidad..." value={query} onChange={e => { setQuery(e.target.value); setAbierto(true); }} onFocus={() => setAbierto(true)} className="input-solido" />
           {abierto && filtradas.length > 0 && (
             <ul className="autocomplete-dropdown">
               {filtradas.map(u => ( <li key={u.id} onMouseDown={() => {onSeleccionar({id: u.id, nombre: u.nombre}); setQuery(''); setAbierto(false);}}>{u.nombre}</li> ))}
@@ -71,7 +71,7 @@ const AutocompleteDinamico: React.FC<{opciones: string[], valor: string, onChang
 
 // ─── Modal Principal ──────────────────────────────────────────────
 const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
-  const { user } = useUser();
+  const { user, miembroActivo } = useUser();
   const [listaElementos, setListaElementos] = useState<string[]>([]);
   const [listaHospitales, setListaHospitales] = useState<string[]>([]);
   const [unidades, setUnidades] = useState<Unidad[]>([]);
@@ -130,17 +130,17 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
   };
 
   const handleGuardar = async () => {
-    if (!user) return;
+    if (!user || !miembroActivo) return;
     if (!elemento.trim() || !hospital.trim() || !unidadSeleccionada || cantidad < 1) { mostrarToast('Completá todos los campos.'); return; }
     
     setGuardando(true);
     try {
-      const operador = await buildOperador(user.uid);
+      const operador = buildOperador(miembroActivo, user.rol);
       const docData: Omit<ElementoMedicoHospital, 'id'> = {
         elemento: elemento.trim(), cantidad, hospital: hospital.trim(),
         unidadId: unidadSeleccionada.id, unidadNombre: unidadSeleccionada.nombre,
         ...(observaciones.trim() && { observaciones: observaciones.trim() }),
-        estado: 'pendiente', registradoPorUid: user.uid, registradoPorNombre: operador.nombre,
+        estado: 'pendiente', registradoPorUid: operador.uid, registradoPorNombre: operador.nombre,
         fechaRegistro: Timestamp.now(), anio: new Date().getFullYear(),
       };
 
@@ -176,7 +176,7 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
                   <Settings size={14} /> Editar
                 </button>
               </div>
-              <AutocompleteDinamico opciones={listaElementos} valor={elemento} onChange={setElemento} placeholder="Ej: Lanza, Tabla espinal..." />
+              <AutocompleteDinamico opciones={listaElementos} valor={elemento} onChange={setElemento} placeholder="Ej: Collar cervical, Tabla rígida..." />
             </div>
             <div className="form-col-solido col-side">
               <div className="label-wrap-solido"><label>CANT.</label></div>
@@ -202,7 +202,7 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
 
           <div className="form-col-solido" style={{ marginTop: '4px' }}>
             <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', marginBottom: '8px' }}>OBSERVACIONES (OPCIONAL)</label>
-            <textarea rows={2} placeholder="Info adicional sobre a quién se lo entregaron, sala, etc..." value={observaciones} onChange={e => setObservaciones(e.target.value)} className="input-solido textarea-solido" />
+            <textarea rows={2} placeholder="Intervención que fué, donde..." value={observaciones} onChange={e => setObservaciones(e.target.value)} className="input-solido textarea-solido" />
           </div>
 
           <div className="modal-solido-actions">

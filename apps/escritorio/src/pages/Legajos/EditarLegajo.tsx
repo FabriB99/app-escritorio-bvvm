@@ -5,7 +5,7 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebas
 import { db, storage } from "../../app/firebase-config";
 import { Plus, Trash2, User } from "lucide-react";
 import "./EditarLegajo.css";
-import { registrarAuditoria } from "../../utils/auditoria";
+import { registrarAuditoria, buildOperador, calcularDiff } from "../../utils/auditoria";
 import { useUser } from "../../context/UserContext";
 import imageCompression from "browser-image-compression";
 import Header from "../../components/Header";
@@ -123,15 +123,21 @@ const EditarLegajo: React.FC = () => {
     try {
       const { miembroId, ...datosAGuardar } = datos;
       await setDoc(doc(db, "legajos", id), datosAGuardar, { merge: true });
+
+      const cambios = calcularDiff(datosOriginales.current || {}, datosAGuardar);
+
       await registrarAuditoria({
-        coleccion: "legajos", accion: "editar", docId: id,
-        miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
-        datosNuevos: datosAGuardar,
-        datosAnteriores: datosOriginales.current,
+        accion: "editar",
+        coleccion: "legajos",
+        docId: id,
+        docResumen: `Legajo: ${datosAGuardar.apellido} ${datosAGuardar.nombre}`,
+        operador: buildOperador(miembroActivo, miembroActivo.categoria),
+        detalles: { cambios },
       });
+
       navigate(`/legajo/${id}`);
     } catch (error) { console.error(error); }
-  };
+};
 
   if (loading) return <p>Cargando...</p>;
 
