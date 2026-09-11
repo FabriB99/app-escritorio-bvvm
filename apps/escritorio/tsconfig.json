@@ -16,7 +16,8 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "types": ["react", "react-dom", "@tauri-apps/api", "node"],
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

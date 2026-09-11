@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, serverTimestamp, doc, setDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
 import { useUser } from '../../context/UserContext';
-import { registrarAuditoria } from '../../utils/auditoria';
+import { registrarAuditoria, buildOperador } from '../../utils/auditoria';
 import { FileText } from 'lucide-react';
 import Header from "../../components/Header";
 import './AgregarLegajo.css';
@@ -98,12 +98,10 @@ const AgregarLegajo: React.FC = () => {
         coleccion: "legajos",
         accion: "crear",
         docId: nuevoDocRef.id,
-        miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
-        datosNuevos: {
-          nombre: miembroEncontrado.nombre,
-          apellido: miembroEncontrado.apellido,
-          dni: dni.trim(),
-          numeroLegajo: Number(numeroLegajo),
+        docResumen: `Legajo N° ${numeroLegajo} — ${miembroEncontrado.apellido} ${miembroEncontrado.nombre}`,
+        operador: buildOperador(miembroActivo, miembroActivo.categoria),
+        detalles: {
+          descripcion: `Alta de legajo N° ${numeroLegajo} vinculado a ${miembroEncontrado.nombre} ${miembroEncontrado.apellido} (DNI ${dni.trim()})`,
         },
       });
 

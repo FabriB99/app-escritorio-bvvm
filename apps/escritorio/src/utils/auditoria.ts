@@ -138,8 +138,8 @@ export const registrarAuditoria = async (registro: RegistroAuditoria): Promise<v
     accion:     registro.accion,
     coleccion:  registro.coleccion,
     docId:      registro.docId,
-    docResumen: registro.docResumen,
-    operador:   registro.operador,
+    docResumen: registro.docResumen ?? "Sin descripción",
+    operador:   registro.operador ?? { uid: "desconocido", nombre: "Sin identificar", rol: "desconocido" },
     detalles:   registro.detalles ?? null,
   });
 };

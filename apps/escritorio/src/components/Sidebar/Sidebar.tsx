@@ -76,9 +76,6 @@ const SECCIONES = [
       { text: "Novedades", to: "/dashboard-guardia" },
       { text: "Choferes", to: "/choferes" },
       { text: "Áreas Protegidas", to: "/areas-protegidas" },
-      { text: "Control Intervenciones", to: "/p-intervenciones" },
-      { text: "Control Mantenimiento", to: "/p-mantenimiento" },
-      { text: "Control Capacitación", to: "/p-capacitaciones" }
     ],
     rolesPermitidos: ["admin", "jefatura", "guardia"]
   },
