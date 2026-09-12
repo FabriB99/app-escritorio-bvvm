@@ -4,7 +4,7 @@ import { db } from '../../../app/firebase-config';
 import { collection, query, where, onSnapshot, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
-import { mostrarToast } from '../../../utils/toast';
+import { toast } from 'sonner';
 import { AlertCircle, Plus, CheckCircle, Building2, Truck } from 'lucide-react';
 import type { ElementoMedicoHospital } from '../ElementosMedicosHospital/types';
 
@@ -57,9 +57,9 @@ const WidgetElementosPendientes: React.FC = () => {
         detalles: { descripcion: `Marcó el elemento como recuperado.` }
       });
 
-      mostrarToast('Elemento marcado como recuperado');
+      toast.success('Elemento marcado como recuperado');
     } catch (err) {
-      mostrarToast('Error al actualizar el estado');
+      toast.error('Error al actualizar el estado');
     }
   };
 

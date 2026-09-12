@@ -4,7 +4,7 @@ import { collection, query, where, getDocs, doc, getDoc, deleteDoc } from 'fireb
 import { db } from "../../app/firebase-config";
 import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaQuestionCircle } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
-import { mostrarToast } from '../../utils/toast'; 
+import { toast } from 'sonner'; 
 import { useUser } from '../../context/UserContext'; // ✅
 import './HistorialRevisiones.css';
 import Header from "../../components/Header";

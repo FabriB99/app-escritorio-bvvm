@@ -4,8 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../../app/firebase-config";
 import { deleteDoc, doc, collection, onSnapshot, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { Plus, Filter, X, FileSpreadsheet } from 'lucide-react';
-import { ToastContainer } from 'react-toastify';
-import { mostrarToast } from '../../utils/toast';
+import { toast } from 'sonner';
 import { useUser } from '../../context/UserContext';
 import Header from "../../components/Header";
 import './Unidades.css';
@@ -88,10 +87,11 @@ const Unidades: React.FC = () => {
     if (!id) return;
     try {
       await deleteDoc(doc(db, 'unidades', id));
-      mostrarToast("Unidad eliminada con éxito.");
+      toast.success("Unidad eliminada con éxito.");
       cerrarModal();
     } catch (error) {
       console.error("Error al eliminar la unidad:", error);
+      toast.error("Error al eliminar la unidad.");
     }
   };
 
@@ -100,11 +100,11 @@ const Unidades: React.FC = () => {
   // Lógica de Exportación a Excel
   const handleExportarExcel = async () => {
     if (units.length === 0) {
-      mostrarToast("No hay unidades para exportar.");
+      toast.warning("No hay unidades para exportar.");
       return;
     }
 
-    mostrarToast("Cargando datos detallados...");
+    toast.info("Cargando datos detallados...");
 
     try {
       // 1. Cargar elementos de todas las unidades en paralelo
@@ -165,11 +165,11 @@ const Unidades: React.FC = () => {
 
       // 3. Descargar
       xlsx.writeFile(wb, `Inventario_Unidades_${new Date().toISOString().slice(0, 10)}.xlsx`);
-      mostrarToast("Archivo Excel descargado exitosamente.");
+      toast.success("Archivo Excel descargado exitosamente.");
 
     } catch (error) {
       console.error("Error al exportar:", error);
-      mostrarToast("Error al generar el archivo Excel.");
+      toast.error("Error al generar el archivo Excel.");
     }
   };
 
@@ -259,16 +259,6 @@ const Unidades: React.FC = () => {
           </div>
         </div>
       )}
-
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar
-        closeOnClick
-        pauseOnHover={false}
-        draggable={false}
-        toastClassName="toast-style"
-      />
     </>
   );
 };

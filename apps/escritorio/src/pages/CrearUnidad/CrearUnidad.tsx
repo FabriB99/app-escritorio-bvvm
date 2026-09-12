@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { db } from "../../app/firebase-config";
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import { mostrarToast } from '../../utils/toast'; 
+import { toast } from 'sonner'; 
 import './CrearUnidad.css'; 
-import '../Toast/toastStyles.css'; 
 import Header from "../../components/Header";
 
 const CrearUnidad: React.FC = () => {
@@ -41,7 +39,7 @@ const CrearUnidad: React.FC = () => {
 
     const crearUnidad = async () => {
         if (!nombre || !modelo || !patente || !tipo) {
-            mostrarToast("Completá todos los campos obligatorios.");
+            toast.warning("Completá todos los campos obligatorios.");
             return;
         }
     
@@ -71,10 +69,11 @@ const CrearUnidad: React.FC = () => {
                 }
             }
     
-            mostrarToast("Unidad creada con éxito.", () => navigate(`/unidades`));
+            toast.success("Unidad creada con éxito.");
+            navigate('/unidades');
         } catch (error) {
             console.error("Error creando unidad:", error);
-            mostrarToast("Error al crear la unidad. Revisá la consola.");
+            toast.error("Error al crear la unidad. Revisá la consola.");
         }
     };
 
@@ -82,8 +81,8 @@ const CrearUnidad: React.FC = () => {
         <div className="crear-unidad__contenedor-principal">
             {/* Encabezado */}
             <Header
-            title="Crear Unidad"
-            onBack={() => navigate('/unidades')}
+                title="Crear Unidad"
+                onBack={() => navigate('/unidades')}
             />
 
             {/* Formulario */}
@@ -186,8 +185,6 @@ const CrearUnidad: React.FC = () => {
                     </button>
                 </div>
             </div>
-
-            <ToastContainer />
         </div>
     );
 };

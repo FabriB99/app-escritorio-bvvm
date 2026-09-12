@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Eye, Trash2, ArrowRight, X, ShieldAlert, ChevronDown } from "lucide-react";
 import Header from "../../components/Header";
+import { toast } from "sonner";
 import "./AuditoriaLista.css";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -229,7 +230,6 @@ const AuditoriaLista: React.FC = () => {
   const [logs, setLogs] = useState<LogAuditoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [logSeleccionado, setLogSeleccionado] = useState<LogAuditoria | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   // Filtros
   const [filtroAccion, setFiltroAccion] = useState<string>("");
@@ -268,7 +268,7 @@ const AuditoriaLista: React.FC = () => {
       setLogs(data);
     } catch (err) {
       console.error("Error al cargar auditoría:", err);
-      mostrarToast("Error al cargar registros.");
+      toast.error("Error al cargar registros.");
     } finally {
       setLoading(false);
     }
@@ -276,16 +276,10 @@ const AuditoriaLista: React.FC = () => {
 
   useEffect(() => { cargar(); }, []);
 
-  const mostrarToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2500);
-  };
-
   // ── Filtrado ──────────────────────────────────────────────────────────────
 
   const parseFechaFiltro = (str: string): Date | null => {
     if (!str || str.length < 8) return null;
-    // Acepta DD/MM/YYYY o YYYY-MM-DD
     const partes = str.includes("/") ? str.split("/") : str.split("-").reverse();
     const [d, m, y] = partes.map(Number);
     if (!d || !m || !y) return null;
@@ -312,7 +306,6 @@ const AuditoriaLista: React.FC = () => {
     });
   }, [logs, filtroAccion, filtroColeccion, filtroOperador, fechaDesde, fechaHasta]);
 
-  // Opciones únicas para los selects de filtro
   const accionesUnicas = useMemo(
     () => Array.from(new Set(logs.map(l => l.accion))).sort(),
     [logs]
@@ -339,10 +332,10 @@ const AuditoriaLista: React.FC = () => {
       await deleteDoc(doc(db, "auditoria", id));
       setLogs(prev => prev.filter(l => l.id !== id));
       if (logSeleccionado?.id === id) setLogSeleccionado(null);
-      mostrarToast("Registro eliminado.");
+      toast.success("Registro eliminado.");
     } catch (err) {
       console.error(err);
-      mostrarToast("Error al eliminar.");
+      toast.error("Error al eliminar.");
     }
   };
 
@@ -352,10 +345,10 @@ const AuditoriaLista: React.FC = () => {
       await Promise.all(logsFiltrados.map(l => deleteDoc(doc(db, "auditoria", l.id))));
       const idsEliminar = new Set(logsFiltrados.map(l => l.id));
       setLogs(prev => prev.filter(l => !idsEliminar.has(l.id)));
-      mostrarToast(`${logsFiltrados.length} registros eliminados.`);
+      toast.success(`${logsFiltrados.length} registros eliminados.`);
     } catch (err) {
       console.error(err);
-      mostrarToast("Error al eliminar.");
+      toast.error("Error al eliminar.");
     }
   };
 
@@ -477,9 +470,6 @@ const AuditoriaLista: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* Toast */}
-        {toast && <div className="au-toast">{toast}</div>}
 
         {/* Tabla */}
         {loading ? (

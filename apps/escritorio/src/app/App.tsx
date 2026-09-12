@@ -20,10 +20,10 @@ import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
 import EnConstruccion from '../pages/EnConstruccion/EnConstruccion';
 
 import { UsuarioBibliotecaProvider } from '../context/UsuarioBibliotecaContext';
+import { Toaster } from 'sonner';
 
 import './styles/variables.css';
 import './App.css';
-
 
 const App: React.FC = () => {
   const { user } = useUser();
@@ -34,6 +34,15 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <Toaster
+        position="top-right"
+        closeButton
+        expand={false}
+        duration={3500}
+        toastOptions={{
+          className: 'toast-cuartel',
+        }}
+      />
       <AuthRedirect>
         <Routes>
           <Route path="/" element={<Inicio />} />

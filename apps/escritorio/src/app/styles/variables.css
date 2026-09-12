@@ -1,68 +1,132 @@
 :root {
   /* Colores principales */
-  --color-sidebar:        #2C3E50;
-  --color-sidebar-dark:   #1f2d3a;
-  --color-sidebar-hover:  rgba(255, 255, 255, 0.08);
-  --color-accent:         #e63946;
-  --color-accent-hover:   #c1121f;
+  --color-sidebar:         #2C3E50;
+  --color-sidebar-dark:    #1f2d3a;
+  --color-sidebar-hover:   rgba(255, 255, 255, 0.08);
+  --color-accent:          #e63946;
+  --color-accent-hover:    #c1121f;
 
   /* Textos */
-  --color-text-primary:   #ecf0f1;
-  --color-text-muted:     #bdc3c7;
-  --color-text-white:     #ffffff;
-  --color-text-dark:      #2c3e50;
+  --color-text-primary:    #ecf0f1;
+  --color-text-muted:      #bdc3c7;
+  --color-text-white:      #ffffff;
+  --color-text-dark:       #2c3e50;
 
   /* Fondos */
-  --color-bg:             #f5f5f5;
-  --color-bg-content:     #f9f9f9;
+  --color-bg:              #f5f5f5;
+  --color-bg-content:      #f9f9f9;
 
   /* Bordes */
-  --color-border:         #cccccc;
-  --color-divider:        rgba(255, 255, 255, 0.2);
-  --color-divider-light:  rgba(255, 255, 255, 0.1);
+  --color-border:          #cccccc;
+  --color-divider:         rgba(255, 255, 255, 0.2);
+  --color-divider-light:   rgba(255, 255, 255, 0.1);
 
   /* Sombras */
-  --shadow-sidebar:       2px 0 8px rgba(0, 0, 0, 0.2);
-  --shadow-dropdown:      0 6px 15px rgba(0, 0, 0, 0.3);
+  --shadow-sidebar:        2px 0 8px rgba(0, 0, 0, 0.2);
+  --shadow-dropdown:       0 6px 15px rgba(0, 0, 0, 0.3);
 
   /* Tipografía */
-  --font-main:            'Poppins', sans-serif;
---font-size-xs:         14px;
---font-size-sm:         15px;
---font-size-base:       16px;
---font-size-nav:        17px;
---font-size-title:      21px;  
-  --font-size-heading:    2.8rem;
+  --font-main:             'Poppins', sans-serif;
+  --font-size-xs:          14px;
+  --font-size-sm:          15px;
+  --font-size-base:        16px;
+  --font-size-nav:         17px;
+  --font-size-title:       21px;  
+  --font-size-heading:     2.8rem;
 
   /* Layout */
-  /* Altura de la barra del header (min-height/height en .app-header). Si la cambiás, revisá
-     también Unidades.css → .filter-menu top: calc(var(--app-header-height) + …) */
-  --app-header-height:    92px;
-  --sidebar-width:        250px;
-  --sidebar-width-2k:     320px;
-  --sidebar-width-4k:     400px;
+  --app-header-height:     92px;
+  --sidebar-width:         250px;
+  --sidebar-width-2k:      320px;
+  --sidebar-width-4k:      400px;
 
   /* Radios */
-  --radius-sm:            6px;
-  --radius-md:            10px;
-  --radius-lg:            12px;
+  --radius-sm:             6px;
+  --radius-md:             10px;
+  --radius-lg:             12px;
 
   /* Transiciones */
-  --transition-fast:      0.2s ease;
-  --transition-base:      0.3s ease;
+  --transition-fast:       0.2s ease;
+  --transition-base:       0.3s ease;
 
   /* Espaciados base */
-  --spacing-xs:           4px;
-  --spacing-sm:           8px;
-  --spacing-md:           16px;
-  --spacing-lg:           24px;
-  --spacing-xl:           32px;
+  --spacing-xs:            4px;
+  --spacing-sm:            8px;
+  --spacing-md:            16px;
+  --spacing-lg:            24px;
+  --spacing-xl:            32px;
 
-  /* Superficies glass (modales / paneles traslúcidos) */
-  --glass-bg:             color-mix(in srgb, var(--color-text-white) 76%, transparent);
-  --glass-bg-elevated:    color-mix(in srgb, var(--color-text-white) 88%, transparent);
-  --glass-border:         color-mix(in srgb, var(--color-sidebar) 16%, transparent);
-  --glass-blur:           14px;
-  --glass-shadow:         var(--shadow-dropdown);
-  --backdrop-scrim:       color-mix(in srgb, var(--color-sidebar-dark) 58%, transparent);
+  /* Superficies glass */
+  --glass-bg:              color-mix(in srgb, var(--color-text-white) 76%, transparent);
+  --glass-bg-elevated:     color-mix(in srgb, var(--color-text-white) 88%, transparent);
+  --glass-border:          color-mix(in srgb, var(--color-sidebar) 16%, transparent);
+  --glass-blur:            14px;
+  --glass-shadow:          var(--shadow-dropdown);
+  --backdrop-scrim:        color-mix(in srgb, var(--color-sidebar-dark) 58%, transparent);
+}
+
+/* ==========================================================================
+   Estilos personalizados para Sonner (Toaster)
+   ========================================================================== */
+
+.toast-cuartel {
+  font-family: var(--font-main) !important;
+  background-color: var(--color-sidebar) !important;
+  color: var(--color-text-white) !important;
+  border: 1px solid var(--color-divider-light) !important;
+  border-left-width: 5px !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+  font-size: var(--font-size-xs) !important;
+}
+
+.toast-cuartel [data-title],
+.toast-cuartel [data-description] {
+  color: var(--color-text-white) !important;
+}
+
+.toast-cuartel [data-description] {
+  opacity: 0.85;
+}
+
+.toast-cuartel [data-close-button] {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: var(--color-text-white) !important;
+  border: none !important;
+}
+
+.toast-cuartel [data-close-button]:hover {
+  background-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+/* Éxito: Verde */
+.toast-cuartel[data-type="success"] {
+  border-left-color: #22c55e !important;
+}
+.toast-cuartel[data-type="success"] [data-icon] {
+  color: #22c55e !important;
+}
+
+/* Error: Rojo Institucional / Acento */
+.toast-cuartel[data-type="error"] {
+  border-left-color: var(--color-accent) !important;
+}
+.toast-cuartel[data-type="error"] [data-icon] {
+  color: var(--color-accent) !important;
+}
+
+/* Advertencia: Ámbar */
+.toast-cuartel[data-type="warning"] {
+  border-left-color: #f59e0b !important;
+}
+.toast-cuartel[data-type="warning"] [data-icon] {
+  color: #f59e0b !important;
+}
+
+/* Info: Azul suave */
+.toast-cuartel[data-type="info"] {
+  border-left-color: #38bdf8 !important;
+}
+.toast-cuartel[data-type="info"] [data-icon] {
+  color: #38bdf8 !important;
 }

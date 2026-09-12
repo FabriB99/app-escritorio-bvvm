@@ -4,7 +4,7 @@ import { db } from '../../../app/firebase-config';
 import { collection, addDoc, getDocs, doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
 import { Save, Settings, Trash2, Plus, X } from 'lucide-react';
-import { mostrarToast } from '../../../utils/toast';
+import { toast } from 'sonner';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import type { ElementoMedicoHospital, ConfigLista, UnidadRef } from './types';
 import './ModalRegistrarElemento.css';
@@ -96,7 +96,9 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
         setUnidades(snapUnidades.docs.map(d => ({ id: d.id, nombre: (d.data().nombre as string) ?? '' })).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { numeric: true })));
         setListaElementos(docElementos.exists() ? (docElementos.data() as ConfigLista).items ?? [] : []);
         setListaHospitales(docHospitales.exists() ? (docHospitales.data() as ConfigLista).items ?? [] : []);
-      } catch (err) { mostrarToast('Error al cargar datos de Firebase.'); }
+      } catch (err) {
+        toast.error('Error al cargar datos de Firebase.');
+      }
     };
     cargarDatos();
   }, []);
@@ -107,14 +109,20 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
     const valor = nuevoItemTexto.trim();
     const listaActual = tipo === 'elementos_medicos' ? listaElementos : listaHospitales;
     
-    if (listaActual.includes(valor)) { mostrarToast('Opción ya existe.'); return; }
+    if (listaActual.includes(valor)) {
+      toast.warning('La opción ya existe.');
+      return;
+    }
     try {
       const nuevaLista = [...listaActual, valor];
       await setDoc(doc(db, 'config_guardia', tipo), { items: nuevaLista }, { merge: true });
       if (tipo === 'elementos_medicos') { setListaElementos(nuevaLista); setElemento(valor); } 
       else { setListaHospitales(nuevaLista); setHospital(valor); }
-      setNuevoItemTexto(''); mostrarToast('Opción añadida.');
-    } catch (err) { mostrarToast('Error al guardar.'); }
+      setNuevoItemTexto('');
+      toast.success('Opción añadida.');
+    } catch (err) {
+      toast.error('Error al guardar la opción.');
+    }
   };
 
   const handleEliminarOpcion = async (item: string) => {
@@ -125,13 +133,18 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
       await setDoc(doc(db, 'config_guardia', tipo), { items: nuevaLista }, { merge: true });
       if (tipo === 'elementos_medicos') { setListaElementos(nuevaLista); if (elemento === item) setElemento(''); } 
       else { setListaHospitales(nuevaLista); if (hospital === item) setHospital(''); }
-      mostrarToast('Opción eliminada.');
-    } catch (err) { mostrarToast('Error al eliminar.'); }
+      toast.success('Opción eliminada.');
+    } catch (err) {
+      toast.error('Error al eliminar la opción.');
+    }
   };
 
   const handleGuardar = async () => {
     if (!user || !miembroActivo) return;
-    if (!elemento.trim() || !hospital.trim() || !unidadSeleccionada || cantidad < 1) { mostrarToast('Completá todos los campos.'); return; }
+    if (!elemento.trim() || !hospital.trim() || !unidadSeleccionada || cantidad < 1) {
+      toast.warning('Completá todos los campos.');
+      return;
+    }
     
     setGuardando(true);
     try {
@@ -147,27 +160,25 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
       const ref_ = await addDoc(collection(db, 'elementos_medicos_hospital'), docData);
       await registrarAuditoria({ accion: 'crear', coleccion: 'elementos_medicos_hospital', docId: ref_.id, docResumen: `${cantidad}x ${docData.elemento} en ${docData.hospital}`, operador, detalles: { descripcion: `Depósito registrado.` } });
 
-      mostrarToast('Elemento registrado correctamente.');
+      toast.success('Elemento registrado correctamente.');
       onGuardado();
-    } catch (err) { mostrarToast('Error al guardar.'); } 
-    finally { setGuardando(false); }
+    } catch (err) {
+      toast.error('Error al guardar el elemento.');
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
     <div className="modal-overlay" style={{ zIndex: 9999 }}>
-      
-      {/* CONTENEDOR UNIFICADO Y SÓLIDO */}
       <div className="modal-solido-container">
         
-        {/* HEADER BLANCO */}
         <div className="modal-solido-header">
           <h3 className="modal-solido-title">Registrar Elemento</h3>
           <button className="btn-icon-close" onClick={onClose}><X size={20} /></button>
         </div>
 
-        {/* BODY GRIS CLARO */}
         <div className="modal-solido-body">
-            
           <div className="form-row-solido">
             <div className="form-col-solido col-main">
               <div className="label-wrap-solido">
@@ -213,11 +224,9 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
               Cancelar
             </button>
           </div>
-
         </div>
       </div>
 
-      {/* Mini Modal para editar listas permanentes (Mantiene el mismo estilo limpio) */}
       {gestionModal.abierto && (
         <div className="modal-overlay" style={{ zIndex: 99999 }}>
           <div className="modal-solido-container" style={{ maxWidth: '440px' }}>

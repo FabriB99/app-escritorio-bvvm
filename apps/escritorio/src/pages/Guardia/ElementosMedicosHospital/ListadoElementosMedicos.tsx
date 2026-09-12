@@ -6,8 +6,7 @@ import {
 } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
 import { Plus, Settings, CheckCircle, X, Trash2, PlusCircle } from 'lucide-react';
-import { ToastContainer } from 'react-toastify';
-import { mostrarToast } from '../../../utils/toast';
+import { toast } from 'sonner';
 import Header from '../../../components/Header';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 
@@ -71,11 +70,11 @@ const ModalRecuperacion: React.FC<ModalRecuperacionProps> = ({ registro, onCerra
         },
       });
 
-      mostrarToast('Marcado como recuperado.');
+      toast.success('Marcado como recuperado.');
       onRecuperado();
     } catch (err) {
       console.error(err);
-      mostrarToast('Error al actualizar. Intentá de nuevo.');
+      toast.error('Error al actualizar. Intentá de nuevo.');
     } finally {
       setGuardando(false);
     }
@@ -157,10 +156,10 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
         docResumen: descripcion,
         operador,
       });
-      mostrarToast('Lista guardada correctamente.');
+      toast.success('Lista guardada correctamente.');
     } catch (err) {
       console.error(err);
-      mostrarToast('Error al guardar. Intentá de nuevo.');
+      toast.error('Error al guardar. Intentá de nuevo.');
     } finally {
       setGuardando(false);
     }
@@ -170,7 +169,7 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
   const agregarElemento = () => {
     const val = nuevoElemento.trim();
     if (!val) return;
-    if (elementos.includes(val)) { mostrarToast('Ya existe ese elemento.'); return; }
+    if (elementos.includes(val)) { toast.warning('Ya existe ese elemento.'); return; }
     setElementos(prev => [...prev, val]);
     setNuevoElemento('');
   };
@@ -182,7 +181,7 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
   const agregarHospital = () => {
     const val = nuevoHospital.trim();
     if (!val) return;
-    if (hospitales.includes(val)) { mostrarToast('Ya existe ese hospital.'); return; }
+    if (hospitales.includes(val)) { toast.warning('Ya existe ese hospital.'); return; }
     setHospitales(prev => [...prev, val]);
     setNuevoHospital('');
   };
@@ -273,7 +272,7 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
 type FiltroEstado = 'todos' | EstadoElemento;
 
 const ListadoElementosMedicos: React.FC = () => {
-  const { user } = useUser(); // Eliminamos navigate que no se usaba
+  const { user } = useUser();
   const esAdmin = user?.rol === 'admin';
 
   const [registros, setRegistros] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
@@ -299,7 +298,7 @@ const ListadoElementosMedicos: React.FC = () => {
       setRegistros(data);
     } catch (err) {
       console.error(err);
-      mostrarToast('Error al cargar registros.');
+      toast.error('Error al cargar registros.');
     } finally {
       setCargando(false);
     }
@@ -458,16 +457,6 @@ const ListadoElementosMedicos: React.FC = () => {
       {modalConfig && (
         <ModalConfig onCerrar={() => { setModalConfig(false); }} />
       )}
-
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar
-        closeOnClick
-        pauseOnHover={false}
-        draggable={false}
-        toastClassName="toast-style"
-      />
     </div>
   );
 };

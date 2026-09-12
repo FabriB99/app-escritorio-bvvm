@@ -8,6 +8,7 @@ import { Trash2, Plus, Search, Pencil, Layers, Users, Settings } from 'lucide-re
 
 import './AdminIdentidades.css';
 import Header from "../../components/Header";
+import { toast } from 'sonner';
 
 type Miembro = {
   id: string;

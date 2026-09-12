@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import { mostrarToast } from "../../utils/toast";
-import '../Toast/toastStyles.css';
+import { toast } from "sonner";
 import { auth, db, storage } from "../../app/firebase-config";
 import { doc, getDoc, collection, getDocs, query, where, orderBy, writeBatch } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import './EditarUnidad.css';
-import "react-toastify/dist/ReactToastify.css";
 import { ArrowUp, ArrowDown, Trash2, Save } from 'lucide-react';
 import Header from "../../components/Header";
 
@@ -146,10 +143,7 @@ const EditarUnidad: React.FC = () => {
             });
         } catch (error) {
             console.error('Error al obtener los datos:', error);
-            toast.error("Error al cargar la unidad", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Error al cargar la unidad");
         } finally {
             setCargando(false);
         }
@@ -189,13 +183,13 @@ const EditarUnidad: React.FC = () => {
             },
             (error) => {
                 console.error("Error subiendo la imagen:", error);
-                mostrarToast("Error al subir la imagen");
+                toast.error("Error al subir la imagen");
                 setUploadProgress(null);
             },
             async () => {
                 const url = await getDownloadURL(uploadTask.snapshot.ref);
                 setFormData((prev) => ({ ...prev, imagen: url }));
-                mostrarToast("Imagen subida correctamente");
+                toast.success("Imagen subida correctamente");
                 setUploadProgress(null);
             }
         );
@@ -280,17 +274,11 @@ const EditarUnidad: React.FC = () => {
 
             await batch.commit();
 
-            toast.success("Cambios guardados con éxito", {
-                position: "top-center",
-                autoClose: 1500,
-            });
+            toast.success("Cambios guardados con éxito");
             navigate(`/unidad/${id}`);
         } catch (error) {
             console.error("Error al guardar:", error);
-            toast.error("Error al guardar cambios", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Error al guardar cambios");
         } finally {
             setIsSubmitting(false);
             setUploadProgress(null);
@@ -578,7 +566,6 @@ const EditarUnidad: React.FC = () => {
                 </div>
 
             </form>
-            <ToastContainer />
         </div>
     );
 };

@@ -4,7 +4,7 @@ import { db } from '../../../app/firebase-config';
 import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
-import { mostrarToast } from '../../../utils/toast';
+import { toast } from 'sonner';
 import { CheckCircle, ClipboardList, Plus, X, Save } from 'lucide-react';
 import type { NovedadGuardia } from './types';
 
@@ -61,13 +61,13 @@ const WidgetNovedades: React.FC = () => {
         detalles: { descripcion: `Prioridad: ${prioridad} - Categoría: ${categoria}` }
       });
 
-      mostrarToast('Novedad registrada');
+      toast.success('Novedad registrada con éxito');
       setTitulo('');
       setDescripcion('');
       setMostrarForm(false);
     } catch (err) {
       console.error(err);
-      mostrarToast('Error al registrar la novedad');
+      toast.error('Error al registrar la novedad');
     }
   };
 
@@ -91,10 +91,10 @@ const WidgetNovedades: React.FC = () => {
         detalles: { descripcion: `Marcó la novedad como resuelta.` }
       });
 
-      mostrarToast('Novedad resuelta');
+      toast.success('Novedad resuelta');
     } catch (err) {
       console.error(err);
-      mostrarToast('Error al actualizar');
+      toast.error('Error al actualizar la novedad');
     }
   };
 

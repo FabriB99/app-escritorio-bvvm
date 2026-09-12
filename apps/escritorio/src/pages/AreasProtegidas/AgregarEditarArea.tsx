@@ -4,8 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { collection, doc, getDoc, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
 import { Plus, X, ShieldCheck, Building2, MapPin, User, Phone } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner";
 import "./AgregarEditarArea.css";
 import Header from "../../components/Header";
 
@@ -67,7 +66,7 @@ const AgregarEditarArea: React.FC = () => {
 
   const removeDireccion = (index: number) => {
     if (area.direcciones.length === 1) {
-      toast.warn("Debe existir al menos una dirección.");
+      toast.warning("Debe existir al menos una dirección.");
       return;
     }
     setArea({
@@ -222,8 +221,6 @@ const AgregarEditarArea: React.FC = () => {
           </div>
         </form>
       </div>
-
-      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };
