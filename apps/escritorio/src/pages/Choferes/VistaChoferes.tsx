@@ -68,11 +68,11 @@ const unidades: Array<'Todos' | TipoUnidadChofer> = [
 
 
 const unidadIconos: Record<TipoUnidadChofer, JSX.Element> = {
-  Maestranza: <FaShoppingBasket size={13} />,
-  Ambulancias: <FaAmbulance size={13} />,
-  Livianas: <FaTruck size={13} />,
-  Pesadas: <MdOutlineFireTruck size={14} />,
-  Escalera: <TbLadder size={14} />,
+  Maestranza: <FaShoppingBasket size={14} />,
+  Ambulancias: <FaAmbulance size={14} />,
+  Livianas: <FaTruck size={14} />,
+  Pesadas: <MdOutlineFireTruck size={15} />,
+  Escalera: <TbLadder size={15} />,
 };
 
 

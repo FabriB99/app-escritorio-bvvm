@@ -1,0 +1,137 @@
+.admin-ajustes__contenedor {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #2c3e50;
+  }
+  
+  /* INTRO */
+  .admin-ajustes__intro {
+    margin: 20px 0 24px;
+  }
+  
+  .admin-ajustes__intro h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  .admin-ajustes__intro p {
+    margin: 4px 0 0;
+    color: #718096;
+    font-size: 0.86rem;
+  }
+  
+  /* GRUPO */
+  .admin-ajustes__grupo {
+    margin-bottom: 24px;
+  }
+  
+  .admin-ajustes__grupo-titulo {
+    margin: 0 0 10px 2px;
+    color: #8a96a3;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  
+  /* LISTA DE OPCIONES */
+  .admin-ajustes__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .admin-ajustes__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 17px;
+  
+    border: 1px solid #e0e5ea;
+    border-radius: 11px;
+  
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.045);
+  
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+  
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  
+  .admin-ajustes__item:hover {
+    border-color: #c7d0d9;
+    box-shadow: 0 5px 16px rgba(44, 62, 80, 0.09);
+    transform: translateY(-1px);
+  }
+  
+  .admin-ajustes__item:active {
+    transform: translateY(0);
+  }
+  
+  .admin-ajustes__item-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #edf2f6;
+    color: #506680;
+  }
+  
+  .admin-ajustes__item-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .admin-ajustes__item-texto strong {
+    color: #2c3e50;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  
+  .admin-ajustes__item-texto span {
+    overflow: hidden;
+    color: #718096;
+    font-size: 0.74rem;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+  }
+  
+  .admin-ajustes__item-flecha {
+    flex-shrink: 0;
+    color: #aab6c1;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .admin-ajustes__intro h1 {
+      font-size: 1.15rem;
+    }
+  
+    .admin-ajustes__item {
+      padding: 13px 14px;
+    }
+  
+    .admin-ajustes__item-icono {
+      width: 38px;
+      height: 38px;
+    }
+  
+    .admin-ajustes__item-texto span {
+      white-space: normal;
+    }
+  }

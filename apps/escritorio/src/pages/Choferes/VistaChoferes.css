@@ -67,9 +67,12 @@
     color: #9a7a16;
   }
   
+  /* Mismo rojo que usa Vencimientos.css para "vencido" (#d32f2f),
+     a propósito distinto del rojo de la categoría Pesadas (#c43f3f)
+     para que el color no signifique dos cosas distintas */
   .resumen-icon-vencido {
-    background: #fde8e8;
-    color: #c43f3f;
+    background: #fde3e3;
+    color: #d32f2f;
   }
   
   .resumen-item strong {
@@ -381,7 +384,7 @@
   
   .nombre-chofer strong {
     color: #2c3e50;
-    font-size: 0.82rem;
+    font-size: 0.93rem;
     font-weight: 600;
     line-height: 1.35;
   }
@@ -407,10 +410,10 @@
       flex: 0 0 auto;
       margin: 0;
       padding: 4px 7px;
-      border: 1px solid #f1caca;
+      border: 1px solid #f3c6c6;
       border-radius: 5px;
-      background: #fff1f1;
-      color: #c43f3f;
+      background: #fde3e3;
+      color: #d32f2f;
       font-size: 0.61rem;
       font-weight: 600;
       line-height: 1;
@@ -448,16 +451,16 @@
   
     gap: 6px;
   
-    min-height: 29px;
+    min-height: 32px;
   
-    padding: 5px 9px;
+    padding: 6px 10px;
   
     box-sizing: border-box;
   
     border: 1px solid;
     border-radius: 6px;
   
-    font-size: 0.67rem;
+    font-size: 0.74rem;
     font-weight: 600;
   
     line-height: 1;
@@ -486,10 +489,8 @@
   .categoria-chip-sufijo {
     margin-left: -2px;
   
-    font-size: 0.61rem;
-    font-weight: 500;
-  
-    opacity: 0.85;
+    font-size: 0.68rem;
+    font-weight: 700;
   }
   
   
@@ -531,7 +532,7 @@
   
   /* ============================================================
      PESADAS
-     ROJO
+     ROJO — distinto del rojo de "vencido" a propósito
      ============================================================ */
   
   .categoria-chip-pesadas {
@@ -555,18 +556,15 @@
   
   /* ============================================================
      EN APRENDIZAJE
+     A propósito NO cambia el color del chip: se mantiene el color
+     de la categoría (Pesadas sigue rojo, Livianas sigue azul, etc.)
+     para que el color siga identificando la unidad. Lo que marca
+     "en aprendizaje" es el ícono en gris + el sufijo resaltado en
+     el mismo color de esa categoría.
      ============================================================ */
   
-  .categoria-chip.en-aprendizaje {
-    background: #fff4c2;
-  
-    border-color: #d8bd55;
-  
-    color: #947516;
-  }
-  
-  .categoria-chip.en-aprendizaje .categoria-chip-sufijo {
-    color: #947516;
+  .categoria-chip.en-aprendizaje svg {
+    color: #9aa5b1;
   }
   
   
@@ -704,19 +702,6 @@
   
   @media (max-width: 600px) {
   
-    .vista-choferes-intro {
-      margin-top: 18px;
-      margin-bottom: 16px;
-    }
-  
-    .vista-choferes-intro h1 {
-      font-size: 1.15rem;
-    }
-  
-    .vista-choferes-intro p {
-      font-size: 0.72rem;
-    }
-  
     .buscador-top {
       justify-content: stretch;
     }
@@ -747,14 +732,6 @@
      ============================================================ */
   
   @media (max-width: 480px) {
-  
-    .vista-choferes-intro h1 {
-      font-size: 1.05rem;
-    }
-  
-    .vista-choferes-intro p {
-      max-width: 330px;
-    }
   
     .resumen-item {
       padding: 11px 13px;
