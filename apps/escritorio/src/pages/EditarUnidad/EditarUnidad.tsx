@@ -7,6 +7,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import './EditarUnidad.css';
 import { ArrowUp, ArrowDown, Trash2, Save } from 'lucide-react';
 import Header from "../../components/Header";
+import { TIPOS_UNIDAD, CATEGORIAS_CHOFER, TipoUnidadChofer } from '../../types/unidades';
 
 interface Elemento {
     id: string;
@@ -24,6 +25,7 @@ interface Ubicacion {
 interface UnidadFormData {
     nombre: string;
     tipo: string;
+    categoria: TipoUnidadChofer | "";
     modelo: string;
     patente: string;
     kilometraje: string;
@@ -36,6 +38,7 @@ interface UnidadFormData {
 const INITIAL_FORM_DATA: UnidadFormData = {
     nombre: "",
     tipo: "",
+    categoria: "",
     modelo: "",
     patente: "",
     kilometraje: "",
@@ -133,6 +136,7 @@ const EditarUnidad: React.FC = () => {
             setFormData({
                 nombre: datosUnidad.nombre || "",
                 tipo: datosUnidad.tipo || "",
+                categoria: (datosUnidad.categoria as TipoUnidadChofer | undefined) || "",
                 modelo: datosUnidad.modelo || "",
                 patente: datosUnidad.patente || "",
                 kilometraje: datosUnidad.kilometraje || "",
@@ -198,6 +202,12 @@ const EditarUnidad: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!id || isSubmitting) return;
+
+        if (!formData.categoria) {
+            toast.warning("Seleccioná la categoría de chofer de la unidad.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -205,6 +215,7 @@ const EditarUnidad: React.FC = () => {
             batch.update(doc(db, "unidades", id), {
                 nombre: formData.nombre,
                 tipo: formData.tipo,
+                categoria: formData.categoria,
                 modelo: formData.modelo,
                 patente: formData.patente,
                 kilometraje: formData.kilometraje,
@@ -332,17 +343,23 @@ const EditarUnidad: React.FC = () => {
                             <label>Tipo</label>
                             <select name="tipo" value={formData.tipo} onChange={handleChange} required>
                                 <option value="">Seleccionar tipo</option>
-                                <option value="Ambulancia">Ambulancia</option>
-                                <option value="Unidad de Incendio Estructural">Unidad de Incendio Estructural</option>
-                                <option value="Unidad de Incendio Forestal">Unidad de Incendio Forestal</option>
-                                <option value="Unidad de Abastecimiento">Unidad de Abastecimiento</option>
-                                <option value="Unidad de Rescate Urbano">Unidad de Rescate Urbano</option>
-                                <option value="Unidad de Transporte Personal">Unidad de Transporte Personal</option>
-                                <option value="Unidad de Logística">Unidad de Logística</option>
-                                <option value="Escalera Mecánica">Escalera Mecánica</option>
-                                <option value="Unidad de Rescate Vehicular">Unidad de Rescate Vehicular</option>
-                                <option value="Unidad de Rescate Acuatico">Unidad de Rescate Acuático</option>
+                                {TIPOS_UNIDAD.map((opcion) => (
+                                    <option key={opcion} value={opcion}>{opcion}</option>
+                                ))}
                             </select>
+                        </div>
+
+                        <div className="editar-unidad__campo">
+                            <label>Categoría (chofer)</label>
+                            <select name="categoria" value={formData.categoria} onChange={handleChange} required>
+                                <option value="">Seleccionar categoría</option>
+                                {CATEGORIAS_CHOFER.map((opcion) => (
+                                    <option key={opcion} value={opcion}>{opcion}</option>
+                                ))}
+                            </select>
+                            <small className="editar-unidad__ayuda-campo">
+                                Define qué habilitación de chofer necesita esta unidad y se usa para vincular la VTV.
+                            </small>
                         </div>
 
                         <div className="editar-unidad__campo">

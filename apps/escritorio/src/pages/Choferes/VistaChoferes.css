@@ -1,267 +1,784 @@
-.vista-choferes {
-  width: 100%;
-  max-width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-family: var(--font-main);
-}
+/* ============================================================
+   VISTA CHOFERES
+   ============================================================ */
 
-/* Buscador */
-.buscador-top {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--spacing-lg);
-}
+   .vista-choferes {
+    width: 100%;
+    box-sizing: border-box;
+  
+    font-family: 'Poppins', sans-serif;
+    color: #2c3e50;
+  }
+  
+  /* ============================================================
+     RESUMEN
+     ============================================================ */
+  
+  .vista-choferes-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  
+    gap: 14px;
+  
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .resumen-item {
+    display: flex;
+    align-items: center;
+  
+    gap: 12px;
+  
+    min-height: 68px;
+  
+    padding: 12px 15px;
+    box-sizing: border-box;
+  
+    background: #ffffff;
+  
+    border: 1px solid #e2e7eb;
+    border-radius: 9px;
+  
+    box-shadow:
+      0 2px 7px rgba(44, 62, 80, 0.045);
+  }
+  
+  .resumen-icon {
+    width: 36px;
+    height: 36px;
+  
+    flex: 0 0 36px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 8px;
+  }
+  
+  .resumen-icon-total {
+    background: #e9eef4;
+    color: #48627d;
+  }
+  
+  .resumen-icon-aprendizaje {
+    background: #fff4c2;
+    color: #9a7a16;
+  }
+  
+  .resumen-icon-vencido {
+    background: #fde8e8;
+    color: #c43f3f;
+  }
+  
+  .resumen-item strong {
+    display: block;
+  
+    margin: 0;
+  
+    color: #2c3e50;
+  
+    font-size: 1.05rem;
+    font-weight: 650;
+  
+    line-height: 1.2;
+  }
+  
+  .resumen-item span {
+    display: block;
+  
+    margin-top: 3px;
+  
+    color: #718096;
+  
+    font-size: 0.68rem;
+  
+    line-height: 1.3;
+  }
+  
+  
+  /* ============================================================
+     TABS + BUSCADOR
+     ============================================================ */
+  
+  .vista-choferes-tabs {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  
+    width: 100%;
+  
+    margin-bottom: 16px;
+  
+    border-bottom: 1px solid #dce2e7;
+  }
+  
+  .tabs-buttons {
+    display: flex;
+    align-items: stretch;
+  
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .vista-choferes-tabs button {
+    position: relative;
+  
+    padding: 10px 19px 11px;
+  
+    border: none;
+    background: transparent;
+  
+    color: #718096;
+  
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+  
+    cursor: pointer;
+  
+    transition:
+      color 0.2s ease,
+      background 0.2s ease;
+  }
+  
+  .vista-choferes-tabs button:hover {
+    color: #2c3e50;
+  }
+  
+  .vista-choferes-tabs button.activo {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  .vista-choferes-tabs button.activo::after {
+    content: '';
+  
+    position: absolute;
+  
+    left: 10px;
+    right: 10px;
+    bottom: -1px;
+  
+    height: 2px;
+  
+    background: #2c3e50;
+  
+    border-radius: 2px 2px 0 0;
+  }
+  
+  
+  /* ============================================================
+     BUSCADOR
+     ============================================================ */
+  
+  .buscador-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  
+    flex: 0 0 auto;
+  
+    margin: 0 0 6px 20px;
+  }
+  
+  .buscador-container {
+    display: flex;
+    align-items: center;
+  
+    gap: 8px;
+  
+    width: 250px;
+    height: 34px;
+  
+    padding: 0 10px;
+    box-sizing: border-box;
+  
+    background: #ffffff;
+  
+    border: 1px solid #d7dee5;
+    border-radius: 6px;
+  
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  
+  .buscador-container:focus-within {
+    border-color: #9eabb8;
+  
+    box-shadow:
+      0 0 0 3px rgba(44, 62, 80, 0.05);
+  }
+  
+  .icono-lupa {
+    flex-shrink: 0;
+  
+    color: #7b8794;
+  }
+  
+  .buscador-container input {
+    flex: 1;
+  
+    min-width: 0;
+    height: 100%;
+  
+    padding: 0;
+  
+    border: none;
+    outline: none;
+  
+    background: transparent;
+  
+    color: #2c3e50;
+  
+    font-family: inherit;
+    font-size: 0.72rem;
+  }
+  
+  .buscador-container input::placeholder {
+    color: #9aa5b1;
+  }
+  
+  .buscador-limpiar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    width: 22px;
+    height: 22px;
+  
+    flex: 0 0 22px;
+  
+    padding: 0;
+  
+    border: none;
+    border-radius: 4px;
+  
+    background: transparent;
+    color: #8a96a3;
+  
+    cursor: pointer;
+  
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  
+  .buscador-limpiar:hover {
+    background: #edf1f4;
+    color: #4a5562;
+  }
+  
+  
+  /* ============================================================
+     TABLA
+     ============================================================ */
+  
+  .vista-choferes-tabla-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+  
+    overflow: hidden;
+  
+    background: #ffffff;
+  
+    border: 1px solid #e0e5ea;
+    border-radius: 10px;
+  
+    box-shadow:
+      0 2px 8px rgba(44, 62, 80, 0.045);
+  }
+  
+  .vista-choferes-tabla {
+    width: 100%;
+  
+    border-collapse: collapse;
+    border-spacing: 0;
+  
+    background: #ffffff;
+  }
+  
+  
+  /* ============================================================
+     CABECERA
+     ============================================================ */
+  
+  .vista-choferes-tabla thead {
+    background: #2c3e50;
+  }
+  
+  .vista-choferes-tabla th {
+    padding: 12px 17px;
+  
+    color: #ffffff;
+  
+    font-size: 0.72rem;
+    font-weight: 600;
+  
+    text-align: left;
+  
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  
+  .vista-choferes-tabla th:first-child {
+    width: 38%;
+  }
+  
+  .vista-choferes-tabla th:last-child {
+    width: 62%;
+  }
+  
+  
+  /* ============================================================
+     FILAS
+     ============================================================ */
+  
+  .vista-choferes-tabla tbody tr {
+    background: #ffffff;
+  
+    transition: background-color 0.15s ease;
+  }
+  
+  .vista-choferes-tabla tbody tr:hover {
+    background: #fafbfc;
+  }
+  
+  .vista-choferes-tabla td {
+    padding: 14px 17px;
+  
+    border-bottom: 1px solid #edf0f3;
+  
+    vertical-align: middle;
+  
+    font-size: 0.78rem;
+  }
+  
+  .vista-choferes-tabla tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  
+/* =========================================
+   NOMBRE DEL CHOFER
+   ========================================= */
 
-.buscador-container {
-  display: flex;
-  align-items: center;
-  width: 280px;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.buscador-container input {
-  width: 100%;
-  padding: 10px 36px 10px var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  font-size: var(--font-size-xs);
-  font-family: var(--font-main);
-  color: var(--color-text-dark);
-  background: #ffffff;
-  outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.buscador-container input:focus {
-  border-color: var(--color-sidebar);
-  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
-}
-
-.icono-lupa {
-  position: absolute;
-  right: 14px;
-  color: var(--color-text-muted);
-  pointer-events: none;
-  font-size: 16px;
-}
-
-.tabs-buttons {
-  display: flex;
-  height: 47px;
-  /* O la altura que quieras que tenga la barra de tabs */
-  position: relative;
-  align-items: center;
-}
-
-.vista-choferes-tabs {
-  position: relative;
-  height: 40px;
-  /* Asegurate de que coincida */
-  background-color: rgba(44, 62, 80, 0.03);
-  /* Un fondo muy sutil para la barra */
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.vista-choferes-tabs .tabs-buttons {
-  display: flex;
-  gap: 4px;
-  flex: 1;
-  position: relative;
-  z-index: 2;
-}
-
-.vista-choferes-tabs button {
-  flex: 1;
-  /* 1. Reset de altura y paddings */
-  height: 100%;
-  padding: 0 var(--spacing-md);
-  margin: 0;
-
-  /* 2. Centrado absoluto del texto */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  /* Vital para que la fuente no añada espacio extra abajo */
-
-  /* 3. Estética */
-  position: relative;
-  z-index: 2;
-  /* Por encima del slider */
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  font-family: var(--font-main);
-  font-weight: 600;
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
-}
-
-.vista-choferes-tabs button.activo {
-  color: var(--color-text-white);
-}
-
-/* Slider animado (Pill) */
-.vista-tab-slider {
-  position: absolute;
-  top: 4px;
-  left: 0;
-  height: calc(100% - 8px);
-  background-color: var(--color-sidebar);
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Loading */
-.vista-choferes-loading {
-  font-style: italic;
-  color: var(--color-text-muted);
-  text-align: center;
-  padding: var(--spacing-xl);
-}
-
-/* Tabla */
-.vista-choferes-tabla {
-  width: 100%;
-  background-color: #ffffff;
-  color: var(--color-text-dark);
-  user-select: none;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border-spacing: 0;
-  border-collapse: separate;
-  border: 1px solid rgba(44, 62, 80, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-.vista-choferes-tabla thead {
-  background-color: var(--color-sidebar);
-  color: var(--color-text-white);
-}
-
-.vista-choferes-tabla th {
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  padding: 16px 24px;
-  text-align: left;
-  vertical-align: middle;
-  font-family: var(--font-main);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.vista-choferes-tabla th:nth-child(2) {
-  text-align: center;
-}
-
-.vista-choferes-tabla td {
-  padding: 12px 18px;
-  vertical-align: middle;
-  background-color: var(--color-bg-content);
-  /* Fondo base */
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color var(--transition-fast);
-  /* Suaviza el cambio */
-}
-
-.vista-choferes-tabla tbody tr td:first-child {
-  border-left: 3px solid transparent;
-  /* Espacio para la línea */
-}
-
-.vista-choferes-tabla tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.vista-choferes-tabla tbody tr:hover td:first-child {
-  border-left-color: var(--color-sidebar);
-  /* Aparece la línea igual que en las cards */
-}
-
-.vista-choferes-tabla tbody tr:hover td {
-  background-color: rgba(44, 62, 80, 0.05) !important;
-  /* Un gris azulado muy sutil */
-  cursor: pointer;
-}
-
-.nombre-chofer {
-  font-weight: 600;
-  color: var(--color-sidebar);
-}
-
-/* Iconos de unidades — Estilo Badges Sutiles (Coherente con Unidades.css) */
-.unidades-iconos {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: var(--spacing-sm);
-  justify-content: center;
-  align-items: center;
-  /* Quitamos el width: 100% o lo dejamos en auto para que respire */
-  width: auto;
-  min-height: 40px;
-}
-
-.sin-unidades {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-style: italic;
-  opacity: 0.7;
-}
-
-.unidad-icon {
-  padding: 6px 14px;
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  background-color: var(--color-bg-content);
-  border: 1px solid var(--color-border);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.unidad-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-/* Colores de badges (Mismo lenguaje que Unidades.css) */
-.unidad-maestranza {
-  background-color: rgba(241, 193, 0, 0.12);
-  color: #9a7a00;
-  border: 1px solid rgba(241, 193, 0, 0.45);
-}
-
-.unidad-ambulancias {
-  background-color: rgba(46, 139, 87, 0.12);
-  color: #1e6b45;
-  border: 1px solid rgba(46, 139, 87, 0.45);
-}
-
-.unidad-livianas {
-  background-color: rgba(44, 62, 80, 0.12);
-  color: var(--color-sidebar);
-  border: 1px solid rgba(44, 62, 80, 0.45);
-}
-
-.unidad-pesadas {
-  background-color: rgba(179, 46, 46, 0.12);
-  color: #8b2323;
-  border: 1px solid rgba(179, 46, 46, 0.45);
-}
-
-.unidad-escalera {
-  background-color: rgba(112, 59, 15, 0.12);
-  color: #703b0f;
-  border: 1px solid rgba(112, 59, 15, 0.45);
-}
+   .nombre-chofer {
+    width: 38%;
+    color: #2c3e50;
+    padding-right: 20px;
+  }
+  
+  .nombre-chofer-linea {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  
+  .nombre-chofer strong {
+    color: #2c3e50;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  
+  .nombre-chofer small {
+    display: block;
+    margin-top: 3px;
+    color: #7a8794;
+    font-size: 0.66rem;
+    font-weight: 400;
+    line-height: 1.3;
+  }
+  
+  
+  /* =========================================
+     BADGE CARNET VENCIDO
+     ========================================= */
+  
+     .carnet-vencido {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex: 0 0 auto;
+      margin: 0;
+      padding: 4px 7px;
+      border: 1px solid #f1caca;
+      border-radius: 5px;
+      background: #fff1f1;
+      color: #c43f3f;
+      font-size: 0.61rem;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+    }
+  
+  /* ============================================================
+     CELDA DE UNIDADES
+     ============================================================ */
+  
+  .unidades-celda {
+    width: 62%;
+  
+    vertical-align: middle;
+  }
+  
+  .unidades-chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  
+    gap: 7px;
+  
+    width: 100%;
+  }
+  
+  
+  /* ============================================================
+     CHIPS DE CATEGORÍAS
+     ============================================================ */
+  
+  .categoria-chip {
+    display: inline-flex;
+    align-items: center;
+  
+    gap: 6px;
+  
+    min-height: 29px;
+  
+    padding: 5px 9px;
+  
+    box-sizing: border-box;
+  
+    border: 1px solid;
+    border-radius: 6px;
+  
+    font-size: 0.67rem;
+    font-weight: 600;
+  
+    line-height: 1;
+    white-space: nowrap;
+  
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  
+  .categoria-chip:hover {
+    transform: translateY(-1px);
+  
+    box-shadow:
+      0 2px 5px rgba(44, 62, 80, 0.08);
+  }
+  
+  .categoria-chip svg {
+    flex-shrink: 0;
+  }
+  
+  .categoria-chip-texto {
+    line-height: 1;
+  }
+  
+  .categoria-chip-sufijo {
+    margin-left: -2px;
+  
+    font-size: 0.61rem;
+    font-weight: 500;
+  
+    opacity: 0.85;
+  }
+  
+  
+  /* ============================================================
+     MAESTRANZA
+     AMARILLO
+     ============================================================ */
+  
+  .categoria-chip-maestranza {
+    background: #fff5c9;
+    border-color: #e4cf76;
+    color: #997615;
+  }
+  
+  
+  /* ============================================================
+     AMBULANCIAS
+     VERDE
+     ============================================================ */
+  
+  .categoria-chip-ambulancias {
+    background: #e7f5eb;
+    border-color: #b9dcbf;
+    color: #3f8750;
+  }
+  
+  
+  /* ============================================================
+     LIVIANAS
+     AZUL OSCURO
+     ============================================================ */
+  
+  .categoria-chip-livianas {
+    background: #e7edf5;
+    border-color: #bccbde;
+    color: #315b83;
+  }
+  
+  
+  /* ============================================================
+     PESADAS
+     ROJO
+     ============================================================ */
+  
+  .categoria-chip-pesadas {
+    background: #fde9e9;
+    border-color: #e7bebe;
+    color: #c43f3f;
+  }
+  
+  
+  /* ============================================================
+     ESCALERA
+     MARRÓN
+     ============================================================ */
+  
+  .categoria-chip-escalera {
+    background: #eee6df;
+    border-color: #d5c3b1;
+    color: #795548;
+  }
+  
+  
+  /* ============================================================
+     EN APRENDIZAJE
+     ============================================================ */
+  
+  .categoria-chip.en-aprendizaje {
+    background: #fff4c2;
+  
+    border-color: #d8bd55;
+  
+    color: #947516;
+  }
+  
+  .categoria-chip.en-aprendizaje .categoria-chip-sufijo {
+    color: #947516;
+  }
+  
+  
+  /* ============================================================
+     SIN UNIDADES
+     ============================================================ */
+  
+  .sin-unidades {
+    color: #8995a1;
+  
+    font-size: 0.69rem;
+    font-style: italic;
+  }
+  
+  
+  /* ============================================================
+     SIN RESULTADOS
+     ============================================================ */
+  
+  .sin-resultados {
+    padding: 28px 16px !important;
+  
+    color: #718096;
+  
+    text-align: center !important;
+  
+    font-size: 0.76rem !important;
+  }
+  
+  
+  /* ============================================================
+     LOADING
+     ============================================================ */
+  
+  .vista-choferes-loading {
+    padding: 28px 0;
+  
+    color: #718096;
+  
+    text-align: center;
+  
+    font-size: 0.78rem;
+  }
+  
+  
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  
+  @media (max-width: 850px) {
+  
+    .vista-choferes-resumen {
+      grid-template-columns: 1fr;
+  
+      gap: 9px;
+    }
+  
+    .resumen-item {
+      min-height: 60px;
+    }
+  
+    .vista-choferes-tabla th,
+    .vista-choferes-tabla td {
+      padding-left: 13px;
+      padding-right: 13px;
+    }
+  
+    .vista-choferes-tabla th:first-child {
+      width: 35%;
+    }
+  
+    .vista-choferes-tabla th:last-child {
+      width: 65%;
+    }
+  
+    .nombre-chofer {
+      width: 35%;
+    }
+  
+    .unidades-celda {
+      width: 65%;
+    }
+  }
+  
+  
+  /* ============================================================
+     TABLET / PANTALLAS MEDIANAS
+     ============================================================ */
+  
+  @media (max-width: 720px) {
+  
+    .vista-choferes-tabs {
+      align-items: stretch;
+  
+      flex-direction: column;
+  
+      border-bottom: none;
+  
+      gap: 10px;
+    }
+  
+    .tabs-buttons {
+      width: 100%;
+  
+      overflow-x: auto;
+  
+      border-bottom: 1px solid #dce2e7;
+  
+      scrollbar-width: none;
+    }
+  
+    .tabs-buttons::-webkit-scrollbar {
+      display: none;
+    }
+  
+    .vista-choferes-tabs button {
+      flex: 0 0 auto;
+    }
+  
+    .buscador-top {
+      justify-content: flex-end;
+  
+      margin: 0 0 8px;
+    }
+  
+    .buscador-container {
+      width: 280px;
+    }
+  }
+  
+  
+  /* ============================================================
+     MÓVIL
+     ============================================================ */
+  
+  @media (max-width: 600px) {
+  
+    .vista-choferes-intro {
+      margin-top: 18px;
+      margin-bottom: 16px;
+    }
+  
+    .vista-choferes-intro h1 {
+      font-size: 1.15rem;
+    }
+  
+    .vista-choferes-intro p {
+      font-size: 0.72rem;
+    }
+  
+    .buscador-top {
+      justify-content: stretch;
+    }
+  
+    .buscador-container {
+      width: 100%;
+      max-width: none;
+    }
+  
+    .vista-choferes-tabla-wrapper {
+      overflow-x: auto;
+    }
+  
+    .vista-choferes-tabla {
+      min-width: 620px;
+    }
+  
+    .categoria-chip {
+      min-height: 28px;
+  
+      padding: 5px 8px;
+    }
+  }
+  
+  
+  /* ============================================================
+     MÓVIL PEQUEÑO
+     ============================================================ */
+  
+  @media (max-width: 480px) {
+  
+    .vista-choferes-intro h1 {
+      font-size: 1.05rem;
+    }
+  
+    .vista-choferes-intro p {
+      max-width: 330px;
+    }
+  
+    .resumen-item {
+      padding: 11px 13px;
+    }
+  
+    .resumen-icon {
+      width: 34px;
+      height: 34px;
+  
+      flex-basis: 34px;
+    }
+  
+    .resumen-item strong {
+      font-size: 0.98rem;
+    }
+  
+    .resumen-item span {
+      font-size: 0.64rem;
+    }
+  
+    .vista-choferes-tabs button {
+      padding-left: 12px;
+      padding-right: 12px;
+  
+      font-size: 0.72rem;
+    }
+  }

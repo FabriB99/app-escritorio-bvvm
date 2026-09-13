@@ -16,8 +16,6 @@ import Choferes from '../pages/Choferes/VistaChoferes';
 import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista';
 import AgregarArea from '../pages/AreasProtegidas/AgregarArea';
 import EditarArea from '../pages/AreasProtegidas/EditarArea';
-import ListadoCapacitaciones from '../pages/Guardia/Capacitaciones/ListadoCapacitaciones';
-import ParteCapacitaciones from '../pages/Guardia/Capacitaciones/ParteCapacitaciones';
 import DashboardGuardia from '../pages/Guardia/Dashboard/DashboardGuardia';
 
 // Admin
@@ -62,8 +60,6 @@ export const rutasProtegidas: RutaProtegidaConfig[] = [
   { path: '/areas-protegidas', element: <AreasProtegidasLista />, roles: ['admin', 'jefatura', 'guardia'] },
   { path: '/agregar-area', element: <AgregarArea />, roles: ['admin', 'jefatura', 'guardia'] },
   { path: '/editar-area/:id', element: <EditarArea />, roles: ['admin', 'jefatura', 'guardia'] },
-  { path: '/p-capacitaciones', element: <ParteCapacitaciones />, roles: ['admin', 'jefatura', 'guardia'] },
-  { path: '/listado-capacitaciones', element: <ListadoCapacitaciones />, roles: ['admin', 'jefatura', 'guardia'] },
   { path: '/choferes', element: <Choferes />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/legajos', element: <Legajos />, roles: ['admin', 'jefatura', 'legajo', 'graduados'] },
   { path: '/agregar-legajo', element: <AgregarLegajo />, roles: ['admin', 'legajo', 'jefatura'] },

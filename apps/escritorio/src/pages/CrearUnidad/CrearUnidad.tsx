@@ -2,18 +2,44 @@ import React, { useState } from 'react';
 import { db } from "../../app/firebase-config";
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner'; 
-import './CrearUnidad.css'; 
+import { toast } from 'sonner';
+import './CrearUnidad.css';
 import Header from "../../components/Header";
+import {
+  TIPOS_UNIDAD,
+  CATEGORIAS_CHOFER,
+  CATEGORIA_SUGERIDA_POR_TIPO,
+  TipoUnidad,
+  TipoUnidadChofer,
+} from '../../types/unidades';
 
 const CrearUnidad: React.FC = () => {
     const navigate = useNavigate();
     const [nombre, setNombre] = useState('');
     const [modelo, setModelo] = useState('');
     const [patente, setPatente] = useState('');
-    const [tipo, setTipo] = useState('');
+    const [tipo, setTipo] = useState<TipoUnidad | ''>('');
+    const [categoria, setCategoria] = useState<TipoUnidadChofer | ''>('');
+    const [categoriaTocada, setCategoriaTocada] = useState(false);
     const [estado, setEstado] = useState('Operativa');
     const [ubicaciones, setUbicaciones] = useState<{ nombre: string; elementos: { nombre: string; cantidad: string }[] }[]>([]);
+
+    // Al elegir el tipo detallado, sugerimos una categoría de chofer si el
+    // usuario todavía no la tocó a mano. Si ya la eligió manualmente, no la
+    // pisamos.
+    const handleCambiarTipo = (nuevoTipo: string) => {
+        setTipo(nuevoTipo as TipoUnidad | '');
+
+        if (!categoriaTocada && nuevoTipo) {
+            const sugerencia = CATEGORIA_SUGERIDA_POR_TIPO[nuevoTipo as TipoUnidad];
+            if (sugerencia) setCategoria(sugerencia);
+        }
+    };
+
+    const handleCambiarCategoria = (nuevaCategoria: string) => {
+        setCategoriaTocada(true);
+        setCategoria(nuevaCategoria as TipoUnidadChofer | '');
+    };
 
     const agregarUbicacion = () => {
         setUbicaciones([...ubicaciones, { nombre: '', elementos: [] }]);
@@ -42,15 +68,20 @@ const CrearUnidad: React.FC = () => {
             toast.warning("Completá todos los campos obligatorios.");
             return;
         }
-    
+
+        if (!categoria) {
+            toast.warning("Seleccioná la categoría de chofer de la unidad.");
+            return;
+        }
+
         try {
             const unidadRef = await addDoc(collection(db, 'unidades'), {
-                nombre, modelo, patente, tipo, estado,
+                nombre, modelo, patente, tipo, categoria, estado,
                 ultima_revision: null,
                 kilometraje: '',
                 combustible: ''
             });
-    
+
             for (let i = 0; i < ubicaciones.length; i++) {
                 const ubicacion = ubicaciones[i];
                 const ubicacionRef = await addDoc(collection(db, 'ubicaciones'), {
@@ -58,7 +89,7 @@ const CrearUnidad: React.FC = () => {
                     unidad_id: unidadRef.id,
                     orden: i
                 });
-    
+
                 for (const elemento of ubicacion.elementos) {
                     await addDoc(collection(db, 'elementos'), {
                         nombre: elemento.nombre,
@@ -68,7 +99,7 @@ const CrearUnidad: React.FC = () => {
                     });
                 }
             }
-    
+
             toast.success("Unidad creada con éxito.");
             navigate('/unidades');
         } catch (error) {
@@ -79,13 +110,11 @@ const CrearUnidad: React.FC = () => {
 
     return (
         <div className="crear-unidad__contenedor-principal">
-            {/* Encabezado */}
             <Header
                 title="Crear Unidad"
                 onBack={() => navigate('/unidades')}
             />
 
-            {/* Formulario */}
             <div className="crear-unidad__formulario">
                 <div className="crear-unidad__tarjeta">
                     <span className="crear-unidad__seccion-titulo">Datos de la Unidad</span>
@@ -105,19 +134,24 @@ const CrearUnidad: React.FC = () => {
                         </div>
                         <div className="crear-unidad__campo">
                             <label>Tipo de unidad</label>
-                            <select value={tipo} onChange={(e) => setTipo(e.target.value)} required>
+                            <select value={tipo} onChange={(e) => handleCambiarTipo(e.target.value)} required>
                                 <option value="">Seleccionar tipo</option>
-                                <option value="Ambulancia">Ambulancia</option>
-                                <option value="Unidad de Incendio Estructural">Unidad de Incendio Estructural</option>
-                                <option value="Unidad de Incendio Forestal">Unidad de Incendio Forestal</option>
-                                <option value="Unidad de Abastecimiento">Unidad de Abastecimiento</option>
-                                <option value="Unidad de Rescate Urbano">Unidad de Rescate Urbano</option>
-                                <option value="Unidad de Transporte Personal">Unidad de Transporte Personal</option>
-                                <option value="Unidad de Logística">Unidad de Logística</option>
-                                <option value="Escalera Mecánica">Escalera Mecánica</option>
-                                <option value="Unidad de Rescate Vehicular">Unidad de Rescate Vehicular</option>
-                                <option value="Unidad de Rescate Acuático">Unidad de Rescate Acuático</option>
+                                {TIPOS_UNIDAD.map((opcion) => (
+                                    <option key={opcion} value={opcion}>{opcion}</option>
+                                ))}
                             </select>
+                        </div>
+                        <div className="crear-unidad__campo">
+                            <label>Categoría (chofer)</label>
+                            <select value={categoria} onChange={(e) => handleCambiarCategoria(e.target.value)} required>
+                                <option value="">Seleccionar categoría</option>
+                                {CATEGORIAS_CHOFER.map((opcion) => (
+                                    <option key={opcion} value={opcion}>{opcion}</option>
+                                ))}
+                            </select>
+                            <small className="crear-unidad__ayuda-campo">
+                                Define qué habilitación de chofer necesita esta unidad y se usa para vincular la VTV.
+                            </small>
                         </div>
                         <div className="crear-unidad__campo">
                             <label>Estado</label>

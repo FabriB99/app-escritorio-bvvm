@@ -9,6 +9,7 @@ import { useUser } from '../../context/UserContext';
 import Header from "../../components/Header";
 import './Unidades.css';
 import * as xlsx from 'xlsx';
+import { TIPOS_UNIDAD, TipoUnidadChofer } from '../../types/unidades';
 
 interface Unidad {
   id: string;
@@ -18,6 +19,11 @@ interface Unidad {
   ultima_revision: any;
   tipo: string;
   estado?: string;
+  // Categoría "de chofer" (Maestranza/Ambulancias/Livianas/Pesadas/Escalera).
+  // Se setea en crear/editar unidad y es lo que usan Vencimientos y
+  // VistaChoferes para vincular VTV y habilitaciones. Puede venir vacía en
+  // unidades cargadas antes de este cambio.
+  categoria?: TipoUnidadChofer;
 }
 
 interface Elemento {
@@ -26,19 +32,6 @@ interface Elemento {
   cantidad: string;
   estado: string;
 }
-
-const TIPOS_UNIDAD = [
-  "Ambulancia",
-  "Unidad de Incendio Estructural",
-  "Unidad de Incendio Forestal",
-  "Unidad de Abastecimiento",
-  "Unidad de Rescate Urbano",
-  "Unidad de Transporte Personal",
-  "Unidad de Logística",
-  "Escalera Mecánica",
-  "Unidad de Rescate Vehicular",
-  "Unidad de Rescate Acuático"
-];
 
 const Unidades: React.FC = () => {
   const { user } = useUser();
@@ -95,7 +88,8 @@ const Unidades: React.FC = () => {
     }
   };
 
-  const unidadesFiltradas = units.filter(u => !filtroTipo || u.tipo === filtroTipo);
+  const unidadesFiltradas = units
+    .filter(u => !filtroTipo || u.tipo === filtroTipo);
 
   // Lógica de Exportación a Excel
   const handleExportarExcel = async () => {
@@ -107,7 +101,6 @@ const Unidades: React.FC = () => {
     toast.info("Cargando datos detallados...");
 
     try {
-      // 1. Cargar elementos de todas las unidades en paralelo
       const promesas = units.map(async (unidad) => {
         const q = query(
           collection(db, 'elementos'),
@@ -115,34 +108,32 @@ const Unidades: React.FC = () => {
           orderBy('nombre')
         );
         const querySnapshot = await getDocs(q);
-        
+
         const elementos: Elemento[] = [];
         querySnapshot.forEach((doc) => {
           elementos.push({ id: doc.id, ...doc.data() } as Elemento);
         });
-        
+
         return { unidadId: unidad.id, elementos };
       });
 
       const resultados = await Promise.all(promesas);
-      
-      // 2. Importar xlsx dinámicamente
+
       const wb = xlsx.utils.book_new();
 
-      // --- Hoja 1: Resumen Unidades ---
       const datosResumen = units.map(u => ({
         'ID': u.id,
         'Nombre': u.nombre,
         'Tipo': u.tipo,
+        'Categoría': u.categoria || 'Sin categoría',
         'Modelo': u.modelo,
         'Patente': u.patente,
         'Estado': u.estado
       }));
       const wsResumen = xlsx.utils.json_to_sheet(datosResumen);
-      wsResumen['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+      wsResumen['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
       xlsx.utils.book_append_sheet(wb, wsResumen, "Resumen Unidades");
 
-      // --- Hoja 2: Inventario Detallado ---
       const datosInventario: any[] = [];
       resultados.forEach(item => {
         const unidad = units.find(u => u.id === item.unidadId);
@@ -163,7 +154,6 @@ const Unidades: React.FC = () => {
       wsInventario['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 30 }, { wch: 10 }, { wch: 15 }];
       xlsx.utils.book_append_sheet(wb, wsInventario, "Inventario Detallado");
 
-      // 3. Descargar
       xlsx.writeFile(wb, `Inventario_Unidades_${new Date().toISOString().slice(0, 10)}.xlsx`);
       toast.success("Archivo Excel descargado exitosamente.");
 
@@ -173,7 +163,6 @@ const Unidades: React.FC = () => {
     }
   };
 
-  // Botones del Header
   const headerButtons = [
     ...(user?.rol === 'admin' ? [{
       icon: Plus,

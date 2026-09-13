@@ -13,6 +13,7 @@ import {
   CircleHelp,
 } from "lucide-react";
 import Header from "../../components/Header";
+import { TipoUnidadChofer } from '../../types/unidades';
 
 interface Elemento {
     id: string;
@@ -31,6 +32,7 @@ interface Unidad {
     id: string;
     nombre: string;
     tipo: string;
+    categoria?: TipoUnidadChofer;
     modelo: string;
     patente: string;
     kilometraje?: string;
@@ -84,7 +86,6 @@ const UnidadDetalle: React.FC = () => {
 
     const fetchUnidad = async ({ silent = false }: { silent?: boolean } = {}) => {
         if (!id) return;
-        console.log("🔍 Buscando en Firestore el ID:", id);
         if (!silent) {
             setCargando(true);
         }
@@ -149,7 +150,6 @@ const UnidadDetalle: React.FC = () => {
                 ...(unidadDoc.data() as Omit<Unidad, "id">),
             };
 
-            // Aplicamos ambos estados juntos para reducir renders visibles.
             setUnidad(nextUnidad);
             setUbicaciones(ubicacionesData);
         } catch (error) {
@@ -206,7 +206,7 @@ const UnidadDetalle: React.FC = () => {
                         icon: Pencil,
                         onClick: () => navigate(`/editar-unidad/${id}`),
                         ariaLabel: 'Editar unidad',
-                        className: 'header-btn-edit', // opcional para estilos extra
+                        className: 'header-btn-edit',
                     },
                     ]
                 : []),
