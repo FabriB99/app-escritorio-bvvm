@@ -1,300 +1,476 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, onSnapshot, query, orderBy, updateDoc, doc } from 'firebase/firestore';
-
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
-
-import { Trash2, Plus, Search, Pencil, Layers, Users, Settings } from 'lucide-react';
-
-import './AdminIdentidades.css';
-import Header from "../../components/Header";
+import {
+  Plus,
+  Search,
+  Pencil,
+  RotateCcw,
+  MoreVertical,
+  UserMinus,
+  Trash2,
+  ChevronDown,
+  X,
+  Award,
+  Check,
+  ShieldAlert,
+  UserCheck,
+  UserX,
+} from 'lucide-react';
 import { toast } from 'sonner';
+import Header from "../../components/Header";
+import {
+  Miembro,
+  CATEGORIAS_ORDEN,
+  ROLES_ORDEN,
+  ROLES_LABELS,
+} from './identidadesConstants';
+import './AdminIdentidades.css';
 
-type Miembro = {
-  id: string;
-  nombre: string;
-  apellido: string;
-  pin: string;
-  ordenOperativo: number;
-  grupoSemana: number;
-  roles: string[];
-  categoria: string;
-  grado?: string;
-  activo: boolean;
-};
+type TipoModal = 'desactivar' | 'reactivar' | 'eliminar';
 
-const CATEGORIAS_ORDEN = [
-  "Oficiales Superiores",
-  "Oficiales Jefes",
-  "Oficiales Subalternos",
-  "Suboficiales Superiores",
-  "Suboficiales Subalternos",
-  "Bomberos",
-  "Aspirantes",
-  "Brigada Auxiliar",
-  "Retiro Efectivo",
-];
-
-const CATEGORIAS_LABELS: Record<string, string> = {
-  "Oficiales Superiores": "Oficiales Superiores",
-  "Oficiales Jefes": "Oficiales Jefes",
-  "Oficiales Subalternos": "Oficiales Subalternos",
-  "Suboficiales Superiores": "Suboficiales Superiores",
-  "Suboficiales Subalternos": "Suboficiales Subalternos",
-  "Bomberos": "Bomberos",
-  "Aspirantes": "Aspirantes",
-  "Brigada Auxiliar": "Brigada Auxiliar",
-  "Retiro Efectivo": "Retiro Efectivo",
-};
-
-const ROLES_ORDEN = ["admin", "jefatura", "graduados", "guardia", "legajo"];
-
-const ROLES_LABELS: Record<string, string> = {
-  "admin": "Administrador",
-  "jefatura": "Jefatura",
-  "graduados": "Graduados",
-  "guardia": "Guardia",
-  "legajo": "Legajo"
-};
+interface ModalConfig {
+  abierto: boolean;
+  tipo: TipoModal;
+  miembro: Miembro | null;
+}
 
 const AdminIdentidades: React.FC = () => {
   const navigate = useNavigate();
 
   const [miembros, setMiembros] = useState<Miembro[]>([]);
-  const [filtro, setFiltro] = useState('');
+  const [filtroTexto, setFiltroTexto] = useState('');
+  const [filtroGrupo, setFiltroGrupo] = useState<string>('todos');
+  const [filtroGrupoAbierto, setFiltroGrupoAbierto] = useState(false);
+  const [verInactivos, setVerInactivos] = useState(false);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
-  const [toast, setToast] = useState('');
-
   const [vistaPor, setVistaPor] = useState<"categoria" | "rol">("categoria");
 
-// 🔥 TRAER MIEMBROS (VERSIÓN SEGURA)
-useEffect(() => {
-  const q = query(collection(db, 'miembros'), orderBy('apellido'));
+  const [menuAbiertoId, setMenuAbiertoId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const filtroGrupoRef = useRef<HTMLDivElement | null>(null);
 
-  const unsubscribe = onSnapshot(
-    q,
-    (snapshot) => {
-      const docs: Miembro[] = snapshot.docs.map(doc => {
-        const data = doc.data();
+  const [modalConfig, setModalConfig] = useState<ModalConfig>({
+    abierto: false,
+    tipo: 'desactivar',
+    miembro: null,
+  });
+  const [ejecutandoAccion, setEjecutandoAccion] = useState(false);
 
-        return {
-          id: doc.id,
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (menuRef.current && !menuRef.current.contains(target)) {
+        setMenuAbiertoId(null);
+      }
+      if (filtroGrupoRef.current && !filtroGrupoRef.current.contains(target)) {
+        setFiltroGrupoAbierto(false);
+      }
+    };
+    document.addEventListener("mousedown", handleDocumentClick);
+    return () => document.removeEventListener("mousedown", handleDocumentClick);
+  }, []);
 
-          nombre: data.nombre ?? "",
-          apellido: data.apellido ?? "",
-          pin: data.pin ?? "",
+  useEffect(() => {
+    const q = query(collection(db, 'miembros'), orderBy('apellido'));
 
-          roles: Array.isArray(data.roles) ? data.roles : [],
-          categoria: data.categoria ?? "",
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const docs: Miembro[] = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            nombre: data.nombre ?? "",
+            apellido: data.apellido ?? "",
+            dni: data.dni ?? "",
+            pin: data.pin ?? "",
+            roles: Array.isArray(data.roles) ? data.roles : [],
+            categoria: data.categoria ?? "",
+            ordenOperativo:
+              typeof data.ordenOperativo === "number"
+                ? data.ordenOperativo
+                : typeof data.ordenMerito === "number"
+                  ? data.ordenMerito
+                  : typeof data.numero === "number"
+                    ? data.numero
+                    : 999,
+            grupoSemana: typeof data.grupoSemana === "number" ? data.grupoSemana : 0,
+            grado: typeof data.grado === "string" ? data.grado : "",
+            activo: data.activo !== false,
+          };
+        });
 
-          ordenOperativo:
-            typeof data.ordenOperativo === "number"
-              ? data.ordenOperativo
-              : typeof data.ordenMerito === "number"
-                ? data.ordenMerito
-                : typeof data.numero === "number"
-                  ? data.numero
-                  : 999,
-          grupoSemana: typeof data.grupoSemana === "number" ? data.grupoSemana : 0,
-          grado: typeof data.grado === "string" ? data.grado : "",
+        setMiembros(docs);
+        setCargando(false);
+      },
+      (error) => {
+        console.error("Error al cargar miembros:", error);
+        toast.error("Error al sincronizar miembros.");
+        setCargando(false);
+      }
+    );
 
-          // 🔥 CLAVE TOTAL
-          activo: data.activo !== false
-        };
-      });
+    return () => unsubscribe();
+  }, []);
 
-      setMiembros(docs);
-      setCargando(false);
-    },
-    () => {
-      setError('Error al cargar los datos.');
-      setCargando(false);
-    }
-  );
+  const abrirModal = (tipo: TipoModal, miembro: Miembro) => {
+    setMenuAbiertoId(null);
+    setModalConfig({ abierto: true, tipo, miembro });
+  };
 
-  return () => unsubscribe();
-}, []);
+  const cerrarModal = () => {
+    if (ejecutandoAccion) return;
+    setModalConfig({ abierto: false, tipo: 'desactivar', miembro: null });
+  };
 
-  // 🔥 SOFT DELETE
-  const eliminarMiembro = async (id: string) => {
+  const ejecutarAccionModal = async () => {
+    const { tipo, miembro } = modalConfig;
+    if (!miembro) return;
+
+    setEjecutandoAccion(true);
+
     try {
-      await updateDoc(doc(db, 'miembros', id), {
-        activo: false
-      });
-
-      setToast('Miembro desactivado correctamente.');
-      setTimeout(() => setToast(''), 2500);
-
-    } catch {
-      setError('Error al eliminar.');
-      setTimeout(() => setError(''), 2500);
+      if (tipo === 'desactivar') {
+        await updateDoc(doc(db, 'miembros', miembro.id), { activo: false });
+        toast.success(`${miembro.apellido}, ${miembro.nombre} desactivado.`);
+      } else if (tipo === 'reactivar') {
+        await updateDoc(doc(db, 'miembros', miembro.id), { activo: true });
+        toast.success(`${miembro.apellido}, ${miembro.nombre} reactivado.`);
+      } else if (tipo === 'eliminar') {
+        const tareas = [deleteDoc(doc(db, 'miembros', miembro.id))];
+        if (miembro.dni) {
+          tareas.push(deleteDoc(doc(db, 'usuariosBiblioteca', miembro.dni)));
+        }
+        await Promise.all(tareas);
+        toast.success("Usuario eliminado de forma permanente.");
+      }
+      cerrarModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocurrió un error al procesar la solicitud.");
+    } finally {
+      setEjecutandoAccion(false);
     }
   };
 
-  // 🔍 FILTRO
-  const miembrosFiltrados = miembros.filter(
-    m =>
-      `${m.apellido} ${m.nombre}`.toLowerCase().includes(filtro.toLowerCase()) ||
-      m.roles.some(r => r.toLowerCase().includes(filtro.toLowerCase())) ||
-      (m.categoria && m.categoria.toLowerCase().includes(filtro.toLowerCase()))
-  );
+  const miembrosFiltrados = useMemo(() => {
+    const busqueda = filtroTexto.trim().toLowerCase();
 
-  // 🧠 AGRUPAR (MISMA LÓGICA TUYA)
-  const agruparMiembros = () => {
+    return miembros.filter((m) => {
+      if (m.activo !== !verInactivos) return false;
+      if (filtroGrupo !== 'todos' && m.grupoSemana !== Number(filtroGrupo)) return false;
+      if (!busqueda) return true;
+
+      const nombreCompleto = `${m.apellido} ${m.nombre}`.toLowerCase();
+      const dni = m.dni ? m.dni.includes(busqueda) : false;
+      const roles = m.roles.some((r) => r.toLowerCase().includes(busqueda));
+      const categoria = m.categoria?.toLowerCase().includes(busqueda);
+      const grado = m.grado?.toLowerCase().includes(busqueda);
+      const orden = m.ordenOperativo.toString().includes(busqueda);
+
+      return nombreCompleto.includes(busqueda) || dni || roles || categoria || grado || orden;
+    });
+  }, [miembros, filtroTexto, filtroGrupo, verInactivos]);
+
+  const grupos = useMemo(() => {
+    const resultado: Record<string, Miembro[]> = {};
+
     if (vistaPor === "categoria") {
-      const grupos: Record<string, Miembro[]> = {};
-
-      CATEGORIAS_ORDEN.forEach(cat => {
-        grupos[cat] = miembrosFiltrados.filter(m => m.categoria === cat);
+      CATEGORIAS_ORDEN.forEach((cat) => {
+        resultado[cat] = miembrosFiltrados
+          .filter((m) => m.categoria === cat)
+          .sort((a, b) => (a.ordenOperativo ?? 999) - (b.ordenOperativo ?? 999));
       });
-
-      return grupos;
     } else {
-      const grupos: Record<string, Miembro[]> = {};
-
-      ROLES_ORDEN.forEach(r => {
-        grupos[r] = miembrosFiltrados.filter(m => m.roles.includes(r));
+      ROLES_ORDEN.forEach((rol) => {
+        resultado[rol] = miembrosFiltrados
+          .filter((m) => m.roles.includes(rol))
+          .sort((a, b) => (a.ordenOperativo ?? 999) - (b.ordenOperativo ?? 999));
       });
-
-      return grupos;
     }
-  };
 
-  const grupos = agruparMiembros();
+    return resultado;
+  }, [miembrosFiltrados, vistaPor]);
 
   return (
-    <div className="admin-identidades__contenedor">
-
+    <div className="admin-identidades">
       <Header
-        title="Gestión de Usuarios"
+        title="Gestión de Personal"
         onBack={() => navigate('/admin')}
-        extraButtons={[
-          {
-            key: "configGrados",
-            label: "Grados",
-            icon: Settings,
-            onClick: () => navigate('/admin/grados'),
-            ariaLabel: "Configurar grados",
-            className: "btn-toggle-vista"
-          },
-          {
-            key: "toggleVista",
-            label: vistaPor === "categoria" ? "Ver por Roles" : "Ver por Categorías",
-            icon: vistaPor === "categoria" ? Layers : Users,
-            onClick: () =>
-              setVistaPor(vistaPor === "categoria" ? "rol" : "categoria"),
-            ariaLabel: "Cambiar vista",
-            className: "btn-toggle-vista"
-          }
-        ]}
       />
 
-      {/* BUSCADOR */}
-      <div className="admin-identidades__buscador-contenedor">
-
-        <div className="admin-identidades__buscador-wrapper">
-          <Search size={16} className="admin-identidades__icono-buscar" />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="admin-identidades__buscador"
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-          />
-        </div>
-
+      <div className="identidades-tabs">
         <button
-          className="admin-identidades__btn-agregar"
-          onClick={() => navigate('/admin/crear-identidad')}
+          className={vistaPor === 'categoria' ? 'activo' : ''}
+          onClick={() => setVistaPor('categoria')}
         >
-          <Plus size={16} />
-          Agregar Usuario
+          Por Categorías Jerárquicas
         </button>
 
+        <button
+          className={vistaPor === 'rol' ? 'activo' : ''}
+          onClick={() => setVistaPor('rol')}
+        >
+          Por Roles de Sistema
+        </button>
       </div>
 
-      {/* CONTENIDO */}
+      <section className="identidades-toolbar">
+        <div className="identidades-busqueda">
+          <Search size={18} />
+          <input
+            type="text"
+            value={filtroTexto}
+            onChange={(e) => setFiltroTexto(e.target.value)}
+            placeholder="Buscar por nombre, orden, DNI o grado..."
+          />
+          {filtroTexto && (
+            <button type="button" onClick={() => setFiltroTexto('')} className="busqueda-limpiar">
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+        <div className="identidades-toolbar-acciones">
+          <div className="filtro-desplegable" ref={filtroGrupoRef}>
+            <button
+              type="button"
+              className="filtro-desplegable-boton"
+              onClick={() => setFiltroGrupoAbierto(!filtroGrupoAbierto)}
+            >
+              <span>{filtroGrupo === 'todos' ? 'Todos los grupos' : `Grupo ${filtroGrupo}`}</span>
+              <ChevronDown size={16} />
+            </button>
+
+            {filtroGrupoAbierto && (
+              <div className="filtro-desplegable-menu">
+                {[
+                  { value: 'todos', label: 'Todos los grupos' },
+                  { value: '0', label: 'Grupo 0' },
+                  { value: '1', label: 'Grupo 1' },
+                  { value: '2', label: 'Grupo 2' },
+                  { value: '3', label: 'Grupo 3' },
+                ].map((opcion) => (
+                  <button
+                    key={opcion.value}
+                    type="button"
+                    className={filtroGrupo === opcion.value ? 'seleccionado' : ''}
+                    onClick={() => {
+                      setFiltroGrupo(opcion.value);
+                      setFiltroGrupoAbierto(false);
+                    }}
+                  >
+                    <span>{opcion.label}</span>
+                    {filtroGrupo === opcion.value && <Check size={15} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className={`btn-secundario-filtro ${verInactivos ? 'activo' : ''}`}
+            onClick={() => setVerInactivos(prev => !prev)}
+          >
+            {verInactivos ? <UserCheck size={16} /> : <UserX size={16} />}
+            <span>{verInactivos ? "Viendo Bajas" : "Ver Bajas"}</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-secundario-filtro"
+            onClick={() => navigate('/admin/grados')}
+          >
+            <Award size={16} />
+            <span>Grados</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-primario-accion"
+            onClick={() => navigate('/admin/crear-identidad')}
+          >
+            <Plus size={16} />
+            <span>Nuevo Usuario</span>
+          </button>
+        </div>
+      </section>
+
       {cargando ? (
-        <p>Cargando miembros...</p>
-      ) : error ? (
-        <p className="admin-identidades__error">{error}</p>
+        <div className="identidades-cargando">
+          <p>Cargando identidades...</p>
+        </div>
       ) : miembrosFiltrados.length === 0 ? (
-        <p className="admin-identidades__sin-resultados">No se encontraron resultados.</p>
+        <div className="tabla-vacia">
+          <div className="tabla-vacia-icon"><Search size={22} /></div>
+          <strong>No se encontraron resultados</strong>
+          <span>Probá cambiando el texto de búsqueda o el grupo seleccionado.</span>
+        </div>
       ) : (
-        <div className="admin-identidades__grupos">
+        <div className="identidades-grupos-contenedor">
+          {Object.entries(grupos).map(([grupoClave, lista]) => {
+            if (lista.length === 0) return null;
 
-          {Object.entries(grupos).map(([grupo, lista]) =>
-            lista.length > 0 && (
-              <div key={grupo} className="admin-identidades__grupo">
+            const titulo =
+              vistaPor === "categoria" ? grupoClave : (ROLES_LABELS[grupoClave] || grupoClave);
 
-                <h2 className="admin-identidades__grupo-titulo">
-                  {vistaPor === "categoria"
-                    ? CATEGORIAS_LABELS[grupo] || grupo
-                    : ROLES_LABELS[grupo] || grupo}
-                </h2>
+            return (
+              <div key={grupoClave} className="identidades-bloque">
+                <div className="identidades-bloque-header">
+                  <h3>{titulo}</h3>
+                  <span className="identidades-badge-conteo">{lista.length}</span>
+                </div>
 
-                <div className="admin-identidades__tarjetas">
+                <div className="identidades-grid">
+                  {lista.map((m) => {
+                    const menuEstaAbierto = menuAbiertoId === m.id;
 
-                  {[...lista]
-                    .sort((a, b) => (a.ordenOperativo ?? 999) - (b.ordenOperativo ?? 999))
-                    .map((m) => (
-                      <div key={m.id} className="admin-identidades__tarjeta">
+                    return (
+                      <div
+                        key={m.id}
+                        className={`tarjeta-miembro ${!m.activo ? 'es-inactivo' : ''}`}
+                      >
+                        <div className="tarjeta-miembro-header">
+                          <div className="tarjeta-miembro-info">
+                            <strong className="tarjeta-nombre">
+                              {m.apellido}, {m.nombre}
+                            </strong>
+                            <div className="tarjeta-chips">
+                              <span className="chip chip-orden">№ {m.ordenOperativo}</span>
+                              <span className="chip chip-grupo">G{m.grupoSemana ?? "-"}</span>
+                              {m.dni && <span className="chip chip-dni">DNI {m.dni}</span>}
+                            </div>
+                          </div>
 
-                      {/* NOMBRE */}
-                      <p className="admin-identidades__nombre">
-                        <strong>{m.apellido}, {m.nombre}</strong>
-                      </p>
+                          <div
+                            className="tarjeta-menu-wrap"
+                            ref={menuEstaAbierto ? menuRef : null}
+                          >
+                            <button
+                              type="button"
+                              className="btn-menu-puntos"
+                              onClick={() => setMenuAbiertoId(menuEstaAbierto ? null : m.id)}
+                            >
+                              <MoreVertical size={16} />
+                            </button>
 
-                      {/* META (№ y G) */}
-                      <div className="admin-identidades__meta">
-                        <span className="admin-identidades__badge admin-identidades__badge--orden">
-                          №: {m.ordenOperativo}
-                        </span>
-                        {/* Corregido: Ahora muestra el 0 correctamente */}
-                        <span className="admin-identidades__badge admin-identidades__badge--grupo">
-                          G: {m.grupoSemana !== undefined ? m.grupoSemana : "-"}
-                        </span>
+                            {menuEstaAbierto && (
+                              <div className="dropdown-opciones">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setMenuAbiertoId(null);
+                                    navigate(`/admin/editar-identidad/${m.id}`);
+                                  }}
+                                >
+                                  <Pencil size={14} />
+                                  <span>Editar datos</span>
+                                </button>
+
+                                {m.activo ? (
+                                  <button
+                                    type="button"
+                                    className="opcion-advertencia"
+                                    onClick={() => abrirModal('desactivar', m)}
+                                  >
+                                    <UserMinus size={14} />
+                                    <span>Desactivar</span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="opcion-reactivar"
+                                    onClick={() => abrirModal('reactivar', m)}
+                                  >
+                                    <RotateCcw size={14} />
+                                    <span>Reactivar</span>
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  className="opcion-peligro"
+                                  onClick={() => abrirModal('eliminar', m)}
+                                >
+                                  <Trash2 size={14} />
+                                  <span>Eliminar definitivo</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="tarjeta-miembro-footer">
+                          <span className={`tarjeta-grado ${!m.grado ? 'sin-grado' : ''}`}>
+                            {m.grado || 'Sin grado asignado'}
+                          </span>
+                        </div>
                       </div>
-
-                      {/* GRADO (Ahora es lo único que se ve abajo) */}
-                      {m.grado ? (
-                        <p className="admin-identidades__grado-unico">{m.grado}</p>
-                      ) : (
-                        <p className="admin-identidades__grado-pendiente">Grado no asignado</p>
-                      )}
-
-                      {/* ACCIONES */}
-                      <div className="admin-identidades__acciones">
-                        <button
-                          className="admin-identidades__btn-editar"
-                          onClick={() => navigate(`/admin/editar-identidad/${m.id}`)}
-                        >
-                          <Pencil size={16} />
-                        </button>
-
-                        <button
-                          className="admin-identidades__btn-eliminar"
-                          onClick={() => eliminarMiembro(m.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-
-                    </div>
-                  ))}
-
+                    );
+                  })}
                 </div>
               </div>
-            )
-          )}
-
+            );
+          })}
         </div>
       )}
 
-      {toast && (
-        <div className="admin-identidades__toast">
-          {toast}
+      {modalConfig.abierto && modalConfig.miembro && (
+        <div className="modal-identidades" onClick={cerrarModal}>
+          <div className="confirmacion-content" onClick={(e) => e.stopPropagation()}>
+            <div className={`confirmacion-icono icono-${modalConfig.tipo}`}>
+              <ShieldAlert size={20} />
+            </div>
+
+            <h2>
+              {modalConfig.tipo === 'desactivar' && 'Desactivar miembro'}
+              {modalConfig.tipo === 'reactivar' && 'Reactivar miembro'}
+              {modalConfig.tipo === 'eliminar' && 'Eliminar definitivamente'}
+            </h2>
+
+            <p>
+              {modalConfig.tipo === 'desactivar' && (
+                <>¿Seguro que querés desactivar a <strong>{modalConfig.miembro.apellido}, {modalConfig.miembro.nombre}</strong>? No podrá registrar guardias pero conservará su historial.</>
+              )}
+              {modalConfig.tipo === 'reactivar' && (
+                <>¿Confirmás la reactivación de <strong>{modalConfig.miembro.apellido}, {modalConfig.miembro.nombre}</strong>?</>
+              )}
+              {modalConfig.tipo === 'eliminar' && (
+                <>¿Eliminar de forma permanente a <strong>{modalConfig.miembro.apellido}, {modalConfig.miembro.nombre}</strong>? Esta acción no se puede deshacer.</>
+              )}
+            </p>
+
+            <div className="confirmacion-botones">
+              <button
+                type="button"
+                className="boton-cancelar"
+                onClick={cerrarModal}
+                disabled={ejecutandoAccion}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                className={`boton-confirmar accion-${modalConfig.tipo}`}
+                onClick={ejecutarAccionModal}
+                disabled={ejecutandoAccion}
+              >
+                {ejecutandoAccion ? "Procesando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

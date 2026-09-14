@@ -580,13 +580,6 @@ const Vencimientos: React.FC = () => {
         extraButtons={[{ label: '', icon: Plus, onClick: () => abrirModal() }]}
       />
 
-      <section className="vencimientos-intro">
-        <div>
-          <h1>Control de documentación</h1>
-          <p>Carnets de conducir y documentación de las unidades.</p>
-        </div>
-      </section>
-
       <section className="vencimientos-resumen">
         <div className="resumen-item">
           <div className="resumen-icon resumen-icon-total"><CalendarDays size={19} /></div>

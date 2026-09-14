@@ -1,0 +1,252 @@
+.admin-form-identidad {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #2c3e50;
+    padding-bottom: 50px;
+  }
+  
+  .form-identidad-layout {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 12px;
+  }
+  
+  .form-identidad-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  
+  /* SECCIONES ESTILO TARJETA DE VENCIMIENTOS */
+  .form-tarjeta-seccion {
+    background: #ffffff;
+    border: 1px solid #e1e6eb;
+    border-radius: 11px;
+    padding: 20px 22px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+  }
+  
+  .seccion-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  
+  .seccion-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: #edf2f6;
+    color: #2c3e50;
+    flex-shrink: 0;
+  }
+  
+  .seccion-cabecera h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  .seccion-cabecera p {
+    margin: 2px 0 0 0;
+    font-size: 0.74rem;
+    color: #718096;
+  }
+  
+  /* GRID DE CAMPOS */
+  .form-grid-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+  }
+  
+  .form-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .form-grupo label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #506680;
+  }
+  
+  .form-grupo input,
+  .form-grupo select {
+    height: 41px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    color: #2c3e50;
+    font-family: inherit;
+    font-size: 0.84rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .form-grupo input::placeholder {
+    color: #9aa6b2;
+  }
+  
+  .form-grupo input:hover,
+  .form-grupo select:hover {
+    border-color: #aab6c1;
+  }
+  
+  .form-grupo input:focus,
+  .form-grupo select:focus {
+    border-color: #506680;
+    box-shadow: 0 0 0 3px rgba(80, 102, 128, 0.1);
+  }
+  
+  /* SELECTOR DE ROLES */
+  .roles-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  
+  .rol-chip-boton {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #d5dce3;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #506680;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  
+  .rol-chip-boton:hover {
+    border-color: #9eabb8;
+    background: #f7f9fa;
+  }
+  
+  .rol-chip-boton.activo {
+    border-color: #2c3e50;
+    background: #2c3e50;
+    color: #edf6ff;
+  }
+  
+  .rol-chip-indicador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 4px;
+    border: 1.5px solid #ccd5de;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+  
+  .rol-chip-boton.activo .rol-chip-indicador {
+    border-color: #ffffff;
+    background: #ffffff;
+    color: #2c3e50;
+  }
+  
+  /* FOOTER / ACCIONES */
+  .form-acciones-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 6px;
+    padding-top: 14px;
+  }
+  
+  .btn-cancelar-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #506680;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  
+  .btn-cancelar-form:hover:not(:disabled) {
+    border-color: #9eabb8;
+    background: #f5f7f9;
+  }
+  
+  .btn-guardar-form {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 24px;
+    border: 1px solid #2c3e50;
+    border-radius: 8px;
+    background: #2c3e50;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  
+  .btn-guardar-form:hover:not(:disabled) {
+    background: #1e2a3d;
+    border-color: #1e2a3d;
+  }
+  
+  .btn-guardar-form:disabled,
+  .btn-cancelar-form:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .form-cargando {
+    text-align: center;
+    padding: 50px 20px;
+    font-size: 0.88rem;
+    color: #718096;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .form-grid-campos {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  
+    .form-tarjeta-seccion {
+      padding: 16px;
+    }
+  
+    .roles-selector-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  
+    .btn-guardar-form {
+      flex: 1;
+    }
+  }

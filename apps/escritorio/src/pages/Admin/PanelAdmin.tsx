@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaIdCard, FaClipboardList } from 'react-icons/fa';
 import Header from "../../components/Header";
-import './PanelAdmin.css'; // CSS nuevo basado en tu estilo de biblioteca
+import './PanelAdmin.css';
 
 const PanelAdmin: React.FC = () => {
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ const PanelAdmin: React.FC = () => {
           onKeyDown={(e) => { if (e.key === 'Enter') navigate('/admin/identidades'); }}
         >
           <FaIdCard className="panel-admin__icono" />
-          <h3>Gestión de Usuarios</h3>
-          <p>Crear, editar y asignar PINs a usuarios.</p>
+          <h3>Gestión de Personal</h3>
+          <p>Crear, editar y asignar PINs al personal.</p>
         </div>
 
         <div

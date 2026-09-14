@@ -22,8 +22,7 @@ import DashboardGuardia from '../pages/Guardia/Dashboard/DashboardGuardia';
 import AdminPanel from '../pages/Admin/PanelAdmin';
 import AdminIdentidades from '../pages/Admin/AdminIdentidades';
 import AdminGrados from '../pages/Admin/AdminGrados';
-import AdminCrearIdentidad from '../pages/Admin/AdminCrearIdentidad';
-import AdminEditarIdentidad from '../pages/Admin/AdminEditarIdentidad';
+import AdminFormIdentidad from '../pages/Admin/AdminFormIdentidad';
 import AuditoriaLista from '../pages/Admin/AuditoriaLista';
 
 // Biblioteca (administración)
@@ -74,7 +73,7 @@ export const rutasProtegidas: RutaProtegidaConfig[] = [
   { path: '/admin', element: <AdminPanel />, roles: ['admin'] },
   { path: '/admin/identidades', element: <AdminIdentidades />, roles: ['admin'] },
   { path: '/admin/grados', element: <AdminGrados />, roles: ['admin'] },
-  { path: '/admin/crear-identidad', element: <AdminCrearIdentidad />, roles: ['admin'] },
-  { path: '/admin/editar-identidad/:id', element: <AdminEditarIdentidad />, roles: ['admin'] },
+  { path: '/admin/crear-identidad', element: <AdminFormIdentidad />, roles: ['admin'] },
+  { path: '/admin/editar-identidad/:id', element: <AdminFormIdentidad />, roles: ['admin'] },
   { path: '/admin/auditoria', element: <AuditoriaLista />, roles: ['admin'] },
 ];
