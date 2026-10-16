@@ -5,25 +5,34 @@ import {
   where,
   orderBy,
   doc,
-  setDoc,
   serverTimestamp,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
 
 import { Unidad } from "../../../shared/types/Unidad";
 import { Ubicacion, Elemento } from "../../../shared/types/Ubicacion";
 
+export type EstadoElemento = "Operativo" | "Con falla" | "Faltante";
+
+export interface RevisionData {
+  unidadId: string;
+  bombero: string;
+  observaciones: string;
+  elementos: Record<string, EstadoElemento>;
+}
+
 // ✅ Obtener todas las unidades
 export const getUnidades = async (): Promise<Unidad[]> => {
   const snapshot = await getDocs(collection(db, "unidades"));
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...(doc.data() as Omit<Unidad, "id">),
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...(docSnap.data() as Omit<Unidad, "id">),
   }));
 };
 
-// ✅ Obtener ubicaciones con sus elementos para una unidad
+// ⚡ OPTIMIZADO: Obtiene todas las ubicaciones y pide sus elementos EN PARALELO
 export const getUbicacionesConElementos = async (
   unidadId: string
 ): Promise<Ubicacion[]> => {
@@ -33,9 +42,8 @@ export const getUbicacionesConElementos = async (
     orderBy("orden")
   );
   const ubicacionesSnap = await getDocs(ubicacionesQuery);
-  const ubicaciones: Ubicacion[] = [];
 
-  for (const ubicacionDoc of ubicacionesSnap.docs) {
+  const promesasUbicaciones = ubicacionesSnap.docs.map(async (ubicacionDoc) => {
     const ubicacionId = ubicacionDoc.id;
     const ubicacionNombre = ubicacionDoc.data().nombre;
 
@@ -46,30 +54,24 @@ export const getUbicacionesConElementos = async (
     );
     const elementosSnap = await getDocs(elementosQuery);
 
-    const elementos: Elemento[] = elementosSnap.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<Elemento, "id">),
+    const elementos: Elemento[] = elementosSnap.docs.map((elDoc) => ({
+      id: elDoc.id,
+      ...(elDoc.data() as Omit<Elemento, "id">),
     }));
 
-    ubicaciones.push({ id: ubicacionId, nombre: ubicacionNombre, elementos });
-  }
+    return { id: ubicacionId, nombre: ubicacionNombre, elementos };
+  });
 
-  return ubicaciones;
+  return Promise.all(promesasUbicaciones);
 };
 
-// ✅ Guardar una revisión y actualizar estados de elementos
-interface RevisionData {
-  unidadId: string;
-  bombero: string;
-  observaciones: string;
-  elementos: {
-    [elementoId: string]: "Operativo" | "Con falla" | "Faltante";
-  };
-}
+// ⚡ OPTIMIZADO: Usa writeBatch para guardar la revisión y todos los elementos en 1 solo viaje a Firebase
+export async function addRevision(data: RevisionData): Promise<void> {
+  const batch = writeBatch(db);
 
-export async function addRevision(data: RevisionData) {
+  // 1. Preparamos el documento de la revisión
   const revisionRef = doc(collection(db, "revisiones"));
-  await setDoc(revisionRef, {
+  batch.set(revisionRef, {
     unidadId: data.unidadId,
     bombero: data.bombero,
     observaciones: data.observaciones,
@@ -77,21 +79,21 @@ export async function addRevision(data: RevisionData) {
     elementos: data.elementos,
   });
 
-  const updatePromises = Object.entries(data.elementos).map(
-    async ([elementoId, estado]) => {
-      const elementoRef = doc(db, "elementos", elementoId);
-      await updateDoc(elementoRef, { estado });
-    }
-  );
+  // 2. Preparamos la actualización de cada elemento en el mismo paquete
+  Object.entries(data.elementos).forEach(([elementoId, estado]) => {
+    const elementoRef = doc(db, "elementos", elementoId);
+    batch.update(elementoRef, { estado });
+  });
 
-  await Promise.all(updatePromises);
+  // 3. Ejecutamos todo junto de forma segura
+  await batch.commit();
 }
 
 // ✅ Actualizar el combustible y registrar fecha de control
 export async function updateCombustibleUnidad(
   unidadId: string,
   combustible: string
-) {
+): Promise<void> {
   const unidadRef = doc(db, "unidades", unidadId);
   await updateDoc(unidadRef, {
     combustible,

@@ -1,15 +1,5 @@
 // src/types/unidades.ts
-//
-// Tipos y constantes compartidas entre Vencimientos, VistaChoferes, Unidades
-// y UnidadDetalle. Antes estaban duplicados en cada componente por separado;
-// ahora viven en un solo lugar para que no se desincronicen.
 
-/**
- * Categoría "de chofer" de una unidad. Es una clasificación GRUESA
- * (5 grupos) usada para habilitaciones de choferes y para vincular VTV.
- * No confundir con `TipoUnidad`, que es la clasificación detallada del
- * vehículo (10 tipos) que se usa en la ficha técnica.
- */
 export type TipoUnidadChofer =
   | 'Maestranza'
   | 'Ambulancias'
@@ -29,11 +19,6 @@ export type EstadoHabilitacion = 'habilitado' | 'aprendizaje';
 
 export type HabilitacionesChofer = Partial<Record<TipoUnidadChofer, EstadoHabilitacion>>;
 
-/**
- * Tipo detallado de unidad (ficha técnica / inventario). Se mantiene
- * separado de la categoría de chofer a propósito: dos unidades del mismo
- * `tipo` podrían, en teoría, quedar en categorías distintas.
- */
 export const TIPOS_UNIDAD = [
   'Ambulancia',
   'Unidad de Incendio Estructural',
@@ -49,12 +34,6 @@ export const TIPOS_UNIDAD = [
 
 export type TipoUnidad = (typeof TIPOS_UNIDAD)[number];
 
-/**
- * Sugerencia de categoría a partir del tipo detallado, para precargar el
- * campo `categoria` en el formulario de creación/edición de unidad. Es solo
- * una ayuda: el usuario la puede cambiar. Ajustá estos mapeos si no
- * corresponden a cómo lo clasifican en el cuerpo.
- */
 export const CATEGORIA_SUGERIDA_POR_TIPO: Record<TipoUnidad, TipoUnidadChofer> = {
   'Ambulancia': 'Ambulancias',
   'Unidad de Incendio Estructural': 'Pesadas',
@@ -67,3 +46,37 @@ export const CATEGORIA_SUGERIDA_POR_TIPO: Record<TipoUnidad, TipoUnidadChofer> =
   'Unidad de Rescate Vehicular': 'Livianas',
   'Unidad de Rescate Acuático': 'Livianas',
 };
+
+export type EstadoElemento = 'Operativo' | 'Con falla' | 'Faltante';
+
+export interface Elemento {
+  id: string;
+  nombre: string;
+  cantidad: number;
+  estado?: EstadoElemento;
+  ubicacion_id?: string;
+  orden?: number;
+}
+
+export interface Ubicacion {
+  id: string;
+  nombre: string;
+  unidad_id?: string;
+  orden?: number;
+  elementos: Elemento[];
+}
+
+export interface Unidad {
+  id: string;
+  nombre: string;
+  numero?: string | number;
+  tipo?: TipoUnidad | string;
+  categoria?: TipoUnidadChofer;
+  modelo?: string;
+  patente?: string;
+  estado?: 'En servicio' | 'Fuera de servicio' | 'En mantenimiento' | string;
+  kilometraje?: string;
+  combustible: string; // Ahora sí es obligatorio en TypeScript
+  fechaControlCombustible?: any;
+  imagenUrl?: string;
+}

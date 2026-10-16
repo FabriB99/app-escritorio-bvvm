@@ -1,0 +1,15 @@
+# Reglas de Arquitectura — Sistema BVVM (Bomberos Voluntarios Villa María)
+
+1. **Idioma y Estilo**: Todo el código, comentarios, interfaces y mensajes de UI deben estar en español claro.
+2. **Fuentes de Verdad (Tipos)**: 
+   - NUNCA declares interfaces de `Unidad`, `Ubicacion`, `Elemento` o `Revision` sueltas dentro de los componentes.
+   - Importá siempre desde `apps/shared/types` o desde `src/types/unidades.ts`. Prohibido usar `any` salvo casos estrictamente necesarios.
+3. **Firestore y Rendimiento**:
+   - NUNCA uses `await` dentro de un bucle `for` para hacer consultas a Firestore; usá siempre `Promise.all()`.
+   - Cuando actualices múltiples documentos al mismo tiempo (ej. guardar revisión y actualizar elementos), usá siempre `writeBatch(db)`.
+   - Firestore no acepta valores `undefined`: asegurate de usar `null` o limpiar los objetos antes de hacer `addDoc`, `setDoc` o `updateDoc`.
+4. **Auditoría Obligatoria (`apps/escritorio`)**:
+   - Toda operación de creación, edición o eliminación en el escritorio debe llamar a `registrarAuditoria` usando `buildOperador(miembroActivo, user?.rol)`.
+5. **Componentes Limpios**:
+   - Evitá crear páginas de más de 350 líneas. Si una pantalla crece, separá los modales, tablas o formularios en subcomponentes.
+   - Si hay un formulario de "Crear" y otro de "Editar" para la misma entidad, priorizá unificar la lógica en un solo componente reutilizable.

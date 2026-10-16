@@ -1,12 +1,13 @@
-// src/context/UserContext.tsx
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../app/firebase-config';
 
-interface UserData {
+export type RolUsuario = 'admin' | 'jefatura' | 'guardia' | 'graduados' | 'legajo' | 'bombero' | string;
+
+export interface UserData {
   uid: string;
-  rol: string;
+  rol: RolUsuario;
 }
 
 export interface MiembroActivo {
@@ -15,7 +16,7 @@ export interface MiembroActivo {
   apellido: string;
   categoria: string;
   roles: string[];
-  pin: string;
+  pin?: string; // Opcional para no obligar a guardarlo en localStorage
 }
 
 interface UserContextType {
@@ -24,37 +25,51 @@ interface UserContextType {
   miembroActivo: MiembroActivo | null;
   setMiembroActivo: (m: MiembroActivo | null) => void;
   loading: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+const STORAGE_USER_KEY = 'usuario';
+const STORAGE_MIEMBRO_KEY = 'miembroActivo';
+
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [miembroActivo, setMiembroActivo] = useState<MiembroActivo | null>(null);
+  // Inicializamos el estado leyendo directo de localStorage una sola vez
+  const [user, setUser] = useState<UserData | null>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_USER_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem(STORAGE_USER_KEY);
+      return null;
+    }
+  });
+
+  const [miembroActivo, setMiembroActivoState] = useState<MiembroActivo | null>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_MIEMBRO_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem(STORAGE_MIEMBRO_KEY);
+      return null;
+    }
+  });
+
   const [loading, setLoading] = useState(true);
 
-  // 🧠 Restaurar datos guardados al iniciar
+  // Función envoltorio que sanitiza el PIN antes de guardar al miembro en memoria
+  const setMiembroActivo = (miembro: MiembroActivo | null) => {
+    if (miembro) {
+      const { pin: _pinOculto, ...miembroSeguro } = miembro;
+      setMiembroActivoState(miembroSeguro);
+      localStorage.setItem(STORAGE_MIEMBRO_KEY, JSON.stringify(miembroSeguro));
+    } else {
+      setMiembroActivoState(null);
+      localStorage.removeItem(STORAGE_MIEMBRO_KEY);
+    }
+  };
+
   useEffect(() => {
-    const storedUser = localStorage.getItem('usuario');
-    const storedMiembro = localStorage.getItem('miembroActivo');
-
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem('usuario');
-      }
-    }
-
-    if (storedMiembro) {
-      try {
-        setMiembroActivo(JSON.parse(storedMiembro));
-      } catch {
-        localStorage.removeItem('miembroActivo');
-      }
-    }
-
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -66,19 +81,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             const data = docSnap.data();
             const fullUser: UserData = { uid, rol: data.rol };
             setUser(fullUser);
-            localStorage.setItem('usuario', JSON.stringify(fullUser));
+            localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(fullUser));
           } else {
-            setUser(null);
-            localStorage.removeItem('usuario');
+            limpiarSesionLocal();
           }
         } catch (error) {
           console.error('Error al obtener el rol del usuario:', error);
-          setUser(null);
-          localStorage.removeItem('usuario');
+          limpiarSesionLocal();
         }
       } else {
-        setUser(null);
-        localStorage.removeItem('usuario');
+        limpiarSesionLocal();
       }
 
       setLoading(false);
@@ -87,23 +99,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  // 🧹 Cerrar sesión limpia todo
-  const logout = () => {
-    auth.signOut();
+  const limpiarSesionLocal = () => {
     setUser(null);
-    setMiembroActivo(null);
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('miembroActivo');
+    setMiembroActivoState(null);
+    localStorage.removeItem(STORAGE_USER_KEY);
+    localStorage.removeItem(STORAGE_MIEMBRO_KEY);
   };
 
-  // 💾 Guardar automáticamente cada vez que cambie el miembro activo
-  useEffect(() => {
-    if (miembroActivo) {
-      localStorage.setItem('miembroActivo', JSON.stringify(miembroActivo));
-    } else {
-      localStorage.removeItem('miembroActivo');
-    }
-  }, [miembroActivo]);
+  const logout = async () => {
+    await auth.signOut();
+    limpiarSesionLocal();
+  };
 
   return (
     <UserContext.Provider
