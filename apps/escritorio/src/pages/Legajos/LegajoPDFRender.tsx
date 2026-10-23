@@ -15,7 +15,7 @@ interface LegajoCompleto {
     fechaNacimiento?: string;
     grupoSanguineo?: string;
     domicilio?: string;
-    lugar?: string;
+    ciudad?: string;
     domicilioLaboral?: string;
     obraSocial?: string;
     carnetConducir?: string;
@@ -73,7 +73,7 @@ const LegajoPDFRender: React.FC<Props> = ({ legajo }) => {
         <p><strong>DNI:</strong> {legajo.datosPersonales.dni || "—"}</p>
         <p><strong>Fecha nacimiento:</strong> {legajo.datosPersonales.fechaNacimiento || "—"}</p>
         <p><strong>Grupo sanguíneo:</strong> {legajo.datosPersonales.grupoSanguineo || "—"}</p>
-        <p><strong>Domicilio:</strong> {legajo.datosPersonales.domicilio || "—"} <strong>Lugar:</strong> {legajo.datosPersonales.lugar || "—"}</p>
+        <p><strong>Domicilio:</strong> {legajo.datosPersonales.domicilio || "—"} <strong>Ciudad:</strong> {legajo.datosPersonales.ciudad || "—"}</p>
         <p><strong>Domicilio laboral:</strong> {legajo.datosPersonales.domicilioLaboral || "—"}</p>
         <p><strong>Obra social:</strong> {legajo.datosPersonales.obraSocial || "—"}</p>
         <p><strong>Carnet de conducir:</strong> {legajo.datosPersonales.carnetConducir || "—"}</p>

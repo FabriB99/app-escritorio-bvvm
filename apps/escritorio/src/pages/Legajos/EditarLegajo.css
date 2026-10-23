@@ -159,7 +159,8 @@
   letter-spacing: 0.5px;
 }
 
-.form-grupo input {
+.form-grupo input,
+.form-grupo select {
   padding: 9px 12px;
   border: 1.5px solid #e0e4ea;
   border-radius: var(--radius-sm);
@@ -173,7 +174,12 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.form-grupo input:focus {
+.form-grupo select {
+  cursor: pointer;
+}
+
+.form-grupo input:focus,
+.form-grupo select:focus {
   border-color: var(--color-sidebar);
   box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
   background: #ffffff;

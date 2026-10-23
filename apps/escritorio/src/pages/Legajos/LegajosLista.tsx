@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useUser } from "../../context/UserContext";
 import { collection, query, orderBy, startAfter, limit, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore";
-import { db } from "../../app/firebase-config";
-import { Plus, Search, Trash2, Eye } from "lucide-react";
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "../../app/firebase-config";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./LegajosLista.css";
-import { registrarAuditoria } from "../../utils/auditoria";
+import { registrarAuditoria, buildOperador } from "../../utils/auditoria";
+import { toast } from "sonner";
 import Header from "../../components/Header";
 
 interface Legajo {
@@ -14,6 +16,7 @@ interface Legajo {
   nombre: string;
   numeroLegajo: number;
   categoria?: string;
+  fotoUrl?: string;
 }
 
 const BATCH_SIZE = 20;
@@ -71,22 +74,41 @@ const LegajosLista: React.FC = () => {
   };
 
   const eliminarLegajo = async (id: string) => {
-    if (!miembroActivo) return;
+    if (!miembroActivo) {
+      toast.error("No se pudo determinar el miembro que realiza la acción.");
+      return;
+    }
+    if (!legajoAEliminar) return;
+
     try {
       const docRef = doc(db, "legajos", id);
       const docSnap = await getDoc(docRef);
       const datosPrevios = docSnap.exists() ? docSnap.data() : null;
+
+      if (legajoAEliminar.fotoUrl || datosPrevios?.fotoUrl) {
+        try {
+          await deleteObject(ref(storage, `legajos/${id}/imagen`));
+        } catch (storageError) {
+          console.warn("No se pudo eliminar la imagen de Storage o no existía:", storageError);
+        }
+      }
+
       await deleteDoc(docRef);
       setLegajos(prev => prev.filter(l => l.id !== id));
-      if (datosPrevios) {
-        await registrarAuditoria({
-          coleccion: "legajos", accion: "eliminar", docId: id,
-          miembro: { uid: miembroActivo.id, rol: miembroActivo.categoria },
-          datosNuevos: null, datosAnteriores: datosPrevios,
-        });
-      }
+
+      await registrarAuditoria({
+        accion: "eliminar",
+        coleccion: "legajos",
+        docId: id,
+        docResumen: `${legajoAEliminar.apellido}, ${legajoAEliminar.nombre} (Legajo N° ${legajoAEliminar.numeroLegajo})`,
+        operador: buildOperador(miembroActivo, user?.rol),
+        detalles: { snapshot: datosPrevios || undefined },
+      });
+
+      toast.success("Legajo eliminado correctamente");
     } catch (error) {
       console.error("Error al eliminar legajo:", error);
+      toast.error("Ocurrió un error al eliminar el legajo");
     }
   };
 
@@ -129,7 +151,11 @@ const LegajosLista: React.FC = () => {
       {/* Lista */}
       <div className="legajos-lista">
         {legajosFiltrados.map(legajo => (
-          <div key={legajo.id} className="legajo-card">
+          <div
+            key={legajo.id}
+            className="legajo-card"
+            onClick={() => navigate(`/legajo/${legajo.id}`)}
+          >
             <div className="legajo-avatar">
               {getIniciales(legajo.apellido, legajo.nombre)}
             </div>
@@ -140,16 +166,23 @@ const LegajosLista: React.FC = () => {
                 {legajo.categoria && <span className="legajo-categoria">{legajo.categoria}</span>}
               </p>
             </div>
-            <div className="legajo-acciones">
-              <button className="btn-ver" onClick={() => navigate(`/legajo/${legajo.id}`)}>
-                <Eye size={14} /> Ver legajo
-              </button>
-              {puedeEditar && (
-                <button className="btn-eliminar" onClick={() => { setLegajoAEliminar(legajo); setModalEliminarVisible(true); }}>
+            {puedeEditar && (
+              <div className="legajo-acciones">
+                <button
+                  type="button"
+                  className="btn-eliminar"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLegajoAEliminar(legajo);
+                    setModalEliminarVisible(true);
+                  }}
+                  title="Eliminar legajo"
+                  aria-label="Eliminar legajo"
+                >
                   <Trash2 size={14} />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ))}
         {loading && <p className="legajos-loading">Cargando...</p>}

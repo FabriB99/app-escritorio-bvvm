@@ -73,6 +73,7 @@
   gap: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: box-shadow var(--transition-fast), border-left-color var(--transition-fast);
+  cursor: pointer;
 }
 
 .legajo-card:hover {

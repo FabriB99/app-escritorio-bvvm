@@ -151,12 +151,6 @@
   font-size: 12px;
 }
 
-.lugar-info {
-  margin-left: 16px;
-  display: inline-flex;
-  gap: 6px;
-}
-
 /* Hijos */
 .hijos-lista {
   display: flex;
@@ -271,7 +265,6 @@
 
   .legajo-header {
     background: #2c3e50 !important;
-    -webkit-print-color-adjust: exact !important;
     border-radius: 8px;
     margin-bottom: 10px;
     padding: 16px 20px;
@@ -316,4 +309,4 @@
 
 .legajo-detalle-container.margin-pdf {
   padding: 20px 40px !important;
-}   
+}

@@ -28,6 +28,7 @@
     "firebase": "^11.10.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.9",
     "lucide-react": "^0.577.0",
     "mapbox-gl": "^3.3.0",
     "pdfjs-dist": "^3.11.174",

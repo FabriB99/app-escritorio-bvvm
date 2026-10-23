@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, serverTimestamp, doc, setDoc, getDocs } from 'firebase/firestore';
+import { collection, serverTimestamp, doc, setDoc, getDocs, query, where, limit } from 'firebase/firestore';
 import { db } from '../../app/firebase-config';
 import { useUser } from '../../context/UserContext';
 import { registrarAuditoria, buildOperador } from '../../utils/auditoria';
+import { toast } from 'sonner';
 import { FileText } from 'lucide-react';
 import Header from "../../components/Header";
 import './AgregarLegajo.css';
 
 const AgregarLegajo: React.FC = () => {
   const navigate = useNavigate();
-  const { miembroActivo } = useUser();
+  const { user, miembroActivo } = useUser();
 
   const [dni, setDni] = useState('');
   const [numeroLegajo, setNumeroLegajo] = useState('');
@@ -24,42 +25,97 @@ const AgregarLegajo: React.FC = () => {
     nombre: string;
     apellido: string;
     categoria: string;
+    grado: string;
+    carnetConducir: string;
   } | null>(null);
 
   const buscarMiembro = async (dniValue: string) => {
-    if (dniValue.trim().length < 7) {
+    const dniLimpio = dniValue.trim();
+    if (dniLimpio.length < 7) {
       setMiembroEncontrado(null);
       return;
     }
     setBuscando(true);
     try {
-      const snapshot = await getDocs(collection(db, 'miembros'));
-      const encontrado = snapshot.docs.find(d => d.data().dni === dniValue.trim());
-      if (encontrado) {
-        const data = encontrado.data();
+      const q = query(
+        collection(db, 'miembros'),
+        where('dni', '==', dniLimpio),
+        limit(1)
+      );
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) {
+        const docSnap = snapshot.docs[0];
+        const data = docSnap.data();
+        const grado = data.grado || data.categoria || '';
+        let carnetConducir = data.carnetConducir || data.licenciaConducir || '';
+
+        // Consultamos en la colección vencimientos si posee carnet
+        try {
+          const qCarnet = query(
+            collection(db, 'vencimientos'),
+            where('miembroId', '==', docSnap.id),
+            where('tipo', '==', 'carnet')
+          );
+          const snapCarnet = await getDocs(qCarnet);
+          if (!snapCarnet.empty) {
+            const vData = snapCarnet.docs[0].data();
+            if (Array.isArray(vData.tipoCarnet) && vData.tipoCarnet.length > 0) {
+              carnetConducir = vData.tipoCarnet.join(', ');
+            } else if (typeof vData.tipoCarnet === 'string' && vData.tipoCarnet.trim()) {
+              carnetConducir = vData.tipoCarnet.trim();
+            }
+          }
+        } catch (errCarnet) {
+          console.warn('Error al consultar carnet en vencimientos:', errCarnet);
+        }
+
+        if (!carnetConducir) {
+          carnetConducir = 'No posee';
+        }
+
         setMiembroEncontrado({
-          id: encontrado.id,
+          id: docSnap.id,
           nombre: data.nombre,
           apellido: data.apellido,
           categoria: data.categoria || '',
+          grado,
+          carnetConducir,
         });
         setError('');
+        toast.success(`Miembro vinculado: ${data.apellido}, ${data.nombre}`);
       } else {
         setMiembroEncontrado(null);
-        setError('No existe un miembro con ese DNI.');
+        const msg = 'No existe un miembro con ese DNI.';
+        setError(msg);
+        toast.error(msg);
       }
     } catch {
-      setError('Error al buscar el miembro.');
+      const msg = 'Error al buscar el miembro.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setBuscando(false);
     }
   };
 
+  useEffect(() => {
+    const valor = dni.trim();
+    if (valor.length < 7) {
+      setMiembroEncontrado(null);
+      setError('');
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      buscarMiembro(valor);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [dni]);
+
   const handleDniChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setDni(value);
+    setDni(e.target.value);
     setError('');
-    buscarMiembro(value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,17 +123,23 @@ const AgregarLegajo: React.FC = () => {
     setError('');
 
     if (!dni.trim() || !numeroLegajo.trim()) {
-      setError('Por favor completá todos los campos.');
+      const msg = 'Por favor completá todos los campos.';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     if (!miembroEncontrado) {
-      setError('Primero ingresá un DNI válido.');
+      const msg = 'Primero ingresá un DNI válido.';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
     if (!miembroActivo) {
-      setError('No se pudo determinar el miembro que realiza la acción.');
+      const msg = 'No se pudo determinar el miembro que realiza la acción.';
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -90,6 +152,8 @@ const AgregarLegajo: React.FC = () => {
         dni: dni.trim(),
         miembroId: miembroEncontrado.id,
         categoria: miembroEncontrado.categoria,
+        grado: miembroEncontrado.grado,
+        carnetConducir: miembroEncontrado.carnetConducir,
         numeroLegajo: Number(numeroLegajo),
         creadoEn: serverTimestamp(),
       });
@@ -99,16 +163,19 @@ const AgregarLegajo: React.FC = () => {
         accion: "crear",
         docId: nuevoDocRef.id,
         docResumen: `Legajo N° ${numeroLegajo} — ${miembroEncontrado.apellido} ${miembroEncontrado.nombre}`,
-        operador: buildOperador(miembroActivo, miembroActivo.categoria),
+        operador: buildOperador(miembroActivo, user?.rol),
         detalles: {
           descripcion: `Alta de legajo N° ${numeroLegajo} vinculado a ${miembroEncontrado.nombre} ${miembroEncontrado.apellido} (DNI ${dni.trim()})`,
         },
       });
 
+      toast.success('Legajo guardado con éxito');
       navigate(`/legajo/${nuevoDocRef.id}`);
     } catch (err) {
       console.error(err);
-      setError('Ocurrió un error al guardar el legajo.');
+      const msg = 'Ocurrió un error al guardar el legajo.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -153,7 +220,7 @@ const AgregarLegajo: React.FC = () => {
               </div>
               {miembroEncontrado && (
                 <span className="form-legajo-miembro-info">
-                  {miembroEncontrado.apellido} {miembroEncontrado.nombre} — {miembroEncontrado.categoria}
+                  {miembroEncontrado.apellido} {miembroEncontrado.nombre} — {miembroEncontrado.grado || miembroEncontrado.categoria} · Carnet: {miembroEncontrado.carnetConducir}
                 </span>
               )}
             </div>
