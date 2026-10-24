@@ -2,10 +2,13 @@
 
 /* ─── Contenedor principal ─────────────────────────────────────────────────── */
 
-.elementos-medicos-wrapper .listado-elementos-medicos {
-  padding: var(--spacing-lg);
-  max-width: 1200px;
-  margin: 0 auto;
+.elementos-medicos-wrapper {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  position: relative;
 }
 
 /* ─── Alerta pendientes ─────────────────────────────────────────────────────── */
@@ -28,9 +31,28 @@
 .elementos-medicos-wrapper .filtros-bar {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
+  width: 100%;
+}
+
+.elementos-medicos-wrapper .filtros-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.elementos-medicos-wrapper .filtros-derecha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 260px;
 }
 
 .elementos-medicos-wrapper .filtros-estado {
@@ -63,7 +85,8 @@
 
 .elementos-medicos-wrapper .buscador {
   flex: 1;
-  min-width: 220px;
+  min-width: 200px;
+  max-width: 380px;
   padding: 7px var(--spacing-sm);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -81,9 +104,13 @@
 /* ─── Tabla ─────────────────────────────────────────────────────────────────── */
 
 .elementos-medicos-wrapper .tabla-wrap {
+  width: 100%;
   overflow-x: auto;
+  background-color: #ffffff;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
 }
 
 .elementos-medicos-wrapper .tabla-elementos {
@@ -98,11 +125,13 @@
 }
 
 .elementos-medicos-wrapper .tabla-elementos th {
-  padding: 11px 14px;
+  padding: 12px 14px;
   text-align: left;
-  font-weight: 500;
+  font-weight: 700;
   font-size: 0.8rem;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+  color: #ffffff;
 }
 
 .elementos-medicos-wrapper .tabla-elementos td {
@@ -188,6 +217,66 @@
 .elementos-medicos-wrapper .btn-recuperar:hover {
   background-color: var(--color-accent);
   color: var(--color-text-white);
+}
+
+.elementos-medicos-wrapper .btn-eliminar-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+  padding: 5px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.elementos-medicos-wrapper .btn-eliminar-item:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.elementos-medicos-wrapper .btn-limpiar-antiguos {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--spacing-xs) 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid #fecaca;
+  background-color: #fff1f2;
+  color: #e11d48;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.elementos-medicos-wrapper .btn-limpiar-antiguos:hover:not(:disabled) {
+  background-color: #ffe4e6;
+  border-color: #fda4af;
+  color: #be123c;
+}
+
+.elementos-medicos-wrapper .btn-danger {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: 1px solid #dc2626;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+}
+
+.elementos-medicos-wrapper .btn-danger:hover:not(:disabled) {
+  background-color: #dc2626;
 }
 
 /* ─── Estados vacío/carga ───────────────────────────────────────────────────── */

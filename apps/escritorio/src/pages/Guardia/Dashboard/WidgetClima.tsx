@@ -45,8 +45,8 @@ const getEstadoClima = (iconoNum: number) => {
 const IndicadorTendencia = ({ valor }: { valor: number }) => {
   if (!valor || valor === 0) return null;
   return valor > 0 
-    ? <TrendingUp size={25} color="#ef4444" style={{ marginLeft: '4px' }} /> 
-    : <TrendingDown size={25} color="#3b82f6" style={{ marginLeft: '4px' }} />;
+    ? <TrendingUp size={24} color="#ef4444" style={{ marginLeft: '4px' }} /> 
+    : <TrendingDown size={24} color="#3b82f6" style={{ marginLeft: '4px' }} />;
 };
 
 const WidgetClima: React.FC = () => {
@@ -63,23 +63,41 @@ const WidgetClima: React.FC = () => {
     return () => { if (unsub) unsub(); };
   }, []);
 
-  if (cargando) return <div className="widget-card"><p className="widget-loading">Cargando meteorología...</p></div>;
-  if (!clima) return <div className="widget-card"><p className="widget-error">A la espera de datos...</p></div>;
+  if (cargando) {
+    return (
+      <div className="widget-card widget-clima-compacto">
+        <p className="widget-loading">Cargando meteorología...</p>
+      </div>
+    );
+  }
+
+  if (!clima) {
+    return (
+      <div className="widget-card widget-clima-compacto">
+        <p className="widget-error">A la espera de datos...</p>
+      </div>
+    );
+  }
 
   const estado = getEstadoClima(clima.iconoNum);
 
   return (
-    /* Agregamos la clase widget-clima-compacto para controlar el contenedor */
     <div className="widget-card widget-clima-compacto">
-      
+      {/* Header Unificado con el resto de los widgets */}
       <div className="widget-header">
-        <h3 className="widget-title"><Cloud size={16} /> Meteorología</h3>
-        <span className="badge-prioridad" style={{ backgroundColor: '#f1f5f9', color: '#64748b', border: 'none', margin: 0, padding: '2px 8px' }}>Villa María</span>
+        <div className="widget-header-title-wrap">
+          <h3 className="widget-title">
+            <Cloud size={20} color="#3b82f6" />
+            Meteorología
+          </h3>
+        </div>
+        <span className="widget-counter-badge widget-counter-badge--location">
+          Villa María
+        </span>
       </div>
 
       <div className="clima-card-body">
-        
-        {/* ROW SUPERIOR */}
+        {/* ROW SUPERIOR: Temp y Brújula */}
         <div className="clima-row-top">
           <div className="clima-bloque-temp">
             {estado.icono}
@@ -117,10 +135,10 @@ const WidgetClima: React.FC = () => {
 
         <div className="clima-linea-separadora"></div>
 
-        {/* ROW INFERIOR */}
+        {/* ROW INFERIOR: Métricas 2x2 */}
         <div className="clima-row-grid">
           <div className="clima-item-grid">
-            <Droplets size={25} color="#3b82f6" />
+            <Droplets size={24} color="#3b82f6" />
             <div className="clima-item-textos">
               <span>Humedad</span>
               <strong>{clima.humedad}%</strong>
@@ -128,7 +146,7 @@ const WidgetClima: React.FC = () => {
           </div>
 
           <div className="clima-item-grid">
-            <Gauge size={25} color="#64748b" />
+            <Gauge size={24} color="#64748b" />
             <div className="clima-item-textos">
               <span>Presión</span>
               <strong>{clima.presion.toFixed(0)} <small>hPa</small></strong>
@@ -136,7 +154,7 @@ const WidgetClima: React.FC = () => {
           </div>
 
           <div className="clima-item-grid">
-            <CloudRain size={25} color="#0ea5e9" />
+            <CloudRain size={24} color="#0ea5e9" />
             <div className="clima-item-textos">
               <span>Lluvia</span>
               <strong>{clima.lluvia.toFixed(1)} <small>mm</small></strong>
@@ -144,14 +162,13 @@ const WidgetClima: React.FC = () => {
           </div>
 
           <div className="clima-item-grid">
-            <AlertTriangle size={25} color="#d97706" />
+            <AlertTriangle size={24} color="#d97706" />
             <div className="clima-item-textos">
               <span style={{ color: '#d97706' }}>Ráfagas</span>
               <strong style={{ color: '#b45309' }}>{clima.rafagas.toFixed(1)} <small>km/h</small></strong>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

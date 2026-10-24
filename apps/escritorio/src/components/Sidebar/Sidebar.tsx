@@ -11,10 +11,18 @@ interface SidebarSectionProps {
   icon: React.ReactNode;
   children: React.ReactNode;
   isOpen: boolean;
+  isActiveSection?: boolean;
   onClick: () => void;
 }
 
-const SidebarSection: React.FC<SidebarSectionProps> = ({ title, icon, children, isOpen, onClick }) => {
+const SidebarSection: React.FC<SidebarSectionProps> = ({
+  title,
+  icon,
+  children,
+  isOpen,
+  isActiveSection = false,
+  onClick,
+}) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState("0px");
 
@@ -24,9 +32,15 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({ title, icon, children, 
     }
   }, [isOpen, children]);
 
+  const sectionClassNames = [
+    "nav-section-title",
+    isActiveSection ? "active" : "",
+    isOpen ? "open" : "",
+  ].filter(Boolean).join(" ");
+
   return (
     <div className="sidebar-section">
-      <div className={`nav-section-title ${isOpen ? "active" : ""}`} onClick={onClick}>
+      <div className={sectionClassNames} onClick={onClick}>
         <span className="nav-section-icon">{icon}</span>
         <span className="nav-section-text">{title}</span>
         <span className="nav-section-arrow">
@@ -89,13 +103,85 @@ const SECCIONES = [
   }
 ];
 
+const isLinkActive = (to: string, currentPath: string): boolean => {
+  if (currentPath === to) return true;
+
+  // Unidades y sub-vistas
+  if (to === "/unidades") {
+    return (
+      currentPath.startsWith("/crear-unidad") ||
+      currentPath.startsWith("/editar-unidad") ||
+      currentPath.startsWith("/unidad/")
+    );
+  }
+
+  // Historial Revisiones
+  if (to === "/seleccionar-unidad-historial") {
+    return currentPath.startsWith("/historial-revisiones");
+  }
+
+  // Legajos y sub-vistas
+  if (to === "/legajos") {
+    return (
+      currentPath.startsWith("/agregar-legajo") ||
+      currentPath.startsWith("/editar-legajo") ||
+      currentPath.startsWith("/legajo/")
+    );
+  }
+
+  // Guardia / Novedades y sus historiales / elementos médicos
+  if (to === "/dashboard-guardia" || to === "/guardia") {
+    return (
+      currentPath === "/guardia" ||
+      currentPath === "/dashboard-guardia" ||
+      currentPath.startsWith("/guardia/novedades-historial") ||
+      currentPath.startsWith("/novedades-historial") ||
+      currentPath.startsWith("/elementos-medicos") ||
+      currentPath.startsWith("/guardia/elementos-medicos")
+    );
+  }
+
+  // Áreas Protegidas y sub-vistas
+  if (to === "/areas-protegidas") {
+    return (
+      currentPath.startsWith("/agregar-area") ||
+      currentPath.startsWith("/editar-area")
+    );
+  }
+
+  // Biblioteca y sub-vistas
+  if (to === "/editar-biblioteca") {
+    return (
+      currentPath.startsWith("/editar-biblioteca") ||
+      currentPath.startsWith("/editar-seccion")
+    );
+  }
+
+  return false;
+};
+
+const isSectionActive = (sec: (typeof SECCIONES)[number], currentPath: string): boolean => {
+  return sec.links.some(link => isLinkActive(link.to, currentPath));
+};
+
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Para saber en qué página estamos
   const { user, setUser, miembroActivo, setMiembroActivo } = useUser();
-  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openSection, setOpenSection] = useState<string | null>(() => {
+    const activeSection = SECCIONES.find(sec => isSectionActive(sec, location.pathname));
+    return activeSection ? activeSection.title : null;
+  });
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Mantener abierta la sección activa automáticamente ante cambios de ruta
+  useEffect(() => {
+    const activeSection = SECCIONES.find(sec => isSectionActive(sec, location.pathname));
+    if (activeSection) {
+      setOpenSection(activeSection.title);
+    }
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
@@ -137,20 +223,20 @@ const Sidebar: React.FC = () => {
   const handleSectionClick = (section: string | null) =>
     setOpenSection(prev => (prev === section ? null : section));
 
-const renderLink = (to: string, text: string) => {
-  // Comprobamos si la ruta actual coincide con el destino del link
-  const isActive = location.pathname === to;
+  const renderLink = (to: string, text: string) => {
+    // Comprobamos si la ruta actual coincide directamente o es una sub-vista
+    const isActive = isLinkActive(to, location.pathname);
 
-  return (
-    <Link 
-      key={to} 
-      to={to} 
-      className={`nav-button-inner ${isActive ? "active-link" : ""}`}
-    >
-      {text}
-    </Link>
-  );
-};
+    return (
+      <Link 
+        key={to} 
+        to={to} 
+        className={`nav-button-inner ${isActive ? "active-link" : ""}`}
+      >
+        {text}
+      </Link>
+    );
+  };
 
   return (
     <div className="sidebar">
@@ -185,21 +271,25 @@ const renderLink = (to: string, text: string) => {
         <nav className="nav-buttons">
           {SECCIONES
             .filter(sec => sec.rolesPermitidos.includes(user?.rol || ""))
-            .map(sec => (
-              <SidebarSection
-                key={sec.title}
-                title={sec.title}
-                icon={sec.icon}
-                isOpen={openSection === sec.title}
-                onClick={() => handleSectionClick(sec.title)}
-              >
-                {sec.links.map(link => renderLink(link.to, link.text))}
-              </SidebarSection>
-            ))}
+            .map(sec => {
+              const active = isSectionActive(sec, location.pathname);
+              return (
+                <SidebarSection
+                  key={sec.title}
+                  title={sec.title}
+                  icon={sec.icon}
+                  isOpen={openSection === sec.title}
+                  isActiveSection={active}
+                  onClick={() => handleSectionClick(sec.title)}
+                >
+                  {sec.links.map(link => renderLink(link.to, link.text))}
+                </SidebarSection>
+              );
+            })}
 
           {user?.rol === "admin" && (
             <div 
-              className={`nav-section-title nav-section-single ${location.pathname === '/admin' ? 'active' : ''}`} 
+              className={`nav-section-title nav-section-single ${location.pathname.startsWith('/admin') ? 'active' : ''}`} 
               onClick={() => {
                 handleSectionClick(null);
                 navigate("/admin");

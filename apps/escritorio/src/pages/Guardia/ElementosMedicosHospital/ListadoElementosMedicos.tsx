@@ -1,8 +1,8 @@
-// src/pages/Guardia/ElementosMedicosHospital/ListadoElementosMedicos.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../../../app/firebase-config';
 import {
-  collection, getDocs, doc, updateDoc, setDoc, getDoc, Timestamp, orderBy, query,
+  collection, getDocs, doc, updateDoc, deleteDoc, writeBatch, setDoc, getDoc, Timestamp, orderBy, query,
 } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
 import { Plus, Settings, CheckCircle, X, Trash2, PlusCircle } from 'lucide-react';
@@ -54,6 +54,7 @@ const ModalRecuperacion: React.FC<ModalRecuperacionProps> = ({ registro, onCerra
       await updateDoc(doc(db, 'elementos_medicos_hospital', registro.id), {
         estado: 'recuperado',
         fechaRecuperacion: Timestamp.now(),
+        fechaResolucion: Timestamp.now(),
         resueltoPorUid: operador.uid,
         resueltoPorNombre: operador.nombre,
         ...(observaciones.trim() && { observacionesRecuperacion: observaciones.trim() }),
@@ -272,7 +273,8 @@ const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
 type FiltroEstado = 'todos' | EstadoElemento;
 
 const ListadoElementosMedicos: React.FC = () => {
-  const { user } = useUser();
+  const navigate = useNavigate();
+  const { user, miembroActivo } = useUser();
   const esAdmin = user?.rol === 'admin';
 
   const [registros, setRegistros] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
@@ -283,6 +285,12 @@ const ListadoElementosMedicos: React.FC = () => {
   const [modalNuevo, setModalNuevo] = useState(false);
   const [registroARecuperar, setRegistroARecuperar] = useState<(ElementoMedicoHospital & { id: string }) | null>(null);
   const [modalConfig, setModalConfig] = useState(false);
+
+  // Estados para eliminación (solo admin)
+  const [registroAEliminar, setRegistroAEliminar] = useState<(ElementoMedicoHospital & { id: string }) | null>(null);
+  const [eliminando, setEliminando] = useState(false);
+  const [modalLimpiarAntiguos, setModalLimpiarAntiguos] = useState(false);
+  const [limpiando, setLimpiando] = useState(false);
 
   // ── Carga ──────────────────────────────────────────────────────────────────
 
@@ -308,17 +316,95 @@ const ListadoElementosMedicos: React.FC = () => {
 
   // ── Filtrado ───────────────────────────────────────────────────────────────
 
-  const registrosFiltrados = registros.filter(r => {
-    const pasaEstado = filtroEstado === 'todos' || r.estado === filtroEstado;
-    const termino = busqueda.toLowerCase();
-    const pasaBusqueda = !termino ||
-      nombreElemento(r).toLowerCase().includes(termino) ||
-      nombreHospital(r).toLowerCase().includes(termino) ||
-      r.unidadNombre.toLowerCase().includes(termino);
-    return pasaEstado && pasaBusqueda;
-  });
+  const registrosFiltrados = useMemo(() => {
+    return registros.filter(r => {
+      const pasaEstado = filtroEstado === 'todos' || r.estado === filtroEstado;
+      const termino = busqueda.toLowerCase();
+      const pasaBusqueda = !termino ||
+        nombreElemento(r).toLowerCase().includes(termino) ||
+        nombreHospital(r).toLowerCase().includes(termino) ||
+        r.unidadNombre.toLowerCase().includes(termino);
+      return pasaEstado && pasaBusqueda;
+    });
+  }, [registros, filtroEstado, busqueda]);
 
-  const cantPendientes = registros.filter(r => r.estado === 'pendiente').length;
+  const cantPendientes = useMemo(() => {
+    return registros.filter(r => r.estado === 'pendiente').length;
+  }, [registros]);
+
+  // Registros recuperados con más de 30 días de antigüedad
+  const recuperadosAntiguos = useMemo(() => {
+    const limite30Dias = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    return registros.filter(r => {
+      if (r.estado !== 'recuperado') return false;
+      const fechaMillis = r.fechaRecuperacion?.toMillis?.() ?? r.fechaRegistro?.toMillis?.() ?? 0;
+      return fechaMillis > 0 && fechaMillis < limite30Dias;
+    });
+  }, [registros]);
+
+  // ── Handlers de eliminación (Solo Admin) ────────────────────────────────────
+
+  const handleEliminarIndividual = async () => {
+    if (!user || !miembroActivo || !registroAEliminar?.id) return;
+    setEliminando(true);
+    try {
+      const operador = buildOperador(miembroActivo, user.rol);
+      await deleteDoc(doc(db, 'elementos_medicos_hospital', registroAEliminar.id));
+
+      await registrarAuditoria({
+        accion: 'eliminar',
+        coleccion: 'elementos_medicos_hospital',
+        docId: registroAEliminar.id,
+        docResumen: `Eliminado: ${registroAEliminar.cantidad}x ${nombreElemento(registroAEliminar)}`,
+        operador,
+        detalles: {
+          descripcion: `Eliminó registro de elemento médico recuperado de ${nombreHospital(registroAEliminar)}`
+        }
+      });
+
+      toast.success('Registro eliminado.');
+      setRegistroAEliminar(null);
+      cargarRegistros();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al eliminar registro.');
+    } finally {
+      setEliminando(false);
+    }
+  };
+
+  const handleLimpiarAntiguos = async () => {
+    if (!user || !miembroActivo || recuperadosAntiguos.length === 0) return;
+    setLimpiando(true);
+    try {
+      const batch = writeBatch(db);
+      recuperadosAntiguos.forEach(r => {
+        batch.delete(doc(db, 'elementos_medicos_hospital', r.id));
+      });
+      await batch.commit();
+
+      const operador = buildOperador(miembroActivo, user.rol);
+      await registrarAuditoria({
+        accion: 'eliminar',
+        coleccion: 'elementos_medicos_hospital',
+        docId: 'batch-recuperados-30d',
+        docResumen: `Limpieza: ${recuperadosAntiguos.length} elementos recuperados antiguos (+30 días)`,
+        operador,
+        detalles: {
+          descripcion: `Eliminación masiva de ${recuperadosAntiguos.length} registros recuperados con más de 30 días de antigüedad.`
+        }
+      });
+
+      toast.success(`Se eliminaron ${recuperadosAntiguos.length} registros antiguos.`);
+      setModalLimpiarAntiguos(false);
+      cargarRegistros();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al limpiar registros antiguos.');
+    } finally {
+      setLimpiando(false);
+    }
+  };
 
   // ── Header buttons ─────────────────────────────────────────────────────────
 
@@ -331,23 +417,28 @@ const ListadoElementosMedicos: React.FC = () => {
 
   return (
     <div className="elementos-medicos-wrapper">
-      <div className="listado-elementos-medicos">
-        <Header title="Elementos médicos en hospital" extraButtons={headerButtons} />
+      <Header 
+        title="Elementos médicos en hospital" 
+        onBack={() => navigate('/guardia')} 
+        extraButtons={headerButtons} 
+      />
 
-        {/* Resumen rápido */}
-        {cantPendientes > 0 && (
-          <div className="alerta-pendientes">
-            <CheckCircle size={16} />
-            <span>{cantPendientes} {cantPendientes === 1 ? 'elemento pendiente' : 'elementos pendientes'} de recuperar</span>
-          </div>
-        )}
+      {/* Resumen rápido */}
+      {cantPendientes > 0 && (
+        <div className="alerta-pendientes">
+          <CheckCircle size={16} />
+          <span>{cantPendientes} {cantPendientes === 1 ? 'elemento pendiente' : 'elementos pendientes'} de recuperar</span>
+        </div>
+      )}
 
-        {/* Filtros */}
-        <div className="filtros-bar">
+      {/* Barra de herramientas */}
+      <div className="filtros-bar">
+        <div className="filtros-izquierda">
           <div className="filtros-estado">
             {(['todos', 'pendiente', 'recuperado'] as FiltroEstado[]).map(f => (
               <button
                 key={f}
+                type="button"
                 className={`filtro-btn ${filtroEstado === f ? 'filtro-btn--active' : ''}`}
                 onClick={() => setFiltroEstado(f)}
               >
@@ -355,6 +446,9 @@ const ListadoElementosMedicos: React.FC = () => {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="filtros-derecha">
           <input
             type="text"
             className="buscador"
@@ -362,7 +456,20 @@ const ListadoElementosMedicos: React.FC = () => {
             value={busqueda}
             onChange={e => setBusqueda(e.target.value)}
           />
+
+          {/* Botón Admin: Limpiar antiguos (+30 días) */}
+          {esAdmin && recuperadosAntiguos.length > 0 && (
+            <button
+              type="button"
+              className="btn-limpiar-antiguos"
+              onClick={() => setModalLimpiarAntiguos(true)}
+              title="Eliminar registros recuperados hace más de 30 días"
+            >
+              <Trash2 size={14} /> Limpiar antiguos (+30 días) ({recuperadosAntiguos.length})
+            </button>
+          )}
         </div>
+      </div>
 
         {/* Tabla */}
         {cargando ? (
@@ -427,6 +534,16 @@ const ListadoElementosMedicos: React.FC = () => {
                           <CheckCircle size={15} /> Recuperar
                         </button>
                       )}
+                      {r.estado === 'recuperado' && esAdmin && (
+                        <button
+                          type="button"
+                          className="btn-eliminar-item"
+                          onClick={() => setRegistroAEliminar(r)}
+                          title="Eliminar registro"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -434,7 +551,6 @@ const ListadoElementosMedicos: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
 
       {/* Renderizado directo del nuevo Modal Premium */}
       {modalNuevo && (
@@ -456,6 +572,73 @@ const ListadoElementosMedicos: React.FC = () => {
       {/* Modal configuración */}
       {modalConfig && (
         <ModalConfig onCerrar={() => { setModalConfig(false); }} />
+      )}
+
+      {/* Modal Confirmar Eliminación Individual (Solo Admin) */}
+      {registroAEliminar && (
+        <div className="modal-overlay">
+          <div className="modal-container modal-container--sm">
+            <div className="modal-header">
+              <h3 className="modal-title">Eliminar Registro</h3>
+              <button className="btn-icon-modal" onClick={() => setRegistroAEliminar(null)} disabled={eliminando}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155' }}>
+                ¿Estás seguro de que deseas eliminar permanentemente este registro?
+              </p>
+              <div className="info-box">
+                <p><strong>Elemento:</strong> {nombreElemento(registroAEliminar)} (x{registroAEliminar.cantidad})</p>
+                <p><strong>Hospital:</strong> {nombreHospital(registroAEliminar)}</p>
+                <p><strong>Unidad:</strong> {registroAEliminar.unidadNombre}</p>
+                <p><strong>Depositado:</strong> {formatFecha(registroAEliminar.fechaRegistro)}</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={() => setRegistroAEliminar(null)} disabled={eliminando}>
+                Cancelar
+              </button>
+              <button className="btn-danger" onClick={handleEliminarIndividual} disabled={eliminando}>
+                <Trash2 size={16} />
+                {eliminando ? 'Eliminando...' : 'Eliminar registro'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Confirmar Limpieza Masiva (+30 días) (Solo Admin) */}
+      {modalLimpiarAntiguos && (
+        <div className="modal-overlay">
+          <div className="modal-container modal-container--sm">
+            <div className="modal-header">
+              <h3 className="modal-title">Limpiar Recuperados (+30 días)</h3>
+              <button className="btn-icon-modal" onClick={() => setModalLimpiarAntiguos(false)} disabled={limpiando}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+                Se eliminarán permanentemente <strong>{recuperadosAntiguos.length}</strong> {recuperadosAntiguos.length === 1 ? 'registro' : 'registros'} marcados como recuperados con más de 30 días de antigüedad.
+              </p>
+              <div className="info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
+                <p style={{ color: '#be123c', fontSize: '13px' }}>
+                  Esta acción no se puede deshacer. Los registros eliminados no podrán recuperarse.
+                </p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={() => setModalLimpiarAntiguos(false)} disabled={limpiando}>
+                Cancelar
+              </button>
+              <button className="btn-danger" onClick={handleLimpiarAntiguos} disabled={limpiando}>
+                <Trash2 size={16} />
+                {limpiando ? 'Eliminando...' : `Eliminar ${recuperadosAntiguos.length} registros`}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -17,6 +17,8 @@ import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista'
 import AgregarArea from '../pages/AreasProtegidas/AgregarArea';
 import EditarArea from '../pages/AreasProtegidas/EditarArea';
 import DashboardGuardia from '../pages/Guardia/Dashboard/DashboardGuardia';
+import ListadoNovedadesGuardia from '../pages/Guardia/Dashboard/ListadoNovedadesGuardia';
+import ListadoElementosMedicos from '../pages/Guardia/ElementosMedicosHospital/ListadoElementosMedicos';
 
 // Admin
 import AdminPanel from '../pages/Admin/PanelAdmin';
@@ -47,6 +49,11 @@ export interface RutaProtegidaConfig {
 
 export const rutasProtegidas: RutaProtegidaConfig[] = [
   { path: '/dashboard-guardia', element: <DashboardGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/guardia', element: <DashboardGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/guardia/novedades-historial', element: <ListadoNovedadesGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/novedades-historial', element: <ListadoNovedadesGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/elementos-medicos', element: <ListadoElementosMedicos />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/guardia/elementos-medicos', element: <ListadoElementosMedicos />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/unidades', element: <Unidades />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/crear-unidad', element: <CrearUnidad />, roles: ['admin'] },
   { path: '/editar-unidad/:id', element: <EditarUnidad />, roles: ['admin', 'jefatura', 'graduados', 'guardia'] },

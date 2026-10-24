@@ -11,13 +11,15 @@ const DashboardGuardia: React.FC = () => {
     <div className="dashboard-page-wrapper">
       <Header title="Dashboard de Guardia" extraButtons={[]} />
       
-      {/* Todo vuelve a la grilla estándar. Novedades tiene prioridad 1 */}
       <div className="dashboard-container">
-        <WidgetNovedades />
-        <WidgetElementosPendientes />
-        <WidgetClima />
+        <div className="dashboard-col-main">
+          <WidgetNovedades />
+        </div>
+        <div className="dashboard-col-side">
+          <WidgetElementosPendientes />
+          <WidgetClima />
+        </div>
       </div>
-      
     </div>
   );
 };

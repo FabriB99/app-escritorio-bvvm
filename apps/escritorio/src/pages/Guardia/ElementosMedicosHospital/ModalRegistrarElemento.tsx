@@ -72,6 +72,7 @@ const AutocompleteDinamico: React.FC<{opciones: string[], valor: string, onChang
 // ─── Modal Principal ──────────────────────────────────────────────
 const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
   const { user, miembroActivo } = useUser();
+  const esAdmin = user?.rol === 'admin';
   const [listaElementos, setListaElementos] = useState<string[]>([]);
   const [listaHospitales, setListaHospitales] = useState<string[]>([]);
   const [unidades, setUnidades] = useState<Unidad[]>([]);
@@ -183,9 +184,11 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
             <div className="form-col-solido col-main">
               <div className="label-wrap-solido">
                 <label>Elemento</label>
-                <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'elementos_medicos' })}>
-                  <Settings size={14} /> Editar
-                </button>
+                {esAdmin && (
+                  <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'elementos_medicos' })}>
+                    <Settings size={14} /> Editar
+                  </button>
+                )}
               </div>
               <AutocompleteDinamico opciones={listaElementos} valor={elemento} onChange={setElemento} placeholder="Ej: Collar cervical, Tabla rígida..." />
             </div>
@@ -199,9 +202,11 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
             <div className="form-col-solido col-main">
               <div className="label-wrap-solido">
                 <label>Destino (Hospital)</label>
-                <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'hospitales' })}>
-                  <Settings size={14} /> Editar
-                </button>
+                {esAdmin && (
+                  <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'hospitales' })}>
+                    <Settings size={14} /> Editar
+                  </button>
+                )}
               </div>
               <AutocompleteDinamico opciones={listaHospitales} valor={hospital} onChange={setHospital} placeholder="Ej: Hospital Pasteur..." />
             </div>

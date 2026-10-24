@@ -14,4 +14,6 @@ export interface NovedadGuardia {
   fechaResolucion?: Timestamp;
   resueltoPorUid?: string;
   resueltoPorNombre?: string;
-}
+  notaResolucion?: string;
+  observacionesResolucion?: string;
+}

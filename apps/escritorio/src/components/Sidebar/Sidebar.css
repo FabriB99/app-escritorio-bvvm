@@ -112,11 +112,24 @@
   color: var(--color-text-white);
 }
 
+/* Cuando solo está desplegada (abierta) pero no es la ruta activa */
+.nav-section-title.open {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Cuando contiene la ruta o módulo activo */
 .nav-section-title.active {
   background: rgba(230, 57, 70, 0.15);
   border-left-color: var(--color-accent);
   color: var(--color-text-white);
   border-radius: 0 8px 8px 0;
+}
+
+.nav-section-title.active.open {
+  background: rgba(230, 57, 70, 0.18);
+  border-left-color: var(--color-accent);
+  color: var(--color-text-white);
 }
 
 .nav-section-single {
@@ -146,27 +159,59 @@
   transition: max-height 0.35s ease, opacity 0.25s ease;
 }
 
+/* Contenedor del submenú con línea guía vertical tipo árbol */
 .content-inner {
   display: flex;
   flex-direction: column;
-  padding: 3px 0 6px 20px;
-  gap: 1px;
+  margin: 4px 0 6px 20px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 2px;
 }
 
 .nav-button-inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
   font-size: 13px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.58);
   text-decoration: none;
-  padding: 6px 10px;
+  padding: 7px 12px;
   border-radius: 6px;
+  position: relative;
   transition: background var(--transition-fast), color var(--transition-fast);
-  display: block;
 }
 
 .nav-button-inner:hover {
   background: rgba(255, 255, 255, 0.07);
   color: var(--color-text-white);
+}
+
+.nav-button-inner.active-link {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--color-text-white) !important;
+  font-weight: 600;
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+.nav-button-inner.active-link::before {
+  content: "";
+  position: absolute;
+  left: -13px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background-color: var(--color-accent);
+}
+
+.nav-button-inner.active-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-white) !important;
 }
 
 /* Bottom */
@@ -299,30 +344,4 @@
 .nav-section-single {
   margin-bottom: 2px;
   border-left: 3px solid transparent; /* Evita el salto visual al activarse */
-}
-
-/* Estilo Badge sutil (Celeste/Azul claro) */
-.nav-button-inner.active-link {
-  /* Un azul celeste muy suave que no choca con el fondo oscuro */
-  background-color: rgba(52, 152, 219, 0.2); 
-  /* Un borde finito para darle definición de badge */
-  border: 1px solid rgba(52, 152, 219, 0.3);
-  /* Color de texto claro pero tirando al azul del badge */
-  color: #add8e6 !important; 
-  
-  font-weight: 500;
-  border-radius: var(--radius-lg); /* Usamos tu variable de 12px */
-  padding: 4px 12px;
-  margin: 2px 0 2px 10px; /* Separación sutil del borde izquierdo */
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  font-size: 13px;
-  transition: all var(--transition-fast);
-}
-
-/* Hover suave para el badge */
-.nav-button-inner.active-link:hover {
-  background-color: rgba(52, 152, 219, 0.3);
-  color: var(--color-text-white) !important;
 }
