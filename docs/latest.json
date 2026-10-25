@@ -1,11 +1,11 @@
 {
-  "version": "0.3.3",
-  "notes": "Rediseño de dashboard de guardia, historiales, áreas protegidas, legajos PDF y sidebar.",
-  "pub_date": "2026-10-24T03:30:00Z",
+  "version": "0.4.0",
+  "notes": "feat: nuevo dashboard ejecutivo de admin, backup JSON, optimizacion Firestore y modales globales",
+  "pub_date": "2026-10-25T20:52:47.810Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSCsxT1ovbzNjMytIUVJVMS9SRHkyaFVKNy9RbUw4NW9FYWdjV0xKUWFZbEhFY1BzT3RMQXhOeXhIejlMQmRqbmxmRHhJclphV05odFRNNUFrTGFPWUFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyODEyNDE4CWZpbGU6Q29udHJvbC1CVlZNXzAuMy4zX3g2NF9lbi1VUy5tc2kKSTdLd0FXVkVwVjA3ckVzdUNwNnY5aEF2ak01VDVNM1NjRllMOEx0cjQvUUwvOU9ySTBIdnU2NnJ5NHRPWDF3dlNoNURiQnR6cC9rRHlxZGR3L0xRQlE9PQo=",
-      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.3.3/Control-BVVM_0.3.3_x64_en-US.msi"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDlqRVBTREpYRmRLeWxrNHNGbWZNYmxxS2EvOThJRWhnaXFzSXVYa3haWjJBQkxuM3c4b2FCTENyNUVKaVNSdGJiSEpxT3BqMmk4b0JqL2plQjhIREFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyOTYxNTYyCWZpbGU6Q29udHJvbC1CVlZNXzAuNC4wX3g2NF9lbi1VUy5tc2kKSG5vR0d4L2JEanhkeURNWHozMjJmak1WWUV3T2RQbE1QWHNxRHNxampSZk83ZG5ocGJlZ2FCSnBtUXJvTkN2YXZhcEw1M1RKMzJ6OE1lTllYZkxyREE9PQo=",
+      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.4.0/Control-BVVM_0.4.0_x64_en-US.msi"
     }
   }
 }
