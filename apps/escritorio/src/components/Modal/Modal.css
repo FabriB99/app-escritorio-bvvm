@@ -1,0 +1,340 @@
+/* apps/escritorio/src/components/Modal/Modal.css
+   Sistema Global de Modales Sólidos - Control BVVM
+   ========================================================================== */
+
+/* Fondo oscuro / scrim con desenfoque */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal con estética sólida: Header blanco + cuerpo gris claro */
+.modal-solido-container {
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 560px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-main, system-ui, -apple-system, sans-serif);
+  animation: modalSolidoIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 90vh;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+@keyframes modalSolidoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Header blanco limpio */
+.modal-solido-header {
+  background-color: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.modal-solido-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-sidebar, #1e293b);
+  letter-spacing: -0.2px;
+}
+
+.btn-icon-close {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-icon-close:hover {
+  background-color: #f1f5f9;
+  color: #ef4444;
+}
+
+/* Cuerpo del modal */
+.modal-solido-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   CLASES GLOBALES DE FORMULARIOS PARA MODALES
+   ========================================================================== */
+
+/* Filas y columnas */
+.form-row-solido {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-col-solido {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .form-row-solido {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+/* Labels */
+.label-wrap-solido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.label-wrap-solido label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Inputs y Selects */
+.input-solido {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-solido:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+textarea.input-solido {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* Acciones y Botones */
+.modal-solido-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-solido-actions--row {
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-solido-actions--row button {
+  width: auto;
+  min-width: 110px;
+}
+
+.btn-solido-primary {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ef4444; /* Rojo institucional */
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.25);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-solido-primary:hover:not(:disabled) {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.btn-solido-primary:disabled {
+  background-color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-solido-primary--blue {
+  background-color: #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
+}
+
+.btn-solido-primary--blue:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.btn-solido-primary--success {
+  background-color: #10b981;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.25);
+}
+
+.btn-solido-primary--success:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.btn-solido-primary--dark {
+  background-color: var(--color-sidebar, #1e293b);
+  box-shadow: 0 4px 6px -1px rgba(30, 41, 59, 0.25);
+}
+
+.btn-solido-primary--dark:hover:not(:disabled) {
+  background-color: #0f172a;
+}
+
+.btn-solido-secondary {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #475569;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.btn-solido-secondary:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.btn-solido-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-solido-danger {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-solido-danger:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+}
+
+/* Caja de información para detalles de confirmación */
+.modal-info-box {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-info-box p,
+.modal-info-row {
+  margin: 0;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.modal-info-box strong,
+.modal-info-row strong {
+  color: #0f172a;
+}
+
+.modal-info-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.modal-info-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-sidebar, #1e293b);
+  line-height: 1.35;
+}
+
+.modal-info-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.modal-info-tags {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}

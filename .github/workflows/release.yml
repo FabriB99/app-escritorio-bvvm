@@ -53,3 +53,56 @@ jobs:
           releaseBody: "Actualización automática del sistema de Control de Bomberos."
           releaseDraft: false
           prerelease: false
+
+      - name: Actualizar docs/latest.json automáticamente
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const { execSync } = require("child_process");
+
+            const tauriConf = JSON.parse(fs.readFileSync("apps/escritorio/src-tauri/tauri.conf.json", "utf8"));
+            const version = tauriConf.version;
+
+            const msiDir = "apps/escritorio/src-tauri/target/release/bundle/msi";
+            const files = fs.readdirSync(msiDir);
+            const sigFile = files.find(f => f.endsWith(".msi.sig"));
+            const msiFile = files.find(f => f.endsWith(".msi") && !f.endsWith(".msi.sig"));
+
+            if (!sigFile || !msiFile) {
+              console.error("No se encontraron los archivos .msi o .msi.sig en", msiDir);
+              process.exit(1);
+            }
+
+            const signature = fs.readFileSync(path.join(msiDir, sigFile), "utf8").trim();
+            const url = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases/download/v${version}/${msiFile}`;
+
+            let notes = "Actualización automática del sistema Control BVVM.";
+            try {
+              const lastMsg = execSync("git log -1 --pretty=%B ${{ github.sha }}").toString().trim();
+              if (lastMsg) notes = lastMsg;
+            } catch (e) {}
+
+            const latest = {
+              version,
+              notes,
+              pub_date: new Date().toISOString(),
+              platforms: {
+                "windows-x86_64": {
+                  signature,
+                  url
+                }
+              }
+            };
+
+            fs.writeFileSync("docs/latest.json", JSON.stringify(latest, null, 2) + "\n");
+            console.log("docs/latest.json actualizado a v" + version);
+          '
+          git add docs/latest.json
+          git commit -m "chore: auto-update latest.json v$(node -p "require('./apps/escritorio/src-tauri/tauri.conf.json').version") [skip ci]" || echo "Sin cambios"
+          git push origin main

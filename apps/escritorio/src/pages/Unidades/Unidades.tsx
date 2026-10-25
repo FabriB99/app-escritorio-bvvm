@@ -3,10 +3,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from "../../app/firebase-config";
 import { doc, collection, onSnapshot, query, where, getDocs, writeBatch } from 'firebase/firestore';
-import { Plus, Filter, X, FileSpreadsheet } from 'lucide-react';
+import { Plus, Filter, X, FileSpreadsheet, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useUser } from '../../context/UserContext';
 import Header from "../../components/Header";
+import Modal from '../../components/Modal';
 import './Unidades.css';
 import * as xlsx from 'xlsx';
 import { TIPOS_UNIDAD, Unidad, Elemento } from '../../types/unidades';
@@ -204,15 +205,39 @@ const Unidades: React.FC = () => {
       </div>
 
       {unidadAEliminar && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>¿Estás seguro de que quieres eliminar {unidadAEliminar.nombre}?</h3>
-            <div className="modal-buttons">
-              <button className="btn-eliminar-modal" onClick={eliminarUnidad}>Eliminar</button>
-              <button className="btn-cancelar" onClick={() => setUnidadAEliminar(null)}>Cancelar</button>
+        <Modal
+          isOpen={!!unidadAEliminar}
+          onClose={() => setUnidadAEliminar(null)}
+          title="Eliminar Unidad"
+          maxWidth="480px"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+              ¿Estás seguro de que deseas eliminar permanentemente la unidad <strong>{unidadAEliminar.nombre}</strong>?
+            </p>
+            <div className="modal-info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
+              <p style={{ color: '#be123c', fontSize: '13px', margin: 0 }}>
+                Esta acción eliminará el móvil y su inventario del sistema de forma irreversible.
+              </p>
+            </div>
+            <div className="modal-solido-actions modal-solido-actions--row">
+              <button
+                type="button"
+                className="btn-solido-secondary"
+                onClick={() => setUnidadAEliminar(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-solido-danger"
+                onClick={eliminarUnidad}
+              >
+                <Trash2 size={16} /> Eliminar móvil
+              </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );

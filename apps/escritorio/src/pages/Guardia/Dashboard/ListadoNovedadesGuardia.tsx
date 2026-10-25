@@ -3,14 +3,15 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../../app/firebase-config';
 import {
-  collection, getDocs, doc, updateDoc, deleteDoc, writeBatch, addDoc, Timestamp, orderBy, query
+  collection, getDocs, doc, updateDoc, deleteDoc, writeBatch, addDoc, Timestamp, orderBy, query, limit
 } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
-import { Plus, CheckCircle, Trash2, X, Save, ClipboardList } from 'lucide-react';
+import { Plus, CheckCircle, Trash2, Save, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '../../../components/Header';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import type { NovedadGuardia } from './types';
+import Modal from '../../../components/Modal';
 import './ListadoNovedadesGuardia.css';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ const ListadoNovedadesGuardia: React.FC = () => {
 
   const [novedades, setNovedades] = useState<NovedadGuardia[]>([]);
   const [cargando, setCargando] = useState(true);
+  const [limite, setLimite] = useState(50);
 
   // Filtros
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>('todas');
@@ -69,7 +71,8 @@ const ListadoNovedadesGuardia: React.FC = () => {
     try {
       const q = query(
         collection(db, 'novedades_guardia'),
-        orderBy('fechaRegistro', 'desc')
+        orderBy('fechaRegistro', 'desc'),
+        limit(limite)
       );
       const snap = await getDocs(q);
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as NovedadGuardia));
@@ -80,7 +83,7 @@ const ListadoNovedadesGuardia: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [limite]);
 
   useEffect(() => {
     cargarNovedades();
@@ -457,221 +460,210 @@ const ListadoNovedadesGuardia: React.FC = () => {
           </div>
         )}
 
-      {/* Modal Registrar Nueva Novedad */}
-      {modalNuevo && (
-        <div className="modal-overlay">
-          <div className="modal-solido-container">
-            <div className="modal-solido-header">
-              <h3 className="modal-solido-title">Registrar Nueva Novedad</h3>
-              <button
-                type="button"
-                className="btn-icon-close"
-                onClick={() => setModalNuevo(false)}
-                disabled={guardandoNuevo}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCrearNovedad} className="modal-solido-body">
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>NOVEDAD / PENDIENTE</label>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Escribir acá..."
-                  value={nuevoTitulo}
-                  onChange={(e) => setNuevoTitulo(e.target.value)}
-                  className="input-solido"
-                  required
-                />
-              </div>
-
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>OBSERVACIÓN (OPCIONAL)</label>
-                </div>
-                <textarea
-                  placeholder="Detalle adicional..."
-                  value={nuevaDescripcion}
-                  onChange={(e) => setNuevaDescripcion(e.target.value)}
-                  className="input-solido"
-                  rows={2}
-                />
-              </div>
-
-              <div className="form-row-solido">
-                <div className="form-col-solido">
-                  <div className="label-wrap-solido">
-                    <label>PRIORIDAD</label>
-                  </div>
-                  <select
-                    value={nuevaPrioridad}
-                    onChange={(e) => setNuevaPrioridad(e.target.value as any)}
-                    className="input-solido"
-                  >
-                    <option value="baja">Baja</option>
-                    <option value="media">Media</option>
-                    <option value="alta">Alta</option>
-                  </select>
-                </div>
-                <div className="form-col-solido">
-                  <div className="label-wrap-solido">
-                    <label>CATEGORÍA</label>
-                  </div>
-                  <select
-                    value={nuevaCategoria}
-                    onChange={(e) => setNuevaCategoria(e.target.value as any)}
-                    className="input-solido"
-                  >
-                    <option value="vehiculos">Vehículos</option>
-                    <option value="edilicio">Edilicio</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="administrativo">Administrativo</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-solido-actions">
-                <button
-                  type="submit"
-                  className="btn-solido-primary"
-                  disabled={guardandoNuevo}
-                >
-                  <Save size={18} /> {guardandoNuevo ? 'Guardando...' : 'Guardar Novedad'}
-                </button>
-                <button
-                  type="button"
-                  className="btn-solido-secondary"
-                  onClick={() => setModalNuevo(false)}
-                  disabled={guardandoNuevo}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
+      {/* Botón Cargar Más Novedades */}
+      {novedades.length >= limite && (
+        <div className="contenedor-cargar-mas">
+          <button
+            type="button"
+            className="btn-cargar-mas"
+            onClick={() => setLimite(prev => prev + 50)}
+            disabled={cargando}
+          >
+            {cargando ? 'Cargando registros...' : 'Cargar más registros (+50)'}
+          </button>
         </div>
       )}
 
+      {/* Modal Registrar Nueva Novedad */}
+      <Modal
+        isOpen={modalNuevo}
+        onClose={() => setModalNuevo(false)}
+        title="Registrar Nueva Novedad"
+        maxWidth="520px"
+      >
+        <form onSubmit={handleCrearNovedad} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="form-col-solido">
+            <div className="label-wrap-solido">
+              <label>NOVEDAD / PENDIENTE</label>
+            </div>
+            <input
+              type="text"
+              placeholder="Escribir acá..."
+              value={nuevoTitulo}
+              onChange={(e) => setNuevoTitulo(e.target.value)}
+              className="input-solido"
+              required
+            />
+          </div>
+
+          <div className="form-col-solido">
+            <div className="label-wrap-solido">
+              <label>OBSERVACIÓN (OPCIONAL)</label>
+            </div>
+            <textarea
+              placeholder="Detalle adicional..."
+              value={nuevaDescripcion}
+              onChange={(e) => setNuevaDescripcion(e.target.value)}
+              className="input-solido"
+              rows={2}
+            />
+          </div>
+
+          <div className="form-row-solido">
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>PRIORIDAD</label>
+              </div>
+              <select
+                value={nuevaPrioridad}
+                onChange={(e) => setNuevaPrioridad(e.target.value as any)}
+                className="input-solido"
+              >
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>CATEGORÍA</label>
+              </div>
+              <select
+                value={nuevaCategoria}
+                onChange={(e) => setNuevaCategoria(e.target.value as any)}
+                className="input-solido"
+              >
+                <option value="vehiculos">Vehículos</option>
+                <option value="edilicio">Edilicio</option>
+                <option value="mantenimiento">Mantenimiento</option>
+                <option value="administrativo">Administrativo</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="modal-solido-actions">
+            <button
+              type="submit"
+              className="btn-solido-primary"
+              disabled={guardandoNuevo}
+            >
+              <Save size={18} /> {guardandoNuevo ? 'Guardando...' : 'Guardar Novedad'}
+            </button>
+            <button
+              type="button"
+              className="btn-solido-secondary"
+              onClick={() => setModalNuevo(false)}
+              disabled={guardandoNuevo}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </Modal>
+
       {/* Modal Confirmar Resolución */}
-      {novedadAResolver && (
-        <div className="modal-overlay">
-          <div className="modal-solido-container modal-compacto-resolver">
-            <div className="modal-solido-header">
-              <h3 className="modal-solido-title">Confirmar Resolución</h3>
+      <Modal
+        isOpen={!!novedadAResolver}
+        onClose={() => {
+          setNovedadAResolver(null);
+          setNotaResolucion('');
+        }}
+        title="Confirmar Resolución"
+        maxWidth="480px"
+      >
+        {novedadAResolver && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="modal-info-box">
+              <span className="modal-info-label">Novedad a resolver:</span>
+              <strong className="modal-info-title">{novedadAResolver.titulo}</strong>
+              {novedadAResolver.descripcion && (
+                <p className="modal-info-desc">{novedadAResolver.descripcion}</p>
+              )}
+              <div className="modal-info-tags">
+                <span className={`badge-prioridad badge-${novedadAResolver.prioridad}`}>
+                  {novedadAResolver.prioridad}
+                </span>
+                <span className="tag-categoria">
+                  {novedadAResolver.categoria}
+                </span>
+              </div>
+            </div>
+
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>NOTA DE RESOLUCIÓN (OPCIONAL)</label>
+              </div>
+              <textarea
+                placeholder="Ej: Se reparó la cerradura, vehículo entregado..."
+                value={notaResolucion}
+                onChange={(e) => setNotaResolucion(e.target.value)}
+                className="input-solido"
+                rows={3}
+              />
+            </div>
+
+            <div className="modal-solido-actions modal-solido-actions--row">
               <button
                 type="button"
-                className="btn-icon-close"
+                className="btn-solido-secondary"
                 onClick={() => {
                   setNovedadAResolver(null);
                   setNotaResolucion('');
                 }}
                 disabled={resolviendo}
               >
-                <X size={20} />
+                Cancelar
               </button>
-            </div>
-
-            <div className="modal-solido-body">
-              <div className="modal-info-box">
-                <span className="modal-info-label">Novedad a resolver:</span>
-                <strong className="modal-info-title">{novedadAResolver.titulo}</strong>
-                {novedadAResolver.descripcion && (
-                  <p className="modal-info-desc">{novedadAResolver.descripcion}</p>
-                )}
-                <div className="modal-info-tags">
-                  <span className={`badge-prioridad badge-${novedadAResolver.prioridad}`}>
-                    {novedadAResolver.prioridad}
-                  </span>
-                  <span className="tag-categoria">
-                    {novedadAResolver.categoria}
-                  </span>
-                </div>
-              </div>
-
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>NOTA DE RESOLUCIÓN (OPCIONAL)</label>
-                </div>
-                <textarea
-                  placeholder="Ej: Se reparó la cerradura, vehículo entregado..."
-                  value={notaResolucion}
-                  onChange={(e) => setNotaResolucion(e.target.value)}
-                  className="input-solido"
-                  rows={3}
-                />
-              </div>
-
-              <div className="modal-solido-actions modal-solido-actions--row">
-                <button
-                  type="button"
-                  className="btn-solido-secondary"
-                  onClick={() => {
-                    setNovedadAResolver(null);
-                    setNotaResolucion('');
-                  }}
-                  disabled={resolviendo}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="btn-solido-primary btn-solido-primary--success"
-                  onClick={handleConfirmarResolucion}
-                  disabled={resolviendo}
-                >
-                  <CheckCircle size={18} />
-                  {resolviendo ? 'Resolviendo...' : 'Confirmar resolución'}
-                </button>
-              </div>
+              <button
+                type="button"
+                className="btn-solido-primary btn-solido-primary--success"
+                onClick={handleConfirmarResolucion}
+                disabled={resolviendo}
+              >
+                <CheckCircle size={18} />
+                {resolviendo ? 'Resolviendo...' : 'Confirmar resolución'}
+              </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Modal Confirmar Eliminación Individual (Solo Admin) */}
-      {novedadAEliminar && (
-        <div className="modal-overlay">
-          <div className="modal-container modal-container--sm">
-            <div className="modal-header">
-              <h3 className="modal-title">Eliminar Novedad</h3>
-              <button
-                className="btn-icon-modal"
-                onClick={() => setNovedadAEliminar(null)}
-                disabled={eliminando}
-              >
-                <X size={18} />
-              </button>
+      <Modal
+        isOpen={!!novedadAEliminar}
+        onClose={() => setNovedadAEliminar(null)}
+        title="Eliminar Novedad"
+        maxWidth="480px"
+      >
+        {novedadAEliminar && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: '#334155' }}>
+              ¿Estás seguro de que deseas eliminar permanentemente esta novedad resuelta?
+            </p>
+            <div className="modal-info-box">
+              <p><strong>Título:</strong> {novedadAEliminar.titulo}</p>
+              {novedadAEliminar.descripcion && (
+                <p><strong>Detalle:</strong> {novedadAEliminar.descripcion}</p>
+              )}
+              <p><strong>Categoría:</strong> {novedadAEliminar.categoria.toUpperCase()}</p>
+              <p><strong>Registrado:</strong> {formatFecha(novedadAEliminar.fechaRegistro)} por {novedadAEliminar.registradoPorNombre}</p>
+              {novedadAEliminar.fechaResolucion && (
+                <p><strong>Resuelto:</strong> {formatFecha(novedadAEliminar.fechaResolucion)} por {novedadAEliminar.resueltoPorNombre}</p>
+              )}
             </div>
-            <div className="modal-body">
-              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155' }}>
-                ¿Estás seguro de que deseas eliminar permanentemente esta novedad resuelta?
-              </p>
-              <div className="info-box">
-                <p><strong>Título:</strong> {novedadAEliminar.titulo}</p>
-                {novedadAEliminar.descripcion && (
-                  <p><strong>Detalle:</strong> {novedadAEliminar.descripcion}</p>
-                )}
-                <p><strong>Categoría:</strong> {novedadAEliminar.categoria.toUpperCase()}</p>
-                <p><strong>Registrado:</strong> {formatFecha(novedadAEliminar.fechaRegistro)} por {novedadAEliminar.registradoPorNombre}</p>
-                {novedadAEliminar.fechaResolucion && (
-                  <p><strong>Resuelto:</strong> {formatFecha(novedadAEliminar.fechaResolucion)} por {novedadAEliminar.resueltoPorNombre}</p>
-                )}
-              </div>
-            </div>
-            <div className="modal-footer">
+            <div className="modal-solido-actions modal-solido-actions--row">
               <button
-                className="btn-secondary"
+                type="button"
+                className="btn-solido-secondary"
                 onClick={() => setNovedadAEliminar(null)}
                 disabled={eliminando}
               >
                 Cancelar
               </button>
               <button
-                className="btn-danger"
+                type="button"
+                className="btn-solido-primary"
                 onClick={handleEliminarIndividual}
                 disabled={eliminando}
               >
@@ -680,53 +672,46 @@ const ListadoNovedadesGuardia: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Modal Confirmar Limpieza Masiva (+30 días) (Solo Admin) */}
-      {modalLimpiarAntiguas && (
-        <div className="modal-overlay">
-          <div className="modal-container modal-container--sm">
-            <div className="modal-header">
-              <h3 className="modal-title">Limpiar Resueltas (+30 días)</h3>
-              <button
-                className="btn-icon-modal"
-                onClick={() => setModalLimpiarAntiguas(false)}
-                disabled={limpiando}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
-                Se eliminarán permanentemente <strong>{resueltasAntiguas.length}</strong> {resueltasAntiguas.length === 1 ? 'novedad resuelta' : 'novedades resueltas'} con más de 30 días de antigüedad.
-              </p>
-              <div className="info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
-                <p style={{ color: '#be123c', fontSize: '13px' }}>
-                  Esta acción no se puede deshacer. Las novedades eliminadas no podrán recuperarse.
-                </p>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn-secondary"
-                onClick={() => setModalLimpiarAntiguas(false)}
-                disabled={limpiando}
-              >
-                Cancelar
-              </button>
-              <button
-                className="btn-danger"
-                onClick={handleLimpiarAntiguas}
-                disabled={limpiando}
-              >
-                <Trash2 size={16} />
-                {limpiando ? 'Eliminando...' : `Eliminar ${resueltasAntiguas.length} novedades`}
-              </button>
-            </div>
+      <Modal
+        isOpen={modalLimpiarAntiguas}
+        onClose={() => setModalLimpiarAntiguas(false)}
+        title="Limpiar Resueltas (+30 días)"
+        maxWidth="480px"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+            Se eliminarán permanentemente <strong>{resueltasAntiguas.length}</strong> {resueltasAntiguas.length === 1 ? 'novedad resuelta' : 'novedades resueltas'} con más de 30 días de antigüedad.
+          </p>
+          <div className="modal-info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
+            <p style={{ color: '#be123c', fontSize: '13px' }}>
+              Esta acción no se puede deshacer. Las novedades eliminadas no podrán recuperarse.
+            </p>
+          </div>
+          <div className="modal-solido-actions modal-solido-actions--row">
+            <button
+              type="button"
+              className="btn-solido-secondary"
+              onClick={() => setModalLimpiarAntiguas(false)}
+              disabled={limpiando}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn-solido-primary"
+              onClick={handleLimpiarAntiguas}
+              disabled={limpiando}
+            >
+              <Trash2 size={16} />
+              {limpiando ? 'Eliminando...' : `Eliminar ${resueltasAntiguas.length} novedades`}
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

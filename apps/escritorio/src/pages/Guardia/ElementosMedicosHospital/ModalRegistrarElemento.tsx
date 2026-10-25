@@ -1,12 +1,14 @@
-// src/pages/Guardia/ElementosMedicosHospital/ModalRegistrarElemento.tsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { db } from '../../../app/firebase-config';
-import { collection, addDoc, getDocs, doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
-import { Save, Settings, Trash2, Plus, X } from 'lucide-react';
+import { Save, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
-import type { ElementoMedicoHospital, ConfigLista, UnidadRef } from './types';
+import { getCatalogosGuardia } from '../../../utils/cacheCatalogos';
+import Modal from '../../../components/Modal';
+import ModalConfigGuardia from './ModalConfigGuardia';
+import type { ElementoMedicoHospital, UnidadRef } from './types';
 import './ModalRegistrarElemento.css';
 
 interface Unidad { id: string; nombre: string; }
@@ -83,62 +85,27 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
   const [unidadSeleccionada, setUnidadSeleccionada] = useState<UnidadRef | null>(null);
   const [observaciones, setObservaciones] = useState('');
   const [guardando, setGuardando] = useState(false);
-  const [gestionModal, setGestionModal] = useState<{ abierto: boolean; tipo: 'elementos_medicos' | 'hospitales' | null }>({ abierto: false, tipo: null });
-  const [nuevoItemTexto, setNuevoItemTexto] = useState('');
 
-  useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const [snapUnidades, docElementos, docHospitales] = await Promise.all([
-          getDocs(collection(db, 'unidades')),
-          getDoc(doc(db, 'config_guardia', 'elementos_medicos')),
-          getDoc(doc(db, 'config_guardia', 'hospitales')),
-        ]);
-        setUnidades(snapUnidades.docs.map(d => ({ id: d.id, nombre: (d.data().nombre as string) ?? '' })).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { numeric: true })));
-        setListaElementos(docElementos.exists() ? (docElementos.data() as ConfigLista).items ?? [] : []);
-        setListaHospitales(docHospitales.exists() ? (docHospitales.data() as ConfigLista).items ?? [] : []);
-      } catch (err) {
-        toast.error('Error al cargar datos de Firebase.');
-      }
-    };
-    cargarDatos();
+  // Modal de configuración de listas unificado
+  const [configModal, setConfigModal] = useState<{ abierto: boolean; tab: 'elementos' | 'hospitales' }>({
+    abierto: false,
+    tab: 'elementos',
+  });
+
+  const cargarCatalogos = useCallback(async (forzar = false) => {
+    try {
+      const data = await getCatalogosGuardia(forzar);
+      setUnidades(data.unidades);
+      setListaElementos(data.elementos);
+      setListaHospitales(data.hospitales);
+    } catch {
+      toast.error('Error al cargar datos de guardia.');
+    }
   }, []);
 
-  const handleAgregarOpcion = async () => {
-    const { tipo } = gestionModal;
-    if (!tipo || !nuevoItemTexto.trim()) return;
-    const valor = nuevoItemTexto.trim();
-    const listaActual = tipo === 'elementos_medicos' ? listaElementos : listaHospitales;
-    
-    if (listaActual.includes(valor)) {
-      toast.warning('La opción ya existe.');
-      return;
-    }
-    try {
-      const nuevaLista = [...listaActual, valor];
-      await setDoc(doc(db, 'config_guardia', tipo), { items: nuevaLista }, { merge: true });
-      if (tipo === 'elementos_medicos') { setListaElementos(nuevaLista); setElemento(valor); } 
-      else { setListaHospitales(nuevaLista); setHospital(valor); }
-      setNuevoItemTexto('');
-      toast.success('Opción añadida.');
-    } catch (err) {
-      toast.error('Error al guardar la opción.');
-    }
-  };
-
-  const handleEliminarOpcion = async (item: string) => {
-    const { tipo } = gestionModal;
-    if (!tipo || !window.confirm(`¿Eliminar "${item}"?`)) return;
-    try {
-      const nuevaLista = (tipo === 'elementos_medicos' ? listaElementos : listaHospitales).filter(i => i !== item);
-      await setDoc(doc(db, 'config_guardia', tipo), { items: nuevaLista }, { merge: true });
-      if (tipo === 'elementos_medicos') { setListaElementos(nuevaLista); if (elemento === item) setElemento(''); } 
-      else { setListaHospitales(nuevaLista); if (hospital === item) setHospital(''); }
-      toast.success('Opción eliminada.');
-    } catch (err) {
-      toast.error('Error al eliminar la opción.');
-    }
-  };
+  useEffect(() => {
+    cargarCatalogos();
+  }, [cargarCatalogos]);
 
   const handleGuardar = async () => {
     if (!user || !miembroActivo) return;
@@ -163,7 +130,7 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
 
       toast.success('Elemento registrado correctamente.');
       onGuardado();
-    } catch (err) {
+    } catch {
       toast.error('Error al guardar el elemento.');
     } finally {
       setGuardando(false);
@@ -171,97 +138,75 @@ const ModalRegistrarElemento: React.FC<Props> = ({ onClose, onGuardado }) => {
   };
 
   return (
-    <div className="modal-overlay" style={{ zIndex: 9999 }}>
-      <div className="modal-solido-container">
-        
-        <div className="modal-solido-header">
-          <h3 className="modal-solido-title">Registrar Elemento</h3>
-          <button className="btn-icon-close" onClick={onClose}><X size={20} /></button>
-        </div>
-
-        <div className="modal-solido-body">
-          <div className="form-row-solido">
-            <div className="form-col-solido col-main">
-              <div className="label-wrap-solido">
-                <label>Elemento</label>
-                {esAdmin && (
-                  <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'elementos_medicos' })}>
-                    <Settings size={14} /> Editar
-                  </button>
-                )}
-              </div>
-              <AutocompleteDinamico opciones={listaElementos} valor={elemento} onChange={setElemento} placeholder="Ej: Collar cervical, Tabla rígida..." />
-            </div>
-            <div className="form-col-solido col-side">
-              <div className="label-wrap-solido"><label>CANT.</label></div>
-              <input type="number" min={1} value={cantidad} onChange={e => setCantidad(Math.max(1, Number(e.target.value)))} className="input-solido txt-centro" />
-            </div>
-          </div>
-
-          <div className="form-row-solido">
-            <div className="form-col-solido col-main">
-              <div className="label-wrap-solido">
-                <label>Destino (Hospital)</label>
-                {esAdmin && (
-                  <button type="button" className="btn-editar-solido" onClick={() => setGestionModal({ abierto: true, tipo: 'hospitales' })}>
-                    <Settings size={14} /> Editar
-                  </button>
-                )}
-              </div>
-              <AutocompleteDinamico opciones={listaHospitales} valor={hospital} onChange={setHospital} placeholder="Ej: Hospital Pasteur..." />
-            </div>
-            <div className="form-col-solido col-main">
-              <div className="label-wrap-solido"><label>Unidad que lo dejó</label></div>
-              <AutocompleteUnidad unidades={unidades} seleccionada={unidadSeleccionada} onSeleccionar={setUnidadSeleccionada} />
-            </div>
-          </div>
-
-          <div className="form-col-solido" style={{ marginTop: '4px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', marginBottom: '8px' }}>OBSERVACIONES (OPCIONAL)</label>
-            <textarea rows={2} placeholder="Intervención que fué, donde..." value={observaciones} onChange={e => setObservaciones(e.target.value)} className="input-solido textarea-solido" />
-          </div>
-
-          <div className="modal-solido-actions">
-            <button type="button" className="btn-solido-primary" onClick={handleGuardar} disabled={guardando}>
-              <Save size={18} /> {guardando ? 'Registrando...' : 'Confirmar Registro'}
+    <>
+      <Modal
+        onClose={onClose}
+        title="Registrar Elemento"
+        maxWidth="680px"
+        zIndex={9999}
+        headerAction={
+          esAdmin ? (
+            <button
+              type="button"
+              className="btn-editar-solido"
+              onClick={() => setConfigModal({ abierto: true, tab: 'elementos' })}
+            >
+              <Settings size={14} /> Configurar listas
             </button>
-            <button type="button" className="btn-solido-secondary" onClick={onClose}>
-              Cancelar
-            </button>
+          ) : null
+        }
+      >
+        <div className="form-row-solido">
+          <div className="form-col-solido col-main">
+            <div className="label-wrap-solido">
+              <label>Elemento</label>
+            </div>
+            <AutocompleteDinamico opciones={listaElementos} valor={elemento} onChange={setElemento} placeholder="Ej: Collar cervical, Tabla rígida..." />
+          </div>
+          <div className="form-col-solido col-side">
+            <div className="label-wrap-solido"><label>CANT.</label></div>
+            <input type="number" min={1} value={cantidad} onChange={e => setCantidad(Math.max(1, Number(e.target.value)))} className="input-solido txt-centro" />
           </div>
         </div>
-      </div>
 
-      {gestionModal.abierto && (
-        <div className="modal-overlay" style={{ zIndex: 99999 }}>
-          <div className="modal-solido-container" style={{ maxWidth: '440px' }}>
-            <div className="modal-solido-header">
-              <h3 className="modal-solido-title">Gestionar {gestionModal.tipo === 'elementos_medicos' ? 'Elementos' : 'Hospitales'}</h3>
-              <button type="button" className="btn-icon-close" onClick={() => setGestionModal({ abierto: false, tipo: null })}><X size={20} /></button>
+        <div className="form-row-solido">
+          <div className="form-col-solido col-main">
+            <div className="label-wrap-solido">
+              <label>Destino (Hospital)</label>
             </div>
-            <div className="modal-solido-body">
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                <input type="text" className="input-solido" placeholder="Añadir nuevo valor..." value={nuevoItemTexto} onChange={e => setNuevoItemTexto(e.target.value)} />
-                <button type="button" className="btn-solido-add" onClick={handleAgregarOpcion}><Plus size={16} /> Agregar</button>
-              </div>
-              <div className="lista-solida-container">
-                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                  {(gestionModal.tipo === 'elementos_medicos' ? listaElementos : listaHospitales).map((item, idx) => (
-                    <li key={idx} className="lista-solida-item">
-                      <span>{item}</span>
-                      <button type="button" className="btn-solido-danger" onClick={() => handleEliminarOpcion(item)}><Trash2 size={15} /></button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                <button type="button" className="btn-solido-secondary" onClick={() => setGestionModal({ abierto: false, tipo: null })}>Finalizar Ajustes</button>
-              </div>
-            </div>
+            <AutocompleteDinamico opciones={listaHospitales} valor={hospital} onChange={setHospital} placeholder="Ej: Hospital Pasteur..." />
+          </div>
+          <div className="form-col-solido col-main">
+            <div className="label-wrap-solido"><label>Unidad que lo dejó</label></div>
+            <AutocompleteUnidad unidades={unidades} seleccionada={unidadSeleccionada} onSeleccionar={setUnidadSeleccionada} />
           </div>
         </div>
+
+        <div className="form-col-solido" style={{ marginTop: '4px' }}>
+          <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', marginBottom: '8px' }}>OBSERVACIONES (OPCIONAL)</label>
+          <textarea rows={2} placeholder="Intervención que fué, donde..." value={observaciones} onChange={e => setObservaciones(e.target.value)} className="input-solido textarea-solido" />
+        </div>
+
+        <div className="modal-solido-actions">
+          <button type="button" className="btn-solido-primary" onClick={handleGuardar} disabled={guardando}>
+            <Save size={18} /> {guardando ? 'Registrando...' : 'Confirmar Registro'}
+          </button>
+          <button type="button" className="btn-solido-secondary" onClick={onClose}>
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+
+      {/* Modal unificado para editar listas de guardia */}
+      {configModal.abierto && (
+        <ModalConfigGuardia
+          isOpen={configModal.abierto}
+          tabInicial={configModal.tab}
+          onClose={() => setConfigModal(prev => ({ ...prev, abierto: false }))}
+          onActualizado={() => cargarCatalogos(true)}
+        />
       )}
-    </div>
+    </>
   );
 };
 

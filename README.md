@@ -361,17 +361,34 @@ const { user, miembroActivo } = useUser();
 
 ## Build y distribución
 
+### Publicación de una nueva versión (Auto-Updater)
+
+El monorepo cuenta con un flujo de lanzamiento completamente automatizado:
+
 ```bash
-# Instalador Windows (.msi) con auto-updater
+# Lanzar una nueva versión con el asistente interactivo (desde la raíz o apps/escritorio)
+npm run release
+
+# O directamente especificando el incremento y notas:
+npm run release patch -m "Correcciones en dashboard de guardia"
+npm run release minor -m "Nuevo módulo de legajos"
+```
+
+El script actualiza las versiones en `tauri.conf.json`, `package.json` y `Cargo.toml`, crea el commit y el tag Git `vX.Y.Z`, y lo pushea a GitHub. **GitHub Actions** compila la app Windows, la firma, crea la Release y actualiza automáticamente `docs/latest.json` en `main` para que GitHub Pages lo distribuya a los clientes.
+
+👉 Para más detalles del circuito, arquitectura y contingencias, consultá la [Guía Completa de Actualizaciones](docs/GUIA_ACTUALIZACION.md).
+
+### Compilación local y despliegue manual
+
+```bash
+# Compilar instalador Windows (.msi) localmente sin publicar
 cd apps/escritorio
 npm run tauri:build
 
-# Deploy app web a Firebase Hosting
+# Deploy de la app web a Firebase Hosting
 cd apps/revision-web
 npm run deploy
 ```
-
-La app de escritorio incluye **auto-actualización** configurada en `src-tauri/tauri.conf.json` (endpoint en GitHub Pages).
 
 ---
 

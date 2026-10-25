@@ -2,18 +2,19 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../../app/firebase-config';
 import {
-  collection, getDocs, doc, updateDoc, deleteDoc, writeBatch, setDoc, getDoc, Timestamp, orderBy, query,
+  collection, getDocs, doc, updateDoc, deleteDoc, writeBatch, Timestamp, orderBy, query, limit,
 } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
-import { Plus, Settings, CheckCircle, X, Trash2, PlusCircle } from 'lucide-react';
+import { Plus, Settings, CheckCircle, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '../../../components/Header';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 
-// Cambiamos la importación vieja por el nuevo modal premium
+import Modal from '../../../components/Modal';
 import ModalRegistrarElemento from './ModalRegistrarElemento';
+import ModalConfigGuardia from './ModalConfigGuardia';
 
-import type { ElementoMedicoHospital, ConfigLista, EstadoElemento } from './types';
+import type { ElementoMedicoHospital, EstadoElemento } from './types';
 import './ListadoElementosMedicos.css';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -82,189 +83,37 @@ const ModalRecuperacion: React.FC<ModalRecuperacionProps> = ({ registro, onCerra
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container modal-container--sm">
-        <div className="modal-header">
-          <h3 className="modal-title">Confirmar recuperación</h3>
-          <button className="btn-icon-modal" onClick={onCerrar}><X size={18} /></button>
+    <Modal onClose={onCerrar} title="Confirmar recuperación" maxWidth="480px">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="modal-info-box">
+          <p><strong>Elemento:</strong> {nombreElemento(registro)} (x{registro.cantidad})</p>
+          <p><strong>Hospital:</strong> {nombreHospital(registro)}</p>
+          <p><strong>Unidad:</strong> {registro.unidadNombre}</p>
+          <p><strong>Depositado:</strong> {formatFecha(registro.fechaRegistro)}</p>
         </div>
-        <div className="modal-body">
-          <div className="info-box">
-            <p><strong>Elemento:</strong> {nombreElemento(registro)} (x{registro.cantidad})</p>
-            <p><strong>Hospital:</strong> {nombreHospital(registro)}</p>
-            <p><strong>Unidad:</strong> {registro.unidadNombre}</p>
-            <p><strong>Depositado:</strong> {formatFecha(registro.fechaRegistro)}</p>
-          </div>
-          <div className="form-group" style={{ marginTop: '1rem' }}>
+        <div className="form-col-solido">
+          <div className="label-wrap-solido">
             <label>Observaciones de recuperación (opcional)</label>
-            <textarea
-              rows={3}
-              placeholder="Ej: Recuperado sin novedad, faltaba 1 unidad..."
-              value={observaciones}
-              onChange={e => setObservaciones(e.target.value)}
-            />
           </div>
+          <textarea
+            className="input-solido"
+            rows={3}
+            placeholder="Ej: Recuperado sin novedad, faltaba 1 unidad..."
+            value={observaciones}
+            onChange={e => setObservaciones(e.target.value)}
+          />
         </div>
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={onCerrar} disabled={guardando}>Cancelar</button>
-          <button className="btn-primary" onClick={handleRecuperar} disabled={guardando}>
+        <div className="modal-solido-actions modal-solido-actions--row">
+          <button className="btn-solido-secondary" onClick={onCerrar} disabled={guardando}>
+            Cancelar
+          </button>
+          <button className="btn-solido-primary btn-solido-primary--success" onClick={handleRecuperar} disabled={guardando}>
             <CheckCircle size={16} />
             {guardando ? 'Guardando...' : 'Confirmar recuperación'}
           </button>
         </div>
       </div>
-    </div>
-  );
-};
-
-// ─── Modal Configuración (solo admin) ────────────────────────────────────────
-
-interface ModalConfigProps {
-  onCerrar: () => void;
-}
-
-const ModalConfig: React.FC<ModalConfigProps> = ({ onCerrar }) => {
-  const { user, miembroActivo } = useUser();
-  const [tab, setTab] = useState<'elementos' | 'hospitales'>('elementos');
-  const [elementos, setElementos] = useState<string[]>([]);
-  const [hospitales, setHospitales] = useState<string[]>([]);
-  const [nuevoElemento, setNuevoElemento] = useState('');
-  const [nuevoHospital, setNuevoHospital] = useState('');
-  const [guardando, setGuardando] = useState(false);
-
-  useEffect(() => {
-    const cargar = async () => {
-      const [docEl, docHosp] = await Promise.all([
-        getDoc(doc(db, 'config_guardia', 'elementos_medicos')),
-        getDoc(doc(db, 'config_guardia', 'hospitales')),
-      ]);
-      setElementos(docEl.exists() ? (docEl.data() as ConfigLista).items : []);
-      setHospitales(docHosp.exists() ? (docHosp.data() as ConfigLista).items : []);
-    };
-    cargar();
-  }, []);
-
-  const guardarLista = async (colDoc: string, items: string[], descripcion: string) => {
-    if (!user || !miembroActivo) return;
-    setGuardando(true);
-    try {
-      await setDoc(doc(db, 'config_guardia', colDoc), { items });
-      const operador = buildOperador(miembroActivo, user.rol);
-      await registrarAuditoria({
-        accion: 'editar',
-        coleccion: 'config_guardia',
-        docId: colDoc,
-        docResumen: descripcion,
-        operador,
-      });
-      toast.success('Lista guardada correctamente.');
-    } catch (err) {
-      console.error(err);
-      toast.error('Error al guardar. Intentá de nuevo.');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  // ── Elementos ──
-  const agregarElemento = () => {
-    const val = nuevoElemento.trim();
-    if (!val) return;
-    if (elementos.includes(val)) { toast.warning('Ya existe ese elemento.'); return; }
-    setElementos(prev => [...prev, val]);
-    setNuevoElemento('');
-  };
-  const eliminarElemento = (i: number) => setElementos(prev => prev.filter((_, idx) => idx !== i));
-  const guardarElementos = () =>
-    guardarLista('elementos_medicos', elementos, `Actualizó lista de elementos médicos (${elementos.length} ítems)`);
-
-  // ── Hospitales ──
-  const agregarHospital = () => {
-    const val = nuevoHospital.trim();
-    if (!val) return;
-    if (hospitales.includes(val)) { toast.warning('Ya existe ese hospital.'); return; }
-    setHospitales(prev => [...prev, val]);
-    setNuevoHospital('');
-  };
-  const eliminarHospital = (i: number) => setHospitales(prev => prev.filter((_, idx) => idx !== i));
-  const guardarHospitales = () =>
-    guardarLista('hospitales', hospitales, `Actualizó lista de hospitales (${hospitales.length} ítems)`);
-
-  const listaActual = tab === 'elementos' ? elementos : hospitales;
-  const nuevoActual = tab === 'elementos' ? nuevoElemento : nuevoHospital;
-  const setNuevoActual = tab === 'elementos' ? setNuevoElemento : setNuevoHospital;
-  const agregarActual = tab === 'elementos' ? agregarElemento : agregarHospital;
-  const eliminarActual = tab === 'elementos' ? eliminarElemento : eliminarHospital;
-  const guardarActual = tab === 'elementos' ? guardarElementos : guardarHospitales;
-  const placeholderActual = tab === 'elementos' ? 'Ej: Collar cervical' : 'Ej: Hospital Regional Pasteur';
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-container modal-container--md">
-        <div className="modal-header">
-          <h3 className="modal-title">Configuración de listas</h3>
-          <button className="btn-icon-modal" onClick={onCerrar}><X size={18} /></button>
-        </div>
-
-        <div className="modal-body">
-          {/* Tabs */}
-          <div className="config-tabs">
-            <button
-              className={`config-tab ${tab === 'elementos' ? 'config-tab--active' : ''}`}
-              onClick={() => setTab('elementos')}
-            >
-              Elementos
-            </button>
-            <button
-              className={`config-tab ${tab === 'hospitales' ? 'config-tab--active' : ''}`}
-              onClick={() => setTab('hospitales')}
-            >
-              Centro médico
-            </button>
-          </div>
-
-          {/* Lista actual */}
-          <div className="config-lista">
-            {listaActual.length === 0 && (
-              <p className="config-lista--vacia">No hay ítems. Agregá uno abajo.</p>
-            )}
-            {listaActual.map((item, i) => (
-              <div key={i} className="config-item">
-                <span>{item}</span>
-                <button
-                  className="btn-icon-danger"
-                  onClick={() => eliminarActual(i)}
-                  title="Eliminar"
-                >
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* Agregar nuevo */}
-          <div className="config-agregar">
-            <input
-              type="text"
-              placeholder={placeholderActual}
-              value={nuevoActual}
-              onChange={e => setNuevoActual(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && agregarActual()}
-            />
-            <button className="btn-agregar" onClick={agregarActual}>
-              <PlusCircle size={16} /> Agregar
-            </button>
-          </div>
-        </div>
-
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={onCerrar}>Cerrar</button>
-          <button className="btn-primary" onClick={guardarActual} disabled={guardando}>
-            {guardando ? 'Guardando...' : 'Guardar cambios'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 
@@ -279,6 +128,7 @@ const ListadoElementosMedicos: React.FC = () => {
 
   const [registros, setRegistros] = useState<(ElementoMedicoHospital & { id: string })[]>([]);
   const [cargando, setCargando] = useState(true);
+  const [limite, setLimite] = useState(50);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>('todos');
   const [busqueda, setBusqueda] = useState('');
 
@@ -300,6 +150,7 @@ const ListadoElementosMedicos: React.FC = () => {
       const q = query(
         collection(db, 'elementos_medicos_hospital'),
         orderBy('fechaRegistro', 'desc'),
+        limit(limite),
       );
       const snap = await getDocs(q);
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as ElementoMedicoHospital & { id: string }));
@@ -310,7 +161,7 @@ const ListadoElementosMedicos: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [limite]);
 
   useEffect(() => { cargarRegistros(); }, [cargarRegistros]);
 
@@ -552,6 +403,20 @@ const ListadoElementosMedicos: React.FC = () => {
           </div>
         )}
 
+      {/* Botón Cargar Más Registros */}
+      {registros.length >= limite && (
+        <div className="contenedor-cargar-mas">
+          <button
+            type="button"
+            className="btn-cargar-mas"
+            onClick={() => setLimite(prev => prev + 50)}
+            disabled={cargando}
+          >
+            {cargando ? 'Cargando registros...' : 'Cargar más registros (+50)'}
+          </button>
+        </div>
+      )}
+
       {/* Renderizado directo del nuevo Modal Premium */}
       {modalNuevo && (
         <ModalRegistrarElemento
@@ -569,76 +434,73 @@ const ListadoElementosMedicos: React.FC = () => {
         />
       )}
 
-      {/* Modal configuración */}
+      {/* Modal configuración unificado */}
       {modalConfig && (
-        <ModalConfig onCerrar={() => { setModalConfig(false); }} />
+        <ModalConfigGuardia
+          isOpen={modalConfig}
+          onClose={() => setModalConfig(false)}
+        />
       )}
 
       {/* Modal Confirmar Eliminación Individual (Solo Admin) */}
       {registroAEliminar && (
-        <div className="modal-overlay">
-          <div className="modal-container modal-container--sm">
-            <div className="modal-header">
-              <h3 className="modal-title">Eliminar Registro</h3>
-              <button className="btn-icon-modal" onClick={() => setRegistroAEliminar(null)} disabled={eliminando}>
-                <X size={18} />
-              </button>
+        <Modal
+          isOpen={!!registroAEliminar}
+          onClose={() => setRegistroAEliminar(null)}
+          title="Eliminar Registro"
+          maxWidth="480px"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: '#334155' }}>
+              ¿Estás seguro de que deseas eliminar permanentemente este registro?
+            </p>
+            <div className="modal-info-box">
+              <p><strong>Elemento:</strong> {nombreElemento(registroAEliminar)} (x{registroAEliminar.cantidad})</p>
+              <p><strong>Hospital:</strong> {nombreHospital(registroAEliminar)}</p>
+              <p><strong>Unidad:</strong> {registroAEliminar.unidadNombre}</p>
+              <p><strong>Depositado:</strong> {formatFecha(registroAEliminar.fechaRegistro)}</p>
             </div>
-            <div className="modal-body">
-              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155' }}>
-                ¿Estás seguro de que deseas eliminar permanentemente este registro?
-              </p>
-              <div className="info-box">
-                <p><strong>Elemento:</strong> {nombreElemento(registroAEliminar)} (x{registroAEliminar.cantidad})</p>
-                <p><strong>Hospital:</strong> {nombreHospital(registroAEliminar)}</p>
-                <p><strong>Unidad:</strong> {registroAEliminar.unidadNombre}</p>
-                <p><strong>Depositado:</strong> {formatFecha(registroAEliminar.fechaRegistro)}</p>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setRegistroAEliminar(null)} disabled={eliminando}>
+            <div className="modal-solido-actions modal-solido-actions--row">
+              <button className="btn-solido-secondary" onClick={() => setRegistroAEliminar(null)} disabled={eliminando}>
                 Cancelar
               </button>
-              <button className="btn-danger" onClick={handleEliminarIndividual} disabled={eliminando}>
+              <button className="btn-solido-danger" onClick={handleEliminarIndividual} disabled={eliminando}>
                 <Trash2 size={16} />
                 {eliminando ? 'Eliminando...' : 'Eliminar registro'}
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Modal Confirmar Limpieza Masiva (+30 días) (Solo Admin) */}
       {modalLimpiarAntiguos && (
-        <div className="modal-overlay">
-          <div className="modal-container modal-container--sm">
-            <div className="modal-header">
-              <h3 className="modal-title">Limpiar Recuperados (+30 días)</h3>
-              <button className="btn-icon-modal" onClick={() => setModalLimpiarAntiguos(false)} disabled={limpiando}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
-                Se eliminarán permanentemente <strong>{recuperadosAntiguos.length}</strong> {recuperadosAntiguos.length === 1 ? 'registro' : 'registros'} marcados como recuperados con más de 30 días de antigüedad.
+        <Modal
+          isOpen={modalLimpiarAntiguos}
+          onClose={() => setModalLimpiarAntiguos(false)}
+          title="Limpiar Recuperados (+30 días)"
+          maxWidth="480px"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+              Se eliminarán permanentemente <strong>{recuperadosAntiguos.length}</strong> {recuperadosAntiguos.length === 1 ? 'registro' : 'registros'} marcados como recuperados con más de 30 días de antigüedad.
+            </p>
+            <div className="modal-info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
+              <p style={{ color: '#be123c', fontSize: '13px', margin: 0 }}>
+                Esta acción no se puede deshacer. Los registros eliminados no podrán recuperarse.
               </p>
-              <div className="info-box" style={{ backgroundColor: '#fff1f2', borderColor: '#fecaca' }}>
-                <p style={{ color: '#be123c', fontSize: '13px' }}>
-                  Esta acción no se puede deshacer. Los registros eliminados no podrán recuperarse.
-                </p>
-              </div>
             </div>
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setModalLimpiarAntiguos(false)} disabled={limpiando}>
+            <div className="modal-solido-actions modal-solido-actions--row">
+              <button className="btn-solido-secondary" onClick={() => setModalLimpiarAntiguos(false)} disabled={limpiando}>
                 Cancelar
               </button>
-              <button className="btn-danger" onClick={handleLimpiarAntiguos} disabled={limpiando}>
+              <button className="btn-solido-danger" onClick={handleLimpiarAntiguos} disabled={limpiando}>
                 <Trash2 size={16} />
                 {limpiando ? 'Eliminando...' : `Eliminar ${recuperadosAntiguos.length} registros`}
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

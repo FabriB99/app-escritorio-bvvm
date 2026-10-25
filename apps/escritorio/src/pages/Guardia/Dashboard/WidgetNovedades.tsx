@@ -7,6 +7,7 @@ import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import { toast } from 'sonner';
 import { CheckCircle, ClipboardList, Plus, X, Save, Clock } from 'lucide-react';
 import type { NovedadGuardia } from './types';
+import Modal from '../../../components/Modal';
 
 import './WidgetNovedades.css';
 
@@ -286,179 +287,159 @@ const WidgetNovedades: React.FC = () => {
       </div>
 
       {/* Modal Registrar Nueva Novedad */}
-      {mostrarForm && (
-        <div className="modal-overlay">
-          <div className="modal-solido-container">
-            <div className="modal-solido-header">
-              <h3 className="modal-solido-title">Registrar Nueva Novedad</h3>
-              <button
-                type="button"
-                className="btn-icon-close"
-                onClick={() => setMostrarForm(false)}
-                disabled={guardandoNovedad}
-              >
-                <X size={20} />
-              </button>
+      <Modal
+        isOpen={mostrarForm}
+        onClose={() => setMostrarForm(false)}
+        title="Registrar Nueva Novedad"
+        maxWidth="520px"
+      >
+        <form onSubmit={handleCrearNovedad} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="form-col-solido">
+            <div className="label-wrap-solido">
+              <label>NOVEDAD / PENDIENTE</label>
             </div>
-
-            <form onSubmit={handleCrearNovedad} className="modal-solido-body">
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>NOVEDAD / PENDIENTE</label>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Escribir acá..."
-                  value={titulo}
-                  onChange={(e) => setTitulo(e.target.value)}
-                  className="input-solido"
-                  required
-                />
-              </div>
-
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>OBSERVACIÓN (OPCIONAL)</label>
-                </div>
-                <textarea
-                  placeholder="Detalle adicional..."
-                  value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
-                  className="input-solido"
-                  rows={2}
-                />
-              </div>
-
-              <div className="form-row-solido">
-                <div className="form-col-solido">
-                  <div className="label-wrap-solido">
-                    <label>PRIORIDAD</label>
-                  </div>
-                  <select
-                    value={prioridad}
-                    onChange={(e) => setPrioridad(e.target.value as any)}
-                    className="input-solido"
-                  >
-                    <option value="baja">Baja</option>
-                    <option value="media">Media</option>
-                    <option value="alta">Alta</option>
-                  </select>
-                </div>
-                <div className="form-col-solido">
-                  <div className="label-wrap-solido">
-                    <label>CATEGORÍA</label>
-                  </div>
-                  <select
-                    value={categoria}
-                    onChange={(e) => setCategoria(e.target.value as any)}
-                    className="input-solido"
-                  >
-                    <option value="vehiculos">Vehículos</option>
-                    <option value="edilicio">Edilicio</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="administrativo">Administrativo</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-solido-actions">
-                <button
-                  type="submit"
-                  className="btn-solido-primary"
-                  disabled={guardandoNovedad}
-                >
-                  <Save size={18} /> {guardandoNovedad ? 'Guardando...' : 'Guardar Novedad'}
-                </button>
-                <button
-                  type="button"
-                  className="btn-solido-secondary"
-                  onClick={() => setMostrarForm(false)}
-                  disabled={guardandoNovedad}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
+            <input
+              type="text"
+              placeholder="Escribir acá..."
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              className="input-solido"
+              required
+            />
           </div>
-        </div>
-      )}
+
+          <div className="form-col-solido">
+            <div className="label-wrap-solido">
+              <label>OBSERVACIÓN (OPCIONAL)</label>
+            </div>
+            <textarea
+              placeholder="Detalle adicional..."
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              className="input-solido"
+              rows={2}
+            />
+          </div>
+
+          <div className="form-row-solido">
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>PRIORIDAD</label>
+              </div>
+              <select
+                value={prioridad}
+                onChange={(e) => setPrioridad(e.target.value as any)}
+                className="input-solido"
+              >
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>CATEGORÍA</label>
+              </div>
+              <select
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value as any)}
+                className="input-solido"
+              >
+                <option value="vehiculos">Vehículos</option>
+                <option value="edilicio">Edilicio</option>
+                <option value="mantenimiento">Mantenimiento</option>
+                <option value="administrativo">Administrativo</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="modal-solido-actions">
+            <button
+              type="submit"
+              className="btn-solido-primary"
+              disabled={guardandoNovedad}
+            >
+              <Save size={18} /> {guardandoNovedad ? 'Guardando...' : 'Guardar Novedad'}
+            </button>
+            <button
+              type="button"
+              className="btn-solido-secondary"
+              onClick={() => setMostrarForm(false)}
+              disabled={guardandoNovedad}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal Compacto de Confirmación para Resolver Novedad */}
-      {novedadAResolver && (
-        <div className="modal-overlay">
-          <div className="modal-solido-container modal-compacto-resolver">
-            <div className="modal-solido-header">
-              <h3 className="modal-solido-title">Confirmar Resolución</h3>
+      <Modal
+        isOpen={!!novedadAResolver}
+        onClose={() => {
+          setNovedadAResolver(null);
+          setNotaResolucion('');
+        }}
+        title="Confirmar Resolución"
+        maxWidth="480px"
+      >
+        {novedadAResolver && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="modal-info-box">
+              <span className="modal-info-label">Novedad a resolver:</span>
+              <strong className="modal-info-title">{novedadAResolver.titulo}</strong>
+              {novedadAResolver.descripcion && (
+                <p className="modal-info-desc">{novedadAResolver.descripcion}</p>
+              )}
+              <div className="modal-info-tags">
+                <span className={`badge-prioridad badge-${novedadAResolver.prioridad}`}>
+                  {novedadAResolver.prioridad}
+                </span>
+                <span className="widget-meta-tag widget-meta-tag--categoria">
+                  {novedadAResolver.categoria.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="form-col-solido">
+              <div className="label-wrap-solido">
+                <label>NOTA DE RESOLUCIÓN (OPCIONAL)</label>
+              </div>
+              <textarea
+                placeholder="Ej: Se reparó la bisagra, vehículo operativo..."
+                value={notaResolucion}
+                onChange={(e) => setNotaResolucion(e.target.value)}
+                className="input-solido"
+                rows={3}
+              />
+            </div>
+
+            <div className="modal-solido-actions modal-solido-actions--row">
               <button
                 type="button"
-                className="btn-icon-close"
+                className="btn-solido-secondary"
                 onClick={() => {
                   setNovedadAResolver(null);
                   setNotaResolucion('');
                 }}
                 disabled={resolviendo}
               >
-                <X size={20} />
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-solido-primary btn-solido-primary--success"
+                onClick={handleConfirmarResolucion}
+                disabled={resolviendo}
+              >
+                <CheckCircle size={18} />
+                {resolviendo ? 'Resolviendo...' : 'Confirmar resolución'}
               </button>
             </div>
-
-            <div className="modal-solido-body">
-              <div className="modal-info-box">
-                <span className="modal-info-label">Novedad a resolver:</span>
-                <strong className="modal-info-title">{novedadAResolver.titulo}</strong>
-                {novedadAResolver.descripcion && (
-                  <p className="modal-info-desc">{novedadAResolver.descripcion}</p>
-                )}
-                <div className="modal-info-tags">
-                  <span className={`badge-prioridad badge-${novedadAResolver.prioridad}`}>
-                    {novedadAResolver.prioridad}
-                  </span>
-                  <span className="widget-meta-tag widget-meta-tag--categoria">
-                    {novedadAResolver.categoria.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="form-col-solido">
-                <div className="label-wrap-solido">
-                  <label>NOTA DE RESOLUCIÓN (OPCIONAL)</label>
-                </div>
-                <textarea
-                  placeholder="Ej: Se reparó la bisagra, vehículo operativo..."
-                  value={notaResolucion}
-                  onChange={(e) => setNotaResolucion(e.target.value)}
-                  className="input-solido"
-                  rows={3}
-                />
-              </div>
-
-              <div className="modal-solido-actions modal-solido-actions--row">
-                <button
-                  type="button"
-                  className="btn-solido-secondary"
-                  onClick={() => {
-                    setNovedadAResolver(null);
-                    setNotaResolucion('');
-                  }}
-                  disabled={resolviendo}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="btn-solido-primary btn-solido-primary--success"
-                  onClick={handleConfirmarResolucion}
-                  disabled={resolviendo}
-                >
-                  <CheckCircle size={18} />
-                  {resolviendo ? 'Resolviendo...' : 'Confirmar resolución'}
-                </button>
-              </div>
-            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </>
   );
 };

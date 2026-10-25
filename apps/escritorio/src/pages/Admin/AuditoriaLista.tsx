@@ -1,7 +1,6 @@
-// src/pages/Admin/AuditoriaLista.tsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
-  collection, query, orderBy, getDocs,
+  collection, query, orderBy, getDocs, limit,
   doc, deleteDoc, Timestamp
 } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
@@ -229,6 +228,7 @@ const ModalDetalle: React.FC<ModalDetalleProps> = ({ log, onCerrar }) => {
 const AuditoriaLista: React.FC = () => {
   const [logs, setLogs] = useState<LogAuditoria[]>([]);
   const [loading, setLoading] = useState(true);
+  const [limite, setLimite] = useState(100);
   const [logSeleccionado, setLogSeleccionado] = useState<LogAuditoria | null>(null);
 
   // Filtros
@@ -240,11 +240,15 @@ const AuditoriaLista: React.FC = () => {
 
   // ── Carga ─────────────────────────────────────────────────────────────────
 
-  const cargar = async () => {
+  const cargar = useCallback(async () => {
     setLoading(true);
     try {
       const snap = await getDocs(
-        query(collection(db, "auditoria"), orderBy("fecha", "desc"))
+        query(
+          collection(db, "auditoria"),
+          orderBy("fecha", "desc"),
+          limit(limite)
+        )
       );
 
       const data: LogAuditoria[] = snap.docs.map(d => {
@@ -272,9 +276,9 @@ const AuditoriaLista: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limite]);
 
-  useEffect(() => { cargar(); }, []);
+  useEffect(() => { cargar(); }, [cargar]);
 
   // ── Filtrado ──────────────────────────────────────────────────────────────
 
@@ -550,6 +554,19 @@ const AuditoriaLista: React.FC = () => {
               {logsFiltrados.length} registro{logsFiltrados.length !== 1 ? "s" : ""}
               {hayFiltros && ` de ${logs.length} totales`}
             </p>
+
+            {logs.length >= limite && (
+              <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0 28px' }}>
+                <button
+                  type="button"
+                  className="au-btn-cargar-mas"
+                  onClick={() => setLimite(prev => prev + 100)}
+                  disabled={loading}
+                >
+                  {loading ? "Cargando registros..." : "Cargar más registros (+100)"}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
