@@ -42,7 +42,7 @@ app-bomberos/
 │   ├── escritorio/                 # App de escritorio (Tauri v2 + React)
 │   │   ├── src/
 │   │   │   ├── app/                # App.tsx, firebase-config.ts, estilos y variables globales
-│   │   │   ├── components/         # Header, Sidebar, MainLayout, Modal, SearchableSelect, ExportarExcel…
+│   │   │   ├── components/         # Header, Sidebar, MainLayout, Modal, PageLoader, SearchableSelect, ExportarExcel…
 │   │   │   ├── context/            # UserContext, UsuarioBibliotecaContext
 │   │   │   ├── pages/              # Módulos funcionales (Guardia, Unidades, Legajos, Admin, Biblioteca…)
 │   │   │   ├── routes/             # RutaProtegida, AuthRedirect, routesConfig.tsx (lazy loading)
@@ -210,7 +210,7 @@ npm run dev
 |--------|------|-------------|
 | **Dashboard de Guardia** | `/dashboard-guardia`, `/guardia` | Panel central del turno en tiempo real con salidas activas, novedades, elementos médicos pendientes y clima. |
 | **Salidas e Intervenciones Activas** | *(widget en dashboard)* | Despacho de unidades en tiempo real (`WidgetSalidasActivas`), agrupación por incidente, asignación de unidad/chofer/recepcionista y código tipificado de siniestro, cambio de estados (`en_camino` → `en_lugar` → `finalizada`), reasignación en calle y cierre con actualización automática del kilometraje de la unidad. |
-| **Libro de Guardia** | `/guardia/libro-guardia`, `/libro-guardia` | Registro histórico e integral de intervenciones y movimientos de unidades. Permite carga manual de salidas pasadas, edición, baja, filtrado por fecha/móvil/código de siniestro y exportación a Excel (`.xlsx`). |
+| **Libro de Guardia** | `/guardia/libro-guardia`, `/libro-guardia` | Registro histórico e integral de intervenciones y movimientos de unidades. Permite carga manual de salidas pasadas, edición, filtrado por fecha/móvil/código de siniestro, exportación a Excel (`.xlsx`) y baja de intervenciones restringida exclusivamente al rol `admin`. |
 | **Novedades de Guardia** | *(widget)* y `/guardia/novedades-historial` | Registro, seguimiento y resolución de novedades operativas del cuartel en tiempo real, con vista de historial completo y filtros. |
 | **Elementos Médicos en Hospitales** | *(widget)* y `/guardia/elementos-medicos` | Seguimiento de equipamiento médico dejado en hospitales durante intervenciones (`pendiente` → `recuperado`), historial completo y configuración dinámica de catálogos de hospitales y elementos (`ModalConfigGuardia`). |
 | **Clima** | *(widget en dashboard)* | Condiciones meteorológicas locales en tiempo real (datos de estación 5900 vía Cloud Function). |
@@ -225,7 +225,7 @@ npm run dev
 | **Crear / Editar Unidad** | `/crear-unidad`, `/editar-unidad/:id` | Formulario unificado de alta y modificación de móviles, categorías de conducción, ubicaciones internas y equipamiento. |
 | **Detalle de Unidad** | `/unidad/:id` | Vista completa de una unidad con sus ubicaciones, elementos y datos operativos. |
 | **Selección e Historial de Revisiones** | `/seleccionar-unidad-historial`, `/historial-revisiones/:id` | Selector visual de unidades y registro histórico de inspecciones por móvil, con detalle de elementos por ubicación y bomberos intervinientes. |
-| **Control Combustible** | `/combustible` | Seguimiento de niveles (`Lleno`, `3/4`, `1/2`, `1/4`) y fechas de control de combustible del parque. |
+| **Control Combustible** | `/combustible` | Panel ejecutivo de control de combustible con alternancia de vista (Cuadrícula / Lista), medidor visual de tanque en 4 segmentos, KPIs de flota en tiempo real y ordenamiento por unidad o prioridad de carga. |
 | **Generador de Informe** | `/generador-informe` | Generación de informes PDF del estado del parque automotor con resumen de últimas revisiones y observaciones normalizadas. |
 
 #### Gestión de Personal
@@ -240,7 +240,7 @@ npm run dev
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
 | **Biblioteca Virtual** | `/biblioteca-login`, `/biblioteca`, `/biblioteca/seccion/:ruta` | Portal de consulta de documentación y protocolos internos organizados por secciones y grupos, con visor PDF integrado (`/biblioteca/previsualizar/:rutaSeccion/:archivoIndex`). |
-| **Administración Biblioteca** | `/editar-biblioteca`, `/editar-biblioteca/secciones`, `/editar-biblioteca/grupos`, `/editar-biblioteca/registro` | CRUD de secciones, grupos de acceso y registro de auditoría de ingresos a la biblioteca. |
+| **Administración Biblioteca** | `/editar-biblioteca`, `/admin-biblioteca` | Consola unificada Master-Detail para administración de grupos, secciones y pestañas en vivo, carga múltiple de archivos mediante drag & drop a Firebase Storage, gestión de enlaces externos y auditoría de accesos con borrado individual o por período. |
 
 #### Administración
 
@@ -284,7 +284,7 @@ npm run dev
 
 | Rol | Acceso principal |
 |-----|------------------|
-| `admin` | Acceso completo, panel ejecutivo, backup JSON, configuración de listas, grados, auditoría y gestión de identidades |
+| `admin` | Acceso completo, panel ejecutivo, backup JSON, configuración de listas, grados, auditoría, gestión de identidades y potestad exclusiva de eliminación de registros del Libro de Guardia |
 | `jefatura` | Gestión operativa de unidades, personal, guardia (salidas, libro de guardia, novedades) y biblioteca |
 | `guardia` | Operaciones de guardia (despacho de salidas, libro de guardia, novedades, elementos médicos), unidades y áreas protegidas |
 | `graduados` | Consulta y gestión en guardia, unidades, historial de revisiones, vencimientos, legajos y biblioteca |
@@ -314,7 +314,7 @@ El sistema de identidad opera en **dos pasos**: `usuarios/{uid}` (Firebase Auth)
 | `config_guardia` | Configuración dinámica de guardia (catálogos de hospitales, elementos médicos, clima, etc.) |
 | `areas_protegidas` | Establecimientos georreferenciados bajo cobertura |
 | `vencimientos` | Vencimientos de carnets de conducir y habilitaciones |
-| `grupos_biblioteca` / secciones | Estructura y documentos de la Biblioteca Virtual |
+| `grupos_biblioteca` / `secciones` | Estructura y documentos de la Biblioteca Virtual |
 | `auditoria` | Log inmutable de acciones del sistema |
 
 ---
@@ -339,6 +339,7 @@ const { unidades, elementos, hospitales } = await getCatalogosGuardia();
 
 - **`Modal` (`src/components/Modal`)**: Componente global estandarizado para diálogos y formularios modales (tamaños `sm`, `md`, `lg`, `xl`, cierre con `Escape` y bloqueo de scroll).
 - **`SearchableSelect` (`src/components/SearchableSelect`)**: Selector desplegable con búsqueda predictiva, soporte de badges (p. ej. número de orden operativo) y subetiquetas.
+- **`PageLoader` (`src/components/PageLoader`)**: Componente global estandarizado para transiciones de rutas y estados de carga en módulos de Firestore.
 
 ### Notificaciones
 
@@ -413,8 +414,8 @@ npm run deploy
 
 ## Estado del proyecto
 
-En desarrollo activo (v0.4.0).
-- **Módulos operativos**: Unidades, Revisiones (web y escritorio), Control de Combustible, Generador de Informes PDF, Guardia (Dashboard en tiempo real, Despacho de Salidas Activas, Libro de Guardia con exportación a Excel, Novedades, Elementos Médicos en Hospitales, Clima), Choferes por categoría, Áreas Protegidas, Legajos (con exportación PDF), Vencimientos, Biblioteca Virtual y Panel Ejecutivo de Administración (con KPIs, Auditoría y Backup JSON).
+En desarrollo activo (v0.5.0).
+- **Módulos operativos**: Unidades, Revisiones (web y escritorio), Panel Ejecutivo de Control de Combustible (vistas Cuadrícula/Lista, medidor de 4 segmentos y KPIs), Generador de Informes PDF, Guardia (Dashboard en tiempo real, Despacho de Salidas Activas, Libro de Guardia con exportación a Excel, Novedades, Elementos Médicos en Hospitales, Clima), Choferes por categoría, Áreas Protegidas, Legajos (con exportación PDF), Vencimientos, Biblioteca Virtual consolidada (con consola de administración Master-Detail, drag & drop de archivos y auditoría de accesos) y Panel Ejecutivo de Administración (con KPIs, Auditoría y Backup JSON).
 - **En construcción**: Panel de estadísticas personales para bomberos (`/mis-estadisticas`).
 
 ---
