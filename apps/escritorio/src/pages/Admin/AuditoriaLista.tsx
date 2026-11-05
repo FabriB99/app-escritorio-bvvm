@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Eye, Trash2, ArrowRight, X, ShieldAlert, ChevronDown } from "lucide-react";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import { toast } from "sonner";
 import "./AuditoriaLista.css";
 
@@ -477,10 +478,7 @@ const AuditoriaLista: React.FC = () => {
 
         {/* Tabla */}
         {loading ? (
-          <div className="au-loading">
-            <div className="au-spinner" />
-            <span>Cargando registros...</span>
-          </div>
+          <PageLoader texto="Cargando registros de auditoría..." />
         ) : logsFiltrados.length === 0 ? (
           <div className="au-empty">
             <ShieldAlert size={36} />

@@ -29,8 +29,10 @@ export interface Unidad {
   modelo?: string;
   patente?: string;
   estado?: 'En servicio' | 'Fuera de servicio' | 'En mantenimiento' | string;
-  kilometraje?: string;
-  combustible: string; // Obligatorio como queríamos
+  kilometraje?: number | string;
+  combustible?: string;
+  operativa?: boolean;
+  ultima_revision?: any;
   fechaControlCombustible?: any;
   imagenUrl?: string;
 }

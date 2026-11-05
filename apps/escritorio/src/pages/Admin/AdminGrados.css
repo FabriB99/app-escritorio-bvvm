@@ -487,13 +487,6 @@
   margin-top: 4px;
 }
 
-.grados-cargando {
-  text-align: center;
-  padding: 50px;
-  color: #718096;
-  font-size: 0.85rem;
-}
-
 /* ALERTA DE BOMBEROS AFECTADOS EN MODAL */
 .alerta-afectados {
   margin: 12px 0 18px 0;

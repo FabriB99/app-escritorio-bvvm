@@ -2,7 +2,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
+import PageLoader from '../components/PageLoader/PageLoader';
 
 interface RutaProtegidaProps {
   children: React.ReactNode;
@@ -29,12 +29,11 @@ const RutaProtegida: React.FC<RutaProtegidaProps> = ({ children, rolesPermitidos
   const { user, loading } = useUser();
   const rol = user?.rol;
 
-  if (loading) return <LoadingScreen />;
+  if (loading && !user) return <PageLoader />;
 
   if (!user?.uid) return <Navigate to="/login" replace />;
 
   if (rolesPermitidos && !rolesPermitidos.includes(rol || '')) {
-    // Redirige a la ruta correcta según el rol
     return <Navigate to={rutaSegunRol(rol)} replace />;
   }
 

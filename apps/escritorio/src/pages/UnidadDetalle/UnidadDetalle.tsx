@@ -7,6 +7,7 @@ import { useUser } from '../../context/UserContext';
 import './UnidadDetalle.css';
 import { Pencil, CircleCheck, XCircle, AlertTriangle, CircleHelp } from "lucide-react";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import { Unidad, Ubicacion, Elemento } from '../../types/unidades';
 
 const getEstadoIcono = (estado?: string) => {
@@ -87,7 +88,7 @@ const UnidadDetalle: React.FC = () => {
   }, [fetchUnidad]);
 
   if (cargando) {
-    return <div className="contenido-principal"><div className="cargando"><p>Cargando unidad...</p></div></div>;
+    return <PageLoader texto="Cargando unidad..." />;
   }
 
   if (!unidad) {

@@ -1,14 +1,19 @@
-// src/pages/RevisionUnidad.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getUbicacionesConElementos, addRevision, getUnidades } from "../firebase/firestore";
+import {
+  getUbicacionesConElementos,
+  getUnidades,
+  getMiembros,
+  formatearEtiquetaMiembro,
+  MiembroRevision,
+} from "../firebase/firestore";
 import { Ubicacion } from "../../../shared/types/Ubicacion";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, collection, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle } from "react-icons/fa";
 import "../styles/RevisionUnidad.css";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
+import { ArrowLeft, X } from "lucide-react";
 
 type EstadoElemento = "Operativo" | "Con falla" | "Faltante";
 
@@ -22,9 +27,15 @@ export default function RevisionUnidad() {
   const [unidadNombre, setUnidadNombre] = useState("");
   const [ubicaciones, setUbicaciones] = useState<Ubicacion[]>([]);
   const [estadoElementos, setEstadoElementos] = useState<EstadoPorElemento>({});
-  const [bombero, setBombero] = useState("");
+  const [miembros, setMiembros] = useState<MiembroRevision[]>([]);
+  const [bomberosSeleccionados, setBomberosSeleccionados] = useState<string[]>([]);
+  const [busquedaBombero, setBusquedaBombero] = useState("");
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
   const [observaciones, setObservaciones] = useState("");
   const [guardando, setGuardando] = useState(false);
+
+  const sugerenciasRef = useRef<HTMLDivElement>(null);
+  const inputBusquedaRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!unidadId) return;
@@ -37,7 +48,108 @@ export default function RevisionUnidad() {
     getUbicacionesConElementos(unidadId).then((ubicaciones) => {
       setUbicaciones(ubicaciones);
     });
+
+    getMiembros()
+      .then((lista) => {
+        setMiembros(lista);
+      })
+      .catch((err) => {
+        console.error("❌ Error al cargar miembros:", err);
+      });
   }, [unidadId]);
+
+  // Cerrar desplegable al tocar fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (
+        sugerenciasRef.current &&
+        !sugerenciasRef.current.contains(event.target as Node) &&
+        inputBusquedaRef.current &&
+        !inputBusquedaRef.current.contains(event.target as Node)
+      ) {
+        setMostrarSugerencias(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
+  const normalizarTexto = (texto: string) =>
+    texto
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
+  const textoBusquedaNorm = normalizarTexto(busquedaBombero);
+
+  const sugerenciasFiltradas = busquedaBombero.trim()
+    ? miembros
+        .filter((m) => {
+          const etiqueta = formatearEtiquetaMiembro(m);
+          if (bomberosSeleccionados.includes(etiqueta)) return false;
+
+          const ordenStr =
+            m.ordenOperativo !== undefined && m.ordenOperativo !== null
+              ? String(m.ordenOperativo).trim()
+              : "";
+          const nombreNorm = normalizarTexto(m.nombre || "");
+          const apellidoNorm = normalizarTexto(m.apellido || "");
+          const etiquetaNorm = normalizarTexto(etiqueta);
+
+          return (
+            etiquetaNorm.includes(textoBusquedaNorm) ||
+            nombreNorm.includes(textoBusquedaNorm) ||
+            apellidoNorm.includes(textoBusquedaNorm) ||
+            (ordenStr && ordenStr.includes(busquedaBombero.trim()))
+          );
+        })
+        .slice(0, 6)
+    : [];
+
+  const coincidenciaExacta = miembros.some(
+    (m) =>
+      formatearEtiquetaMiembro(m).toLowerCase() === busquedaBombero.trim().toLowerCase()
+  );
+  const yaSeleccionadoManualmente = bomberosSeleccionados.some(
+    (b) => b.toLowerCase() === busquedaBombero.trim().toLowerCase()
+  );
+
+  const mostrarBotonManual =
+    busquedaBombero.trim().length > 0 &&
+    !coincidenciaExacta &&
+    !yaSeleccionadoManualmente;
+
+  const handleAgregarBombero = (etiqueta: string) => {
+    const limpia = etiqueta.trim();
+    if (!limpia) return;
+    if (!bomberosSeleccionados.includes(limpia)) {
+      setBomberosSeleccionados((prev) => [...prev, limpia]);
+    }
+    setBusquedaBombero("");
+    setMostrarSugerencias(false);
+    inputBusquedaRef.current?.focus();
+  };
+
+  const handleQuitarBombero = (etiqueta: string) => {
+    setBomberosSeleccionados((prev) => prev.filter((b) => b !== etiqueta));
+  };
+
+  const handleKeyDownBusqueda = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (sugerenciasFiltradas.length > 0) {
+        handleAgregarBombero(formatearEtiquetaMiembro(sugerenciasFiltradas[0]));
+      } else if (busquedaBombero.trim()) {
+        handleAgregarBombero(busquedaBombero.trim());
+      }
+    }
+  };
 
   const handleChangeEstado = (elementoId: string, estado: EstadoElemento) => {
     setEstadoElementos((prev) => ({
@@ -46,56 +158,98 @@ export default function RevisionUnidad() {
     }));
   };
 
+  const handleMarcarSeccionOperativa = (ubicacion: Ubicacion) => {
+    setEstadoElementos((prev) => {
+      const actualizados = { ...prev };
+      ubicacion.elementos.forEach((el) => {
+        actualizados[el.id] = "Operativo";
+      });
+      return actualizados;
+    });
+    toast.success(`Sección "${ubicacion.nombre}" marcada como Operativa`, { duration: 1200 });
+  };
+
   const handleGuardarRevision = async () => {
-    if (!unidadId || !bombero.trim()) {
-      toast.warn("🧑‍🚒 Completá el nombre del bombero", { autoClose: 2000 });
+    if (!unidadId) {
+      toast.error("Unidad no válida");
       return;
     }
 
-    // Validar que todos los elementos tengan estado
+    let bomberosFinales = [...bomberosSeleccionados];
+
+    // Si no hay seleccionados pero dejó texto en el buscador, tomarlo automáticamente
+    if (bomberosFinales.length === 0 && busquedaBombero.trim()) {
+      bomberosFinales = [busquedaBombero.trim()];
+      setBomberosSeleccionados(bomberosFinales);
+      setBusquedaBombero("");
+    }
+
+    if (bomberosFinales.length === 0) {
+      toast.error("Seleccioná al menos un bombero responsable");
+      return;
+    }
+
+    // Validar que todos los elementos tengan estado asignado
     const totalElementos = ubicaciones.flatMap((u) => u.elementos).length;
     const totalEstados = Object.keys(estadoElementos).length;
 
     if (totalEstados !== totalElementos) {
-      toast.warn("⚠️ Todos los elementos deben tener un estado asignado", { autoClose: 2000 });
+      toast("⚠️ Todos los elementos deben tener un estado asignado");
       return;
     }
 
-    // Validar observaciones
-    if (!observaciones.trim()) {
-      toast.warn("✏️ Agregá una observación", { autoClose: 2000 });
+    // Verificamos si hay al menos un elemento marcado como Faltante o Con falla
+    const hayFallasOFaltantes = Object.values(estadoElementos).some(
+      (estado) => estado === "Faltante" || estado === "Con falla"
+    );
+
+    if (hayFallasOFaltantes && !observaciones.trim()) {
+      toast("⚠️ Hay faltantes o fallas. Especificá el detalle en observaciones.");
       return;
     }
+
+    const observacionesFinal = observaciones.trim() || "Sin novedades";
 
     setGuardando(true);
 
     try {
-      await addRevision({
+      const batch = writeBatch(db);
+
+      // 1. Guardar la revisión atómicamente con bombero (string) y bomberos (array)
+      const revisionRef = doc(collection(db, "revisiones"));
+      batch.set(revisionRef, {
         unidadId,
-        bombero,
-        observaciones,
+        bombero: bomberosFinales.join(", "),
+        bomberos: bomberosFinales,
+        observaciones: observacionesFinal,
+        fecha: serverTimestamp(),
         elementos: estadoElementos,
       });
 
-      const updates = Object.entries(estadoElementos).map(async ([elementoId, estado]) => {
+      // 2. Actualizar estado de cada elemento en el lote
+      Object.entries(estadoElementos).forEach(([elementoId, estado]) => {
         const elementoRef = doc(db, "elementos", elementoId);
-        await updateDoc(elementoRef, { estado });
-      });
-      await Promise.all(updates);
-
-      await updateDoc(doc(db, "unidades", unidadId), {
-        ultima_revision: new Date(),
+        batch.update(elementoRef, { estado });
       });
 
-      toast.success("✅ Revisión guardada con éxito", { autoClose: 2000 });
+      // 3. Actualizar la última revisión en la unidad en el mismo lote
+      const unidadRef = doc(db, "unidades", unidadId);
+      batch.update(unidadRef, {
+        ultima_revision: serverTimestamp(),
+      });
 
-      // Espero un poco para que el toast se muestre antes de navegar
+      // Ejecutar commit atómico (optimizado y compatible con offline)
+      await batch.commit();
+
+      toast.success("Revisión guardada con éxito");
+
+      // Esperar un momento para mostrar el toast antes de navegar
       setTimeout(() => {
         navigate("/control-unidades");
       }, 2000);
     } catch (error) {
       console.error("❌ Error al guardar la revisión:", error);
-      toast.error("❌ Ocurrió un error al guardar", { autoClose: 3000 });
+      toast.error("Ocurrió un error al guardar");
     } finally {
       setGuardando(false);
     }
@@ -108,20 +262,100 @@ export default function RevisionUnidad() {
 
   return (
     <div className="revision-container">
-      <Link to="/" style={{ display: "flex", justifyContent: "center" }}>
-        <img src="/logo-bomberos.png" alt="Logo" className="revision-logo" />
-      </Link>
-      <h1 className="revision-title">Revisión de Unidad</h1>
-      <h2 className="revision-subtitle">{unidadNombre}</h2>
+      <div className="revision-top-bar">
+        <Link to="/control-unidades" className="btn-volver-revision">
+          <ArrowLeft size={18} />
+          <span>Volver</span>
+        </Link>
+        <div className="brand-header-compact">
+          <img src="/logo-bomberos.png" alt="Escudo" className="brand-logo-compact" />
+          <span className="brand-text-compact">Bomberos Villa María</span>
+        </div>
+      </div>
 
-      <div className="form-group">
-        <label>Nombre del Bombero</label>
-        <input
-          type="text"
-          value={bombero}
-          onChange={(e) => setBombero(e.target.value)}
-          placeholder="Nombre..."
-        />
+      <div className="revision-header-titles">
+        <h1 className="revision-title">Revisión de {unidadNombre}</h1>
+      </div>
+
+      <div className="form-group selector-bomberos-group">
+        <label htmlFor="input-busqueda-bombero">Bomberos Responsables</label>
+
+        {/* Chips de bomberos seleccionados */}
+        {bomberosSeleccionados.length > 0 && (
+          <div className="bomberos-chips-container" aria-label="Bomberos seleccionados">
+            {bomberosSeleccionados.map((nombreBombero) => (
+              <span key={nombreBombero} className="bombero-chip">
+                <span>{nombreBombero}</span>
+                <button
+                  type="button"
+                  className="bombero-chip-quitar"
+                  onClick={() => handleQuitarBombero(nombreBombero)}
+                  title={`Quitar a ${nombreBombero}`}
+                  aria-label={`Quitar a ${nombreBombero}`}
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Buscador táctil con autocompletado */}
+        <div className="buscador-bomberos-wrapper">
+          <input
+            id="input-busqueda-bombero"
+            ref={inputBusquedaRef}
+            type="text"
+            value={busquedaBombero}
+            onChange={(e) => {
+              setBusquedaBombero(e.target.value);
+              setMostrarSugerencias(true);
+            }}
+            onFocus={() => {
+              if (busquedaBombero.trim()) {
+                setMostrarSugerencias(true);
+              }
+            }}
+            onKeyDown={handleKeyDownBusqueda}
+            placeholder={
+              bomberosSeleccionados.length === 0
+                ? "Buscar por orden, apellido o nombre..."
+                : "+ Agregar otro bombero..."
+            }
+            autoComplete="off"
+          />
+
+          {mostrarSugerencias && (sugerenciasFiltradas.length > 0 || mostrarBotonManual) && (
+            <div ref={sugerenciasRef} className="sugerencias-bomberos" role="listbox">
+              {sugerenciasFiltradas.map((miembro) => {
+                const etiqueta = formatearEtiquetaMiembro(miembro);
+                return (
+                  <button
+                    key={miembro.id}
+                    type="button"
+                    className="sugerencia-item"
+                    onClick={() => handleAgregarBombero(etiqueta)}
+                  >
+                    <span className="sugerencia-texto">{etiqueta}</span>
+                    <span className="sugerencia-accion">+ Agregar</span>
+                  </button>
+                );
+              })}
+
+              {mostrarBotonManual && (
+                <button
+                  type="button"
+                  className="sugerencia-item sugerencia-manual"
+                  onClick={() => handleAgregarBombero(busquedaBombero)}
+                >
+                  <span className="sugerencia-manual-texto">
+                    + Agregar "<strong>{busquedaBombero.trim()}</strong>" manualmente
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="estado-leyenda">
@@ -139,13 +373,24 @@ export default function RevisionUnidad() {
         </div>
       </div>
 
+
       {ubicaciones.map((ubicacion) => (
         <div key={ubicacion.id} className="ubicacion-section">
-          <div className="ubicacion-nombre">{ubicacion.nombre}</div>
+          <div className="ubicacion-header">
+            <span className="ubicacion-nombre">{ubicacion.nombre}</span>
+            <button
+              type="button"
+              className="btn-seccion-ok"
+              onClick={() => handleMarcarSeccionOperativa(ubicacion)}
+              disabled={guardando}
+            >
+              ✓ Toda la sección OK
+            </button>
+          </div>
 
           <div className="ubicacion-encabezado">
-            <span className="espacio-vacio"></span>
-            <span className="cantidad-label">Cantidad</span>
+            <span className="espacio-vacio">Elemento</span>
+            <span className="cantidad-label">Cant.</span>
             <span className="estado-labels">Estado</span>
           </div>
 
@@ -153,47 +398,54 @@ export default function RevisionUnidad() {
             <div key={elemento.id} className="elemento-row">
               <span className="elemento-nombre">{elemento.nombre}</span>
               <span className="elemento-cantidad">{elemento.cantidad}</span>
-              <div className="estado-radios">
-                <label
-                  className={estadoElementos[elemento.id] === "Operativo" ? "radio operativo" : ""}
+              <div
+                className="estado-chips"
+                role="group"
+                aria-label={`Estado de ${elemento.nombre}`}
+              >
+                <button
+                  type="button"
+                  className={`chip-btn chip-operativo ${
+                    estadoElementos[elemento.id] === "Operativo" ? "activo" : ""
+                  }`}
+                  onClick={() => handleChangeEstado(elemento.id, "Operativo")}
+                  disabled={guardando}
+                  aria-pressed={estadoElementos[elemento.id] === "Operativo"}
+                  title="Operativo"
                 >
-                  <input
-                    type="radio"
-                    name={`estado-${elemento.id}`}
-                    value="Operativo"
-                    checked={estadoElementos[elemento.id] === "Operativo"}
-                    onChange={() => handleChangeEstado(elemento.id, "Operativo")}
-                  />
-                </label>
-                <label
-                  className={estadoElementos[elemento.id] === "Faltante" ? "radio faltante" : ""}
+                  <FaCheckCircle className="chip-icon" />
+                </button>
+                <button
+                  type="button"
+                  className={`chip-btn chip-faltante ${
+                    estadoElementos[elemento.id] === "Faltante" ? "activo" : ""
+                  }`}
+                  onClick={() => handleChangeEstado(elemento.id, "Faltante")}
+                  disabled={guardando}
+                  aria-pressed={estadoElementos[elemento.id] === "Faltante"}
+                  title="Faltante"
                 >
-                  <input
-                    type="radio"
-                    name={`estado-${elemento.id}`}
-                    value="Faltante"
-                    checked={estadoElementos[elemento.id] === "Faltante"}
-                    onChange={() => handleChangeEstado(elemento.id, "Faltante")}
-                  />
-                </label>
-                <label
-                  className={estadoElementos[elemento.id] === "Con falla" ? "radio con-falla" : ""}
+                  <FaExclamationTriangle className="chip-icon" />
+                </button>
+                <button
+                  type="button"
+                  className={`chip-btn chip-con-falla ${
+                    estadoElementos[elemento.id] === "Con falla" ? "activo" : ""
+                  }`}
+                  onClick={() => handleChangeEstado(elemento.id, "Con falla")}
+                  disabled={guardando}
+                  aria-pressed={estadoElementos[elemento.id] === "Con falla"}
+                  title="Con falla"
                 >
-                  <input
-                    type="radio"
-                    name={`estado-${elemento.id}`}
-                    value="Con falla"
-                    checked={estadoElementos[elemento.id] === "Con falla"}
-                    onChange={() => handleChangeEstado(elemento.id, "Con falla")}
-                  />
-                </label>
+                  <FaTimesCircle className="chip-icon" />
+                </button>
               </div>
             </div>
           ))}
         </div>
       ))}
 
-      <div className="form-group">
+      <div className="form-group" style={{ marginTop: "20px" }}>
         <label>Observaciones</label>
         <textarea
           className="observaciones-textarea"
@@ -209,8 +461,6 @@ export default function RevisionUnidad() {
       <button className="finalizar-button" onClick={handleGuardarRevision} disabled={guardando}>
         {guardando ? "Guardando..." : "Finalizar Revisión"}
       </button>
-
-      <ToastContainer position="top-center" />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { AlertCircle, Plus, CheckCircle, Building2, Truck, Clock, X } from 'lucide-react';
 import type { ElementoMedicoHospital } from '../ElementosMedicosHospital/types';
 import ModalRegistrarElemento from '../ElementosMedicosHospital/ModalRegistrarElemento';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 
 const formatearFechaHora = (ts?: Timestamp): string => {
   if (!ts) return '—';
@@ -135,7 +136,7 @@ const WidgetElementosPendientes: React.FC = () => {
         </div>
 
         {cargando ? (
-          <p className="widget-loading">Cargando...</p>
+          <PageLoader texto="Cargando elementos pendientes..." />
         ) : (
           <>
             {elementos.length === 0 ? (

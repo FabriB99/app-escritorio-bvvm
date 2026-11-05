@@ -263,15 +263,10 @@
   justify-content: center;
 }
 
-.contenido-principal .cargando p,
 .contenido-principal .error p {
   margin: 0;
   font-size: 15px;
   font-weight: 500;
-  color: #506680;
-}
-
-.contenido-principal .error p {
   color: var(--color-accent);
 }
 

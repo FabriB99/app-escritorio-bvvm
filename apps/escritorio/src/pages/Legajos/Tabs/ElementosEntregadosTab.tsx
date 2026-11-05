@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from '../../../utils/auditoria';
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface ElementoEntregado {
   id: string;
@@ -122,7 +123,7 @@ const ElementosEntregadosTab: React.FC = () => {
     return `${d}-${m}-${a}`;
   };
 
-  if (loading) return <p>Cargando elementos entregados...</p>;
+  if (loading) return <PageLoader texto="Cargando elementos entregados..." />;
 
   return (
     <div className="tab-container">

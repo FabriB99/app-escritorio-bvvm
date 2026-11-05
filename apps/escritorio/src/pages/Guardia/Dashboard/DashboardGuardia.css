@@ -291,14 +291,6 @@
   border-color: #cbd5e1;
 }
 
-.dashboard-page-wrapper .widget-loading {
-  font-size: 13px;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-text-dark, #0f172a) 65%, var(--color-text-muted, #64748b));
-  text-align: center;
-  padding: var(--spacing-md, 16px) 0;
-}
-
 .dashboard-page-wrapper .widget-error {
   font-size: 13px;
   font-weight: 600;

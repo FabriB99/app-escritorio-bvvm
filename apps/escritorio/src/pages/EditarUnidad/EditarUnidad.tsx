@@ -8,6 +8,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import './EditarUnidad.css';
 import { ArrowUp, ArrowDown, Trash2, Save } from 'lucide-react';
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import {
   TIPOS_UNIDAD,
   CATEGORIAS_CHOFER,
@@ -139,7 +140,7 @@ const EditarUnidad: React.FC = () => {
     fetchUnidad();
   }, [id, esModoCrear, esGuardia, navigate]);
 
-  if (cargando) return <p>Cargando datos...</p>;
+  if (cargando) return <PageLoader texto="Cargando datos de la unidad..." />;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

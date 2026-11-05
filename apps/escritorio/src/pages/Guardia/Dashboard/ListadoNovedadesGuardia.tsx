@@ -9,6 +9,7 @@ import { useUser } from '../../../context/UserContext';
 import { Plus, CheckCircle, Trash2, Save, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '../../../components/Header';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import type { NovedadGuardia } from './types';
 import Modal from '../../../components/Modal';
@@ -361,7 +362,7 @@ const ListadoNovedadesGuardia: React.FC = () => {
 
         {/* Tabla */}
         {cargando ? (
-          <p className="estado-carga">Cargando historial de novedades...</p>
+          <PageLoader texto="Cargando historial de novedades..." />
         ) : novedadesFiltradas.length === 0 ? (
           <p className="estado-vacio">No se encontraron novedades con los filtros seleccionados.</p>
         ) : (

@@ -1,213 +1,444 @@
-/* Misma base que Unidades: encaja en main-content sin desbordar */
+/* Panel Ejecutivo de Control de Combustible */
 .combustible-lista {
   width: 100%;
   max-width: 100%;
   min-width: 0;
   min-height: 0;
   box-sizing: border-box;
-  font-family: var(--font-main);
+  font-family: var(--font-main, 'Poppins', sans-serif);
   position: relative;
 }
 
-.combustible-contenido {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
+.combustible-panel {
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.8vw, 10px);
-  padding: 0 0 var(--spacing-lg);
+  gap: 18px;
+  padding: 0 0 var(--spacing-lg, 24px);
+  width: 100%;
   box-sizing: border-box;
 }
 
-.cargando {
-  margin: var(--spacing-lg) 0;
-  font-size: 12px;
-  font-weight: 500;
-  color: #506680;
-  font-family: var(--font-main);
+/* ─── Barra Superior: KPIs y Selector de Ordenamiento ────────────────────── */
+
+.combustible-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-/* Tarjetas — línea con Legajos / Unidades */
+.combustible-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 12px;
+  flex: 1 1 560px;
+}
+
+.combustible-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.combustible-kpi-card--alerta {
+  border-color: #fed7aa;
+  background-color: #fffaf5;
+}
+
+.combustible-kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.combustible-kpi-icon--flota {
+  background-color: #eff6ff;
+  color: #1e3a5f;
+}
+
+.combustible-kpi-icon--optimo {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.combustible-kpi-icon--alerta {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.combustible-kpi-icon--neutral {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.combustible-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.combustible-kpi-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #64748b;
+}
+
+.combustible-kpi-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.15;
+}
+
+.combustible-kpi-value--optimo {
+  color: #059669;
+}
+
+.combustible-kpi-value--alerta {
+  color: #ea580c;
+}
+
+/* Selector de Ordenamiento y Alternancia de Vista */
+
+.combustible-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.combustible-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.combustible-sort-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.combustible-sort-pills {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.combustible-sort-pill {
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.combustible-sort-pill:hover {
+  color: #0f172a;
+}
+
+.combustible-sort-pill.active {
+  background-color: #1e3a5f;
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(30, 58, 95, 0.2);
+}
+
+/* Toggle Cuadrícula / Lista */
+
+.combustible-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.combustible-view-btn {
+  width: 32px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.combustible-view-btn:hover {
+  color: #0f172a;
+}
+
+.combustible-view-btn.active {
+  background-color: #1e3a5f;
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(30, 58, 95, 0.22);
+}
+
+/* ─── Contenedor de Unidades (Cuadrícula vs Lista) ───────────────────────── */
+
+.combustible-contenido {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.combustible-contenido.modo-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.combustible-contenido.modo-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tarjetas de Unidad */
+
 .unidad-card-combustible {
   background-color: #ffffff;
-  border: 1px solid #e8ecf0;
-  border-left: 3px solid var(--color-sidebar);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
   transition:
-    box-shadow var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-base);
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
   box-sizing: border-box;
   min-width: 0;
-  isolation: isolate;
 }
 
 .unidad-card-combustible:hover {
-  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.1);
-  border-color: rgba(44, 62, 80, 0.12);
   transform: translateY(-2px);
-  z-index: 1;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.unidad-info {
-  display: flex;
+/* Distribución Horizontal en Modo Lista */
+
+.combustible-contenido.modo-lista .unidad-card-combustible {
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 12px 16px;
+  gap: 20px;
+  padding: 14px 20px;
+}
+
+.combustible-contenido.modo-lista .unidad-card-header {
+  flex: 1 1 220px;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.combustible-contenido.modo-lista .unidad-tanque-section {
+  flex: 0 1 280px;
+  min-width: 220px;
+  gap: 6px;
+}
+
+.combustible-contenido.modo-lista .unidad-card-footer {
+  flex: 0 0 auto;
+  padding-top: 0;
+  border-top: none;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .combustible-contenido.modo-lista .unidad-card-combustible {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .combustible-contenido.modo-lista .unidad-card-footer {
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+    text-align: left;
+  }
+}
+
+/* Colores de borde lateral izquierdo de 4px según el nivel */
+.borde-14 {
+  border-left-color: #ef4444;
+}
+.borde-14:hover {
+  border-left-color: #ef4444;
+}
+
+.borde-24 {
+  border-left-color: #f97316;
+}
+.borde-24:hover {
+  border-left-color: #f97316;
+}
+
+.borde-34 {
+  border-left-color: #eab308;
+}
+.borde-34:hover {
+  border-left-color: #eab308;
+}
+
+.borde-44 {
+  border-left-color: #10b981;
+}
+.borde-44:hover {
+  border-left-color: #10b981;
+}
+
+/* Cabecera de la tarjeta */
+
+.unidad-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   flex-wrap: wrap;
-  min-width: 0;
-}
-
-.unidad-info > p.unidad-nombre {
-  flex: 1 1 200px;
-  min-width: 0;
-}
-
-.unidad-info p {
-  margin: 0;
-  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
-  color: var(--color-text-dark);
-  font-family: var(--font-main);
 }
 
 .unidad-nombre {
+  margin: 0;
+  font-size: 16.5px;
   font-weight: 800;
   letter-spacing: -0.3px;
-  color: var(--color-sidebar);
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.unidad-tipo {
-  font-size: 0.85em;
-  font-weight: 500;
-  color: #506680;
-  margin-left: 6px;
+  color: #0f172a;
 }
 
 .badge-tipo {
-  display: inline-block;
-  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
   padding: 4px 10px;
-  background: rgba(44, 62, 80, 0.08);
-  color: var(--color-sidebar);
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
-  border-radius: var(--radius-sm);
-  vertical-align: middle;
-  max-width: 100%;
-  overflow-wrap: anywhere;
+  border-radius: 999px;
 }
 
-.separador {
-  margin: 10px;
-  color: #94a3b8;
-  font-weight: 500;
+/* Medidor Visual de Tanque (4 Segmentos) */
+
+.unidad-tanque-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.nivel-fecha-container {
+.unidad-tanque-top {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 10px 14px;
-  flex-wrap: wrap;
-  flex: 0 1 auto;
-  min-width: 0;
+  justify-content: space-between;
+}
+
+.unidad-tanque-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.unidad-tanque-label.nivel-14 {
+  color: #dc2626;
+}
+
+.unidad-tanque-label.nivel-24 {
+  color: #ea580c;
+}
+
+.unidad-tanque-label.nivel-34 {
+  color: #ca8a04;
+}
+
+.unidad-tanque-label.nivel-44 {
+  color: #059669;
+}
+
+.unidad-tanque-segmentos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.tanque-segmento {
+  height: 10px;
+  border-radius: 3px;
+  background-color: #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.tanque-segmento.activo.nivel-14 {
+  background-color: #ef4444;
+}
+
+.tanque-segmento.activo.nivel-24 {
+  background-color: #f97316;
+}
+
+.tanque-segmento.activo.nivel-34 {
+  background-color: #eab308;
+}
+
+.tanque-segmento.activo.nivel-44 {
+  background-color: #10b981;
+}
+
+/* Pie de la tarjeta */
+
+.unidad-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
 }
 
 .fecha-control {
   font-size: 12px;
   font-weight: 500;
-  color: #506680;
-  font-style: normal;
-  white-space: normal;
-  text-align: right;
-  max-width: 100%;
-  overflow-wrap: anywhere;
+  color: #64748b;
 }
 
-/* Colores borde izquierdo según nivel (semánticos) */
-.borde-14 { border-left-color: #e74c3c; }
-.borde-24 { border-left-color: #f39c12; }
-.borde-34 { border-left-color: #f1c40f; }
-.borde-44 { border-left-color: #27ae60; }
-
-/* Etiqueta de nivel */
-.nivel-combustible {
-  font-size: 13px;
-  font-weight: 600;
-  font-family: var(--font-main);
-  padding: 8px 14px;
-  border-radius: 20px;
-  color: var(--color-text-white);
-  display: inline-block;
-  min-width: 88px;
-  text-align: center;
-  background-color: #94a3b8;
-  white-space: nowrap;
-  box-sizing: border-box;
-}
-
-.nivel-14 { background-color: #e74c3c; }
-.nivel-24 { background-color: #f39c12; }
-.nivel-34 { background-color: #f1c40f; color: var(--color-text-dark); }
-.nivel-44 { background-color: #27ae60; }
-
-/* Icono actualizar en header (si Header aplica esta clase) */
-.actualizar-icon {
-  font-size: 18px;
-  padding: 8px;
-}
-
-/* Pantallas grandes: un poco más de aire, sin duplicar cinco breakpoints */
-@media (min-width: 1366px) {
-  .unidad-card-combustible {
-    padding: 18px 22px;
-  }
-
-  .nivel-combustible {
-    font-size: 14px;
-    padding: 8px 16px;
-    min-width: 96px;
-  }
-
-  .fecha-control {
-    font-size: 13px;
-  }
-}
-
-@media (min-width: 1920px) {
-  .unidad-card-combustible {
-    padding: 20px 26px;
-  }
-
-  .nivel-combustible {
-    font-size: 14px;
-    min-width: 104px;
-  }
-
-  .actualizar-icon {
-    font-size: 20px;
-    padding: 10px;
-  }
-}
-
-@media (min-width: 2560px) {
-  .unidad-card-combustible {
-    padding: 22px 28px;
-  }
-
-  .unidad-nombre {
-    font-size: 1.15rem;
-  }
-
-  .nivel-combustible {
-    font-size: 15px;
-    min-width: 112px;
-  }
-}

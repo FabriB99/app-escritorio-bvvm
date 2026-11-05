@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from '../../../utils/auditoria';
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface Observacion {
   id: string;
@@ -124,7 +125,7 @@ const ObservacionesTab: React.FC = () => {
     return `${d}-${m}-${a}`;
   };
 
-  if (loading) return <p>Cargando observaciones...</p>;
+  if (loading) return <PageLoader texto="Cargando observaciones..." />;
 
   return (
     <div className="tab-container">

@@ -164,30 +164,6 @@
 
 /* ── Estados de carga / vacío ────────────────────────────────────────────── */
 
-.au-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 60px 20px;
-  font-family: var(--font-main);
-  font-size: 13px;
-  color: #506680;
-}
-
-.au-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #e8ecf0;
-  border-top-color: var(--color-sidebar, #2C3E50);
-  border-radius: 50%;
-  animation: au-spin 0.7s linear infinite;
-}
-
-@keyframes au-spin {
-  to { transform: rotate(360deg); }
-}
-
 .au-empty {
   display: flex;
   flex-direction: column;

@@ -1,227 +1,601 @@
-/* Contenedor principal - centrado */
-.historial-revisiones {
-  width: 100%;
-  max-width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+/* ==========================================================================
+   Historial de Revisiones - Aplicación de Escritorio
+   ========================================================================== */
+
+.historial-revisiones__contenedor-principal {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8fafc;
 }
 
-/* Tarjetas */
-.revision-card {
-    background: none;
-    padding: 15px 30px;
+.historial-contenido-wrapper,
+.historial-contenido {
+    width: 100%;
+    max-width: 100%;
+    margin: 16px 0 0 0;
+    padding: 0 28px 48px;
+    box-sizing: border-box;
+}
+
+/* 🔷 Cabecera de la Unidad */
+.unidad-resumen-header {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    border-left: 5px solid #2C3E50;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+}
+
+.unidad-resumen-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.unidad-resumen-icono {
+    width: 48px;
+    height: 48px;
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbeafe;
+    flex-shrink: 0;
+}
+
+.unidad-resumen-nombre {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+}
+
+.unidad-resumen-tipo {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    display: inline-block;
+}
+
+.unidad-resumen-contador {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.contador-numero {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2563eb;
+    line-height: 1;
+}
+
+.contador-label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* 🔷 Lista de tarjetas de revisión */
+.historial-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.revision-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
     cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    user-select: none;
+}
+
+.revision-card.estado-card-ok {
+    border-left: 4px solid #22c55e;
+}
+
+.revision-card.estado-card-alerta {
+    border-left: 4px solid #ef4444;
+}
+
+.revision-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.revision-card.expandido {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+/* 🔷 Cabecera de la tarjeta */
+.revision-header-row,
+.revision-card-header {
+    padding: 16px 20px;
+    padding-right: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
     position: relative;
 }
 
-/* Hover de tarjetas */
-.revision-card:hover {
-    background: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.revision-meta-principal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 240px;
+}
+
+.revision-fecha-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.icono-meta {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.revision-hora-texto {
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    background-color: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
+}
+
+.revision-bombero-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.revision-bombero-texto {
+    color: #334155;
+    font-weight: 600;
+}
+
+/* 🔷 Acciones e indicadores de la tarjeta */
+.revision-card-acciones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Badges */
+.badge-revision {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-revision.badge-ok {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.badge-revision.badge-alerta {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
 }
 
 /* Botón eliminar */
 .boton-eliminar-revision {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: #c0392b;
-    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: transform 0.2s ease, color 0.3s ease;
-    z-index: 2;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
 }
 
 .boton-eliminar-revision:hover {
-    transform: scale(1.2);
-    color: #e74c3c;
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+    transform: scale(1.05);
 }
 
-/* Info dentro de tarjeta */
-.revision-info p {
-    font-size: 16px;
-    margin: 6px 0;
-    color: #2c3e50;
-}
-
-.revision-observaciones {
-    font-style: italic;
-    color: #636e72;
-    margin-top: 10px;
-}
-
-.revision-elementos {
-    margin-top: 10px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 12px;
-    border: 1px solid #ccc;
-}
-
-.revision-elementos h4 {
-    font-size: 1.1rem;
-    color: #2d3436;
-    margin-top: 0px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #7c8897;
-    padding-bottom: 8px;
-}
-
-.grupo-ubicacion {
-    margin-bottom: 12px;
-}
-
-.elemento-ubicacion {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-    color: #2c3e50;
-    border-bottom: 1px solid #ccc;
-}
-
-.detalle-elemento {
-    margin-bottom: 0rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-/* Lista de elementos */
-.lista-elementos-ubicacion {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-/* Item lista elementos */
-.item-elemento {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 0;
-    font-size: 0.95rem;
-}
-
-/* Iconos */
-.estado-icono {
-    flex-shrink: 0;
-    font-size: 1.1rem;
-    margin-right: 6px;
+.chevron-expandir-wrapper {
+    color: #94a3b8;
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding-left: 4px;
 }
 
-.icon-operativo { color: #27ae60; }
-.icon-falla { color: #e74c3c; }
-.icon-faltante { color: #f39c12; }
-.icon-desconocido { color: #95a5a6; }
+.chevron-expandir {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
 
-.elemento-nombre {
-    font-weight: 500;
-    color: #2c3e50;
+.chevron-expandir.rotado {
+    transform: rotate(180deg);
+    color: #2563eb;
+}
+
+/* 🔷 Cuerpo desplegable de la tarjeta */
+.revision-card-cuerpo {
+    border-top: 1px solid #f1f5f9;
+    padding: 16px 20px 20px;
+    background-color: #fbfcfe;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Observaciones */
+.revision-observaciones-box {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #64748b;
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+.observaciones-header {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-grow: 1;
+    font-size: 13px;
+    color: #334155;
+    margin-bottom: 6px;
 }
 
-.elemento-estado {
-    font-style: italic;
-    color: #888;
-    font-size: 0.9rem;
+.icono-observaciones {
+    color: #64748b;
+}
+
+.observaciones-texto {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+    font-style: normal;
+}
+
+/* Sección sin novedades */
+.revision-sin-novedades {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 13px;
+}
+
+.icono-check-verde {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+/* Sección con alertas */
+.revision-elementos-alerta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.revision-elementos-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: #991b1b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.grupo-ubicacion-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.grupo-ubicacion-titulo {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lista-elementos-novedad {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-elemento-novedad {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.item-elemento-novedad:last-child {
+    border-bottom: none;
+}
+
+.item-elemento-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.estado-icono-wrapper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.icono-estado-faltante {
+    color: #d97706;
+}
+
+.icono-estado-falla {
+    color: #dc2626;
+}
+
+.icono-estado-operativo {
+    color: #16a34a;
+}
+
+.icono-estado-desconocido {
+    color: #94a3b8;
+}
+
+.elemento-nombre-texto {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    word-break: break-word;
+}
+
+.badge-estado-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
     white-space: nowrap;
+    text-transform: capitalize;
 }
 
-/* Cargando */
-.cargando {
+.badge-estado-pill.pill-faltante {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-estado-pill.pill-falla {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+/* 🔷 Estados vacíos */
+.historial-vacio {
     text-align: center;
-    padding: 40px;
-    font-size: 1.2rem;
-    color: #555;
+    padding: 60px 20px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
 }
 
-/* Media Query para FULL HD y superiores */
-@media (min-width: 1900px) {
-    .revision-card {
-        padding: 25px 40px;
-        margin-bottom: 30px;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-        border-radius: 16px;
+.icono-vacio {
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+
+.historial-vacio h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.historial-vacio p {
+    font-size: 14px;
+    margin: 0;
+    max-width: 400px;
+}
+
+/* 🔷 Modal de eliminación */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-dialog {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: modal-aparecer 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-aparecer {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
     }
-    .revision-info p {
-        font-size: 18px;
-    }
-    .revision-elementos {
-        padding: 18px;
-    }
-    .revision-elementos h4 {
-        font-size: 1.3rem;
-    }
-    .elemento-ubicacion {
-        font-size: 1.3rem;
-    }
-    .item-elemento {
-        font-size: 1.1rem;
-        padding: 6px 0;
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
 }
 
-/* Media Query para 2K (2560px o más) */
-@media (min-width: 2560px) {
-    .revision-card {
-        padding: 30px 50px;
-        margin-bottom: 36px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        border-radius: 18px;
-    }
-    .revision-info p {
-        font-size: 20px;
-    }
-    .revision-elementos {
-        padding: 22px;
-    }
-    .revision-elementos h4 {
-        font-size: 1.5rem;
-    }
-    .elemento-ubicacion {
-        font-size: 1.4rem;
-    }
-    .item-elemento {
-        font-size: 1.2rem;
-        padding: 8px 0;
-    }
+.modal-header-alerta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* Media Query para 4K (3840px o más) */
-@media (min-width: 3840px) {
-    .revision-card {
-        padding: 36px 60px;
-        margin-bottom: 40px;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-        border-radius: 20px;
+.modal-icono-peligro {
+    width: 44px;
+    height: 44px;
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-header-alerta h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.modal-descripcion {
+    margin: 0;
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.5;
+}
+
+.modal-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.btn-cancelar-modal {
+    padding: 8px 16px;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-cancelar-modal:hover:not(:disabled) {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-eliminar-modal {
+    padding: 8px 18px;
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-eliminar-modal:hover:not(:disabled) {
+    background-color: #b91c1c;
+}
+
+.btn-cancelar-modal:disabled,
+.btn-eliminar-modal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 🔷 Responsive y Pantallas Grandes */
+@media (min-width: 1920px) {
+    .revision-card-header {
+        padding: 20px 24px;
+        padding-right: 48px;
     }
-    .revision-info p {
-        font-size: 22px;
+
+    .revision-fecha-texto {
+        font-size: 17px;
     }
-    .revision-elementos {
-        padding: 26px;
-    }
-    .revision-elementos h4 {
-        font-size: 1.7rem;
-    }
-    .elemento-ubicacion {
-        font-size: 1.6rem;
-    }
-    .item-elemento {
-        font-size: 1.3rem;
-        padding: 10px 0;
+
+    .revision-bombero-row {
+        font-size: 14px;
     }
 }

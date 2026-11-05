@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../app/firebase-config";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import { toast } from "sonner";
 import { User, Shield, KeyRound, ArrowLeft, Check } from "lucide-react";
 import {
@@ -185,7 +186,7 @@ const AdminFormIdentidad: React.FC = () => {
     return (
       <div className="admin-form-identidad">
         <Header title="Cargando perfil..." onBack={() => navigate("/admin/identidades")} />
-        <div className="form-cargando">Cargando datos del usuario...</div>
+        <PageLoader texto="Cargando datos del usuario..." />
       </div>
     );
   }

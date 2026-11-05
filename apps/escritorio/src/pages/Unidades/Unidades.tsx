@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useUser } from '../../context/UserContext';
 import Header from "../../components/Header";
 import Modal from '../../components/Modal';
+import PageLoader from '../../components/PageLoader/PageLoader';
 import './Unidades.css';
 import * as xlsx from 'xlsx';
 import { TIPOS_UNIDAD, Unidad, Elemento } from '../../types/unidades';
@@ -22,6 +23,7 @@ const Unidades: React.FC = () => {
   const { user, miembroActivo } = useUser();
   const navigate = useNavigate();
   const [units, setUnits] = useState<(Unidad & { ultima_revision?: any })[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [unidadAEliminar, setUnidadAEliminar] = useState<(Unidad & { ultima_revision?: any }) | null>(null);
   const [filtroTipo, setFiltroTipo] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -36,6 +38,7 @@ const Unidades: React.FC = () => {
         return numA - numB;
       });
       setUnits(unidadesData);
+      setCargando(false);
     });
     return () => unsubscribe();
   }, []);
@@ -175,33 +178,37 @@ const Unidades: React.FC = () => {
           </div>
         )}
 
-        <div className="cards-container">
-          {unidadesFiltradas.map(unidad => {
-            const claseEstado = formatearClaseEstado(unidad.estado);
-            return (
-              <div key={unidad.id} className={`card estado-${claseEstado}`}>
-                {user?.rol === 'admin' && (
-                  <button className="btn-eliminar-tarjeta" onClick={() => setUnidadAEliminar(unidad)}>
-                    <X size={18} />
-                  </button>
-                )}
+        {cargando ? (
+          <PageLoader texto="Cargando unidades..." />
+        ) : (
+          <div className="cards-container">
+            {unidadesFiltradas.map(unidad => {
+              const claseEstado = formatearClaseEstado(unidad.estado);
+              return (
+                <div key={unidad.id} className={`card estado-${claseEstado}`}>
+                  {user?.rol === 'admin' && (
+                    <button className="btn-eliminar-tarjeta" onClick={() => setUnidadAEliminar(unidad)}>
+                      <X size={18} />
+                    </button>
+                  )}
 
-                <Link to={`/unidad/${unidad.id}`} className="card-link">
-                  <h3>{unidad.nombre}</h3>
-                  <div className="tipo">{unidad.tipo}</div>
-                  <p>Modelo: {unidad.modelo}</p>
-                  <p>Última revisión: {unidad.ultima_revision?.seconds
-                    ? new Date(unidad.ultima_revision.seconds * 1000).toLocaleDateString()
-                    : 'Sin fecha'}
-                  </p>
-                  <div className={`estado estado-${claseEstado}`}>
-                    {unidad.estado || 'Desconocido'}
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
+                  <Link to={`/unidad/${unidad.id}`} className="card-link">
+                    <h3>{unidad.nombre}</h3>
+                    <div className="tipo">{unidad.tipo}</div>
+                    <p>Modelo: {unidad.modelo}</p>
+                    <p>Última revisión: {unidad.ultima_revision?.seconds
+                      ? new Date(unidad.ultima_revision.seconds * 1000).toLocaleDateString()
+                      : 'Sin fecha'}
+                    </p>
+                    <div className={`estado estado-${claseEstado}`}>
+                      {unidad.estado || 'Desconocido'}
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {unidadAEliminar && (

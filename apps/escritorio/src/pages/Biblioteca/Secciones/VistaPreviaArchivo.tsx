@@ -14,6 +14,7 @@ import {
 } from 'react-icons/fa';
 import { db } from '../../../app/firebase-config';
 import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 
 interface Archivo {
   nombre: string;
@@ -301,7 +302,7 @@ const VistaPreviaArchivo: React.FC = () => {
   };
 
   if (loading) {
-    return <div style={{ padding: 20 }}>Cargando vista previa...</div>;
+    return <PageLoader texto="Cargando vista previa..." />;
   }
 
   if (!archivo) {

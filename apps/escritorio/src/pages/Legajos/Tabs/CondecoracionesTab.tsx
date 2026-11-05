@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from "../../../utils/auditoria";
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface Condecoracion {
   id: string;
@@ -173,7 +174,7 @@ const CondecoracionesTab: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Cargando condecoraciones...</p>;
+  if (loading) return <PageLoader texto="Cargando condecoraciones..." />;
 
   return (
     <div className="tab-container">

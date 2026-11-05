@@ -27,8 +27,12 @@ export interface RegistroAuditoria {
   accion: AccionAuditoria;
   coleccion: string;
   docId: string;
-  docResumen: string;
-  operador: Operador;
+  docResumen?: string;
+  operador?: Operador;
+  tipoCambio?: string;
+  miembro?: { uid?: string; nombre?: string; rol?: string };
+  datosNuevos?: any;
+  datosAnteriores?: any;
   detalles?: {
     descripcion?: string;
     cambios?: CampoModificado[];

@@ -5,6 +5,7 @@ export interface Revision {
   unidadId: string;
   fecha: any; // Soporta Timestamp de Firestore o Date
   bombero: string;
+  bomberos?: string[];
   observaciones?: string;
   // Guardamos un diccionario plano por ID de elemento (ej: { "elem_123": "Operativo" }) 
   // para que sea súper rápido de consultar y procesar en Firestore

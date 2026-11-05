@@ -279,13 +279,13 @@
   background-color: #dc2626;
 }
 
-/* ─── Estados vacío/carga ───────────────────────────────────────────────────── */
+/* ─── Estado vacío ─────────────────────────────────────────────────────────── */
 
-.elementos-medicos-wrapper .estado-carga,
 .elementos-medicos-wrapper .estado-vacio {
   text-align: center;
   color: var(--color-text-muted);
   padding: var(--spacing-xl) var(--spacing-md);
+}
 /* ─── Botón Cargar Más ──────────────────────────────────────────────────────── */
 
 .elementos-medicos-wrapper .contenedor-cargar-mas {

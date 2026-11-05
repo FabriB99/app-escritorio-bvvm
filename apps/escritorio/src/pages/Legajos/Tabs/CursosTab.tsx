@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from "../../../utils/auditoria";
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface Curso {
   id: string;
@@ -183,7 +184,7 @@ const CursosTab: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Cargando cursos...</p>;
+  if (loading) return <PageLoader texto="Cargando cursos..." />;
 
   return (
     <div className="tab-container">

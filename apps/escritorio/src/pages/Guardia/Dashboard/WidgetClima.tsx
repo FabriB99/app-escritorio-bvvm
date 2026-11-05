@@ -6,6 +6,7 @@ import {
   Cloud, Droplets, Sun, CloudRain, 
   CloudLightning, CloudFog, AlertTriangle, Gauge, TrendingUp, TrendingDown, Navigation
 } from 'lucide-react';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 
 interface DatosClima {
   temperatura: number;
@@ -66,7 +67,7 @@ const WidgetClima: React.FC = () => {
   if (cargando) {
     return (
       <div className="widget-card widget-clima-compacto">
-        <p className="widget-loading">Cargando meteorología...</p>
+        <PageLoader texto="Cargando meteorología..." />
       </div>
     );
   }

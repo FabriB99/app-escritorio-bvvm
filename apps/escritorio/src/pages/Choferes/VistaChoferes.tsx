@@ -17,6 +17,7 @@ import {
 import { Users, GraduationCap, X } from 'lucide-react';
 
 import Header from '../../components/Header';
+import PageLoader from '../../components/PageLoader/PageLoader';
 
 import './VistaChoferes.css';
 
@@ -431,9 +432,7 @@ const VistaChoferes: React.FC = () => {
 
       {loading ? (
 
-        <p className="vista-choferes-loading">
-          Cargando choferes...
-        </p>
+        <PageLoader texto="Cargando choferes..." />
 
       ) : (
 

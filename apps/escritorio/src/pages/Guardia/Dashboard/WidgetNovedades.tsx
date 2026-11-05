@@ -5,9 +5,10 @@ import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, Timestamp
 import { useUser } from '../../../context/UserContext';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 import { toast } from 'sonner';
-import { CheckCircle, ClipboardList, Plus, X, Save, Clock } from 'lucide-react';
+import { CheckCircle, ClipboardList, Plus, Save, Clock } from 'lucide-react';
 import type { NovedadGuardia } from './types';
 import Modal from '../../../components/Modal';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 
 import './WidgetNovedades.css';
 
@@ -220,7 +221,7 @@ const WidgetNovedades: React.FC = () => {
 
         {/* Contenido / Listado con Scroll Interno Prolijo */}
         {cargando ? (
-          <p className="widget-loading">Cargando...</p>
+          <PageLoader texto="Cargando novedades..." />
         ) : novedades.length === 0 ? (
           <p className="widget-empty-msg">Sin novedades pendientes por ahora.</p>
         ) : novedadesFiltradas.length === 0 ? (

@@ -1,34 +1,36 @@
 # BVVM — Sistema de Gestión Digital
 
-Plataforma de gestión interna del **Cuerpo de Bomberos Voluntarios Villa María (BVVM)**. Reemplaza registros en papel con aplicaciones modernas con acceso por roles, auditoría de acciones y sincronización en la nube mediante Firebase.
+Plataforma de gestión interna del **Cuerpo de Bomberos Voluntarios Villa María (BVVM)**. Reemplaza registros en papel con aplicaciones modernas con acceso por roles, trazabilidad mediante auditoría de acciones y sincronización en tiempo real en la nube mediante Firebase.
 
 El proyecto está organizado como **monorepo** con dos clientes principales:
 
 | Cliente | Ubicación | Propósito |
 |---------|-----------|-----------|
-| **App de escritorio** | `apps/escritorio` | Gestión integral del cuartel (unidades, legajos, guardia, biblioteca, admin). Empaquetada con **Tauri v2** para Windows. |
-| **App web** | `apps/revision-web` | Operaciones de campo: revisiones de unidades y control de combustible desde navegador o móvil. Desplegada en **Firebase Hosting**. |
+| **App de escritorio** | `apps/escritorio` | Gestión integral del cuartel (guardia, despacho y libro de guardia, unidades, legajos, biblioteca, administración). Empaquetada con **Tauri v2** para Windows. |
+| **App web** | `apps/revision-web` | Operaciones de campo: revisiones de unidades con selección de personal y control de combustible desde navegador o móvil. Desplegada en **Firebase Hosting**. |
 
-Ambas aplicaciones comparten la misma base de datos **Firestore** y tipos TypeScript en `apps/shared`.
+Ambas aplicaciones comparten la misma base de datos **Firestore** y definiciones de tipos TypeScript en `apps/shared`.
 
 ---
 
 ## Stack tecnológico
 
-| Capa | Escritorio | Web |
-|------|------------|-----|
+| Capa | Escritorio (`apps/escritorio`) | Web (`apps/revision-web`) |
+|------|--------------------------------|---------------------------|
 | UI | React 18 + TypeScript | React 19 + TypeScript |
 | Build | Vite 5 | Vite 6 |
 | Desktop shell | Tauri v2 (Rust) | — |
-| Routing | React Router v6 | React Router v7 |
+| Routing | React Router v6 (con Lazy Loading) | React Router v7 |
 | Backend / DB | Firebase Firestore | Firebase Firestore |
-| Autenticación | Firebase Auth | Firebase Auth |
+| Autenticación | Firebase Auth + PIN por miembro | Firebase Auth |
 | Archivos | Firebase Storage | — |
 | Funciones serverless | Firebase Cloud Functions (`functions/`) | — |
-| Íconos | lucide-react, react-icons | react-icons |
-| Estilos | CSS custom (sin framework UI) | CSS + Tailwind 4 |
-| Exportación | jsPDF, html2canvas, xlsx | — |
-| Mapas | Mapbox GL, Google Maps (áreas protegidas) | — |
+| Íconos | `lucide-react`, `react-icons` | `lucide-react`, `react-icons` |
+| Notificaciones | `sonner` | `react-hot-toast`, `react-toastify` |
+| Estilos | CSS custom con variables corporativas | CSS + Tailwind 4 |
+| Exportación y PDF | `@react-pdf/renderer`, `jspdf`, `jspdf-autotable`, `html2canvas`, `xlsx` | — |
+| Visor PDF | `@react-pdf-viewer/core`, `react-pdf` | — |
+| Mapas | Mapbox GL (`@mapbox/mapbox-gl-geocoder`), Google Maps | — |
 
 ---
 
@@ -37,14 +39,14 @@ Ambas aplicaciones comparten la misma base de datos **Firestore** y tipos TypeSc
 ```
 app-bomberos/
 ├── apps/
-│   ├── escritorio/                 # App de escritorio (Tauri + React)
+│   ├── escritorio/                 # App de escritorio (Tauri v2 + React)
 │   │   ├── src/
-│   │   │   ├── app/                # App.tsx, firebase-config.ts, estilos globales
-│   │   │   ├── components/         # Header, Sidebar, MainLayout, ExportarExcel…
+│   │   │   ├── app/                # App.tsx, firebase-config.ts, estilos y variables globales
+│   │   │   ├── components/         # Header, Sidebar, MainLayout, Modal, SearchableSelect, ExportarExcel…
 │   │   │   ├── context/            # UserContext, UsuarioBibliotecaContext
-│   │   │   ├── pages/              # Módulos funcionales (ver listado abajo)
-│   │   │   ├── routes/             # RutaProtegida, AuthRedirect
-│   │   │   └── utils/              # toast, auditoria, generarLegajoPDF…
+│   │   │   ├── pages/              # Módulos funcionales (Guardia, Unidades, Legajos, Admin, Biblioteca…)
+│   │   │   ├── routes/             # RutaProtegida, AuthRedirect, routesConfig.tsx (lazy loading)
+│   │   │   └── utils/              # toast, auditoria, cacheCatalogos, generarLegajoPDF…
 │   │   ├── src-tauri/              # Backend nativo Rust (Tauri v2)
 │   │   │   ├── src/                # main.rs, lib.rs
 │   │   │   ├── tauri.conf.json     # Configuración de build y auto-updater
@@ -55,19 +57,22 @@ app-bomberos/
 │   │   ├── src/
 │   │   │   ├── pages/              # Home, ElegirUnidad, RevisionUnidad, ControlCombustible
 │   │   │   ├── firebase/           # firebase-config.ts, firestore.ts
-│   │   │   └── components/         # LayoutContainer, ModalConfirmacion
+│   │   │   ├── components/         # LayoutContainer, ModalConfirmacion
+│   │   │   └── styles/             # Estilos de vistas móviles y layout
 │   │   └── firebase.json           # Config de Firebase Hosting
 │   │
 │   └── shared/
-│       └── types/                  # Tipos compartidos: Unidad, Elemento, Revision, Ubicacion
+│       └── types/                  # Tipos compartidos: Unidad, Elemento, Revision, Ubicacion, SalidaUnidad
 │
 ├── functions/                      # Cloud Functions (Node.js 24)
 │   └── index.js                    # actualizarClimaEstacion (estación meteorológica 5900)
 │
-├── docs/                           # Artefactos de distribución (p. ej. latest.json del updater)
+├── scripts/
+│   └── release.mjs                 # Script automatizado de versionado y publicación
+├── docs/                           # Artefactos de distribución (latest.json) y documentación
 ├── firebase.json                   # Config raíz de Cloud Functions
 ├── cors.json                       # Reglas CORS para Storage
-└── package.json                    # Dependencias compartidas del monorepo
+└── package.json                    # Scripts y dependencias compartidas del monorepo
 ```
 
 Cada módulo de la app de escritorio sigue el patrón:
@@ -84,12 +89,12 @@ pages/NombreModulo/
 
 ### Requisitos previos
 
-- **Node.js** 18+ (Functions requiere Node 24)
+- **Node.js** 18+ (Cloud Functions requiere Node 24)
 - **npm**
 - Para la app de escritorio:
   - [Rust](https://www.rust-lang.org/tools/install)
   - [Prerrequisitos de Tauri v2](https://v2.tauri.app/start/prerequisites/) (WebView2 en Windows)
-  - [Tauri CLI](https://v2.tauri.app/reference/cli/) (incluido como devDependency)
+  - [Tauri CLI](https://v2.tauri.app/reference/cli/) (incluido como `devDependency`)
 
 ### Instalación
 
@@ -136,7 +141,7 @@ Campos requeridos en `firebaseConfig`:
 }
 ```
 
-> **Recomendación:** migrar estas credenciales a variables de entorno con prefijo `VITE_` (p. ej. `VITE_FIREBASE_API_KEY`) y leerlas con `import.meta.env`. Hoy el proyecto las tiene hardcodeadas en los archivos anteriores.
+> **Recomendación:** migrar estas credenciales a variables de entorno con prefijo `VITE_` (p. ej. `VITE_FIREBASE_API_KEY`) y leerlas con `import.meta.env`.
 
 #### Variables de entorno opcionales
 
@@ -157,7 +162,8 @@ VITE_GOOGLE_MAPS_API_KEY=tu_api_key
 | `npm run build` | Build de producción del frontend |
 | `npm run preview` | Preview del build |
 | `npm run tauri:dev` | App de escritorio en modo desarrollo (Vite + Tauri) |
-| `npm run tauri:build` | Genera instalador Windows (`.msi`) |
+| `npm run tauri:build` | Genera instalador Windows (`.msi` / `.exe`) |
+| `npm run release` | Ejecuta el asistente de publicación de nueva versión |
 
 #### App web (`apps/revision-web`)
 
@@ -198,60 +204,59 @@ npm run dev
 
 ### App de escritorio (`apps/escritorio`)
 
+#### Gestión de Guardia y Operaciones
+
+| Módulo | Ruta | Descripción |
+|--------|------|-------------|
+| **Dashboard de Guardia** | `/dashboard-guardia`, `/guardia` | Panel central del turno en tiempo real con salidas activas, novedades, elementos médicos pendientes y clima. |
+| **Salidas e Intervenciones Activas** | *(widget en dashboard)* | Despacho de unidades en tiempo real (`WidgetSalidasActivas`), agrupación por incidente, asignación de unidad/chofer/recepcionista y código tipificado de siniestro, cambio de estados (`en_camino` → `en_lugar` → `finalizada`), reasignación en calle y cierre con actualización automática del kilometraje de la unidad. |
+| **Libro de Guardia** | `/guardia/libro-guardia`, `/libro-guardia` | Registro histórico e integral de intervenciones y movimientos de unidades. Permite carga manual de salidas pasadas, edición, baja, filtrado por fecha/móvil/código de siniestro y exportación a Excel (`.xlsx`). |
+| **Novedades de Guardia** | *(widget)* y `/guardia/novedades-historial` | Registro, seguimiento y resolución de novedades operativas del cuartel en tiempo real, con vista de historial completo y filtros. |
+| **Elementos Médicos en Hospitales** | *(widget)* y `/guardia/elementos-medicos` | Seguimiento de equipamiento médico dejado en hospitales durante intervenciones (`pendiente` → `recuperado`), historial completo y configuración dinámica de catálogos de hospitales y elementos (`ModalConfigGuardia`). |
+| **Clima** | *(widget en dashboard)* | Condiciones meteorológicas locales en tiempo real (datos de estación 5900 vía Cloud Function). |
+| **Choferes** | `/choferes` | Tablero de choferes habilitados clasificados por categoría de unidad (`Maestranza`, `Ambulancias`, `Livianas`, `Pesadas`, `Escalera`). |
+| **Áreas Protegidas** | `/areas-protegidas`, `/agregar-area`, `/editar-area/:id` | Registro georreferenciado de establecimientos bajo cobertura del cuerpo, con mapas interactivos y formulario unificado de alta/edición. |
+
 #### Gestión de Unidades
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Unidades** | `/unidades` | Listado del parque automotor con filtros, estados de elementos y exportación a Excel. |
-| **Crear / Editar Unidad** | `/crear-unidad`, `/editar-unidad/:id` | Alta y modificación de móviles, ubicaciones internas y equipamiento. |
-| **Detalle de Unidad** | `/unidad/:id` | Vista completa de una unidad con sus elementos y datos operativos. |
-| **Historial de Revisiones** | `/historial-revisiones/:id` | Registro histórico de inspecciones por unidad. |
-| **Control Combustible** | `/combustible` | Seguimiento de niveles y fechas de control de combustible del parque. |
-| **Generador de Informe** | `/generador-informe` | Generación de informes PDF del estado del parque automotor. |
+| **Unidades** | `/unidades` | Listado del parque automotor con filtros, estados operativos, kilometraje, nivel de combustible y exportación a Excel. |
+| **Crear / Editar Unidad** | `/crear-unidad`, `/editar-unidad/:id` | Formulario unificado de alta y modificación de móviles, categorías de conducción, ubicaciones internas y equipamiento. |
+| **Detalle de Unidad** | `/unidad/:id` | Vista completa de una unidad con sus ubicaciones, elementos y datos operativos. |
+| **Selección e Historial de Revisiones** | `/seleccionar-unidad-historial`, `/historial-revisiones/:id` | Selector visual de unidades y registro histórico de inspecciones por móvil, con detalle de elementos por ubicación y bomberos intervinientes. |
+| **Control Combustible** | `/combustible` | Seguimiento de niveles (`Lleno`, `3/4`, `1/2`, `1/4`) y fechas de control de combustible del parque. |
+| **Generador de Informe** | `/generador-informe` | Generación de informes PDF del estado del parque automotor con resumen de últimas revisiones y observaciones normalizadas. |
 
 #### Gestión de Personal
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Legajos** | `/legajos` | Gestión del personal: datos personales, jerarquía, ascensos, sanciones, condecoraciones y elementos entregados. |
-| **Vencimientos** | `/vencimientos` | Control de vencimientos de carnets de conducir y VTV del personal. |
+| **Legajos** | `/legajos`, `/agregar-legajo`, `/editar-legajo/:id`, `/legajo/:id` | Gestión integral del personal: datos personales, orden operativo, jerarquía, ascensos, sanciones, condecoraciones, elementos entregados y descarga de ficha completa en PDF. |
+| **Vencimientos** | `/vencimientos` | Control unificado de vencimientos de carnets de conducir y habilitaciones del personal, sincronizado con legajos y categorías de chofer. |
 
-#### Gestión de Guardia
-
-| Módulo | Ruta | Descripción |
-|--------|------|-------------|
-| **Dashboard de Guardia** | `/dashboard-guardia` | Panel central del turno con novedades, elementos médicos pendientes y clima. |
-| **Novedades de Guardia** | *(widget en dashboard)* | Registro y resolución de novedades operativas del cuartel en tiempo real. |
-| **Elementos Médicos en Hospitales** | *(widget en dashboard)* | Seguimiento de equipamiento médico dejado en hospitales durante intervenciones (`pendiente` → `recuperado`). |
-| **Clima** | *(widget en dashboard)* | Condiciones meteorológicas locales (datos de estación 5900 vía Cloud Function). |
-| **Choferes** | `/choferes` | Consulta de choferes habilitados por tipo de unidad. |
-| **Áreas Protegidas** | `/areas-protegidas` | Registro georreferenciado de establecimientos bajo cobertura del cuerpo. |
-| **Capacitaciones** | `/p-capacitaciones`, `/listado-capacitaciones` | Carga de partes de capacitación y listado histórico agrupado por año. |
-| **Control Intervenciones** | `/p-intervenciones` | *(en construcción)* Gestión de partes de salida e intervenciones. |
-| **Control Mantenimiento** | `/p-mantenimiento` | *(en construcción)* Seguimiento de mantenimientos del cuartel. |
-
-#### Gestión Interna
+#### Gestión Interna (Biblioteca Virtual)
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Biblioteca Virtual** | `/biblioteca` | Portal de consulta de documentación interna por secciones y grupos. |
-| **Administración Biblioteca** | `/editar-biblioteca` | CRUD de secciones, grupos y registro de accesos (admin). |
+| **Biblioteca Virtual** | `/biblioteca-login`, `/biblioteca`, `/biblioteca/seccion/:ruta` | Portal de consulta de documentación y protocolos internos organizados por secciones y grupos, con visor PDF integrado (`/biblioteca/previsualizar/:rutaSeccion/:archivoIndex`). |
+| **Administración Biblioteca** | `/editar-biblioteca`, `/editar-biblioteca/secciones`, `/editar-biblioteca/grupos`, `/editar-biblioteca/registro` | CRUD de secciones, grupos de acceso y registro de auditoría de ingresos a la biblioteca. |
 
 #### Administración
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Panel Admin** | `/admin` | Acceso central a herramientas de administración del sistema. |
-| **Identidades / Usuarios** | `/admin/identidades` | Creación y gestión de usuarios con roles y PIN de acceso. |
-| **Grados** | `/admin/grados` | Configuración de grados jerárquicos del cuerpo. |
-| **Auditoría** | `/admin/auditoria` | Visor de logs de acciones (creaciones, ediciones, eliminaciones, cambios de config). |
+| **Panel Ejecutivo Admin** | `/admin` | Centro de gestión con KPIs en tiempo real (personal activo por grupos G1/G2/G3, estado de flota, revisiones vencidas +14d, alertas de combustible y actividad diaria), alertas operativas de móviles, configuración de catálogos de guardia y **descarga de Backup JSON** de las colecciones críticas. |
+| **Identidades / Usuarios** | `/admin/identidades`, `/admin/crear-identidad`, `/admin/editar-identidad/:id` | Creación y gestión unificada de identidades de acceso con roles y PIN vinculado a miembros. |
+| **Grados** | `/admin/grados` | Configuración del escalafón y grados jerárquicos del cuerpo. |
+| **Auditoría** | `/admin/auditoria` | Visor detallado de logs de acciones del sistema (creaciones, ediciones, eliminaciones y cambios de configuración). |
 
-#### Acceso bomberos
+#### Acceso Bomberos
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Inicio Bombero** | `/inicio-bombero` | Portal de acceso para bomberos con identificación por miembro. |
-| **Mi Legajo** | `/legajo/:id` | Consulta del legajo personal (vista restringida por rol). |
+| **Inicio Bombero** | `/inicio-bombero` | Portal de acceso personal para bomberos con identificación por miembro. |
+| **Mi Legajo** | `/legajo/:id` | Consulta del legajo personal y exportación en PDF (vista restringida por rol). |
 | **Mis Estadísticas** | `/mis-estadisticas` | *(en construcción)* Panel de estadísticas personales. |
 
 ---
@@ -260,10 +265,10 @@ npm run dev
 
 | Módulo | Ruta | Descripción |
 |--------|------|-------------|
-| **Panel de Control** | `/` | Menú principal para operaciones de campo. |
-| **Control de Unidades** | `/control-unidades` | Selección de unidad e inspección de elementos por ubicación. |
-| **Revisión de Unidad** | `/revision/:unidadId` | Formulario de revisión que actualiza estados de elementos en Firestore. |
-| **Control de Combustible** | `/control-combustible` | Registro rápido del nivel de combustible desde dispositivo móvil. |
+| **Panel de Control** | `/` | Menú principal optimizado para dispositivos móviles en operaciones de campo. |
+| **Control de Unidades** | `/control-unidades` | Selección rápida de unidad con buscador e indicadores de tipo de móvil. |
+| **Revisión de Unidad** | `/revision/:unidadId` | Formulario de inspección por ubicación que actualiza estados de elementos (`Operativo`, `Con falla`, `Faltante`) mediante `writeBatch` en Firestore, con selector autocompletable de múltiples bomberos responsables. |
+| **Control de Combustible** | `/control-combustible` | Registro rápido del nivel de combustible de las unidades desde dispositivo móvil. |
 
 ---
 
@@ -279,16 +284,16 @@ npm run dev
 
 | Rol | Acceso principal |
 |-----|------------------|
-| `admin` | Acceso completo, configuración, auditoría y gestión de usuarios |
-| `jefatura` | Gestión operativa de unidades, personal, guardia y biblioteca |
-| `guardia` | Operaciones de guardia, capacitaciones, áreas protegidas |
-| `graduados` | Consulta y edición limitada en unidades y legajos |
+| `admin` | Acceso completo, panel ejecutivo, backup JSON, configuración de listas, grados, auditoría y gestión de identidades |
+| `jefatura` | Gestión operativa de unidades, personal, guardia (salidas, libro de guardia, novedades) y biblioteca |
+| `guardia` | Operaciones de guardia (despacho de salidas, libro de guardia, novedades, elementos médicos), unidades y áreas protegidas |
+| `graduados` | Consulta y gestión en guardia, unidades, historial de revisiones, vencimientos, legajos y biblioteca |
 | `legajo` | Gestión de legajos del personal |
 | `bombero` | Consulta de legajo propio e identificación por miembro |
 
-Las rutas protegidas se controlan en frontend con `RutaProtegida`; Firestore Security Rules refuerzan el acceso en backend.
+Las rutas protegidas se definen de forma centralizada en `apps/escritorio/src/routes/routesConfig.tsx` (con soporte de `React.lazy` para carga diferida) y se validan mediante `RutaProtegida`; Firestore Security Rules refuerzan el acceso en backend.
 
-El sistema de identidad es de **dos pasos**: `usuarios/{uid}` (Firebase Auth) solo guarda el `rol`; el nombre real de la persona vive en `miembros` y se resuelve por turno mediante identificación por PIN/DNI (`IdentificarMiembro.tsx`), guardándose en `miembroActivo` dentro del contexto `useUser()`.
+El sistema de identidad opera en **dos pasos**: `usuarios/{uid}` (Firebase Auth) define la cuenta y el `rol` de estación/acceso; la identidad real del bombero vive en `miembros` y se resuelve por turno mediante identificación por PIN (`IdentificarMiembro.tsx`), almacenándose en `miembroActivo` dentro de `useUser()`.
 
 ---
 
@@ -296,38 +301,52 @@ El sistema de identidad es de **dos pasos**: `usuarios/{uid}` (Firebase Auth) so
 
 | Colección | Descripción |
 |-----------|-------------|
-| `usuarios` | Cuentas de acceso y roles |
-| `legajos` / `miembros` | Personal del cuerpo |
+| `usuarios` | Cuentas de acceso (Firebase Auth) y roles |
+| `miembros` / `legajos` | Personal del cuerpo, datos de legajo, orden operativo, grupo de guardia y carnets |
 | `identidades` | Credenciales de acceso (PIN) vinculadas a miembros |
-| `unidades` | Móviles del parque automotor |
-| `ubicaciones` / `elementos` | Inventario interno por unidad |
-| `revisiones` | Inspecciones de unidades |
-| `capacitaciones` | Registros de formación |
-| `novedades_guardia` | Novedades del turno de guardia |
-| `elementos_medicos_hospital` | Equipamiento médico en hospitales |
-| `config_guardia` | Configuración dinámica (listas, clima, etc.) |
-| `areas_protegidas` | Establecimientos bajo cobertura |
-| `vencimientos` | Carnets y VTV |
-| `grupos_biblioteca` / secciones | Documentación interna |
-| `auditoria` | Log de acciones del sistema |
+| `grados` | Escalafón y jerarquías del cuerpo |
+| `unidades` | Móviles del parque automotor (estado, kilometraje, combustible, categoría) |
+| `ubicaciones` / `elementos` | Inventario interno de equipamiento por unidad y compartimento |
+| `revisiones` | Historial de inspecciones de unidades y estado de elementos |
+| `salidas_unidades` | Despachos activos en tiempo real e historial del Libro de Guardia |
+| `novedades_guardia` | Novedades operativas del turno de guardia |
+| `elementos_medicos_hospital` | Equipamiento médico pendiente o recuperado en hospitales |
+| `config_guardia` | Configuración dinámica de guardia (catálogos de hospitales, elementos médicos, clima, etc.) |
+| `areas_protegidas` | Establecimientos georreferenciados bajo cobertura |
+| `vencimientos` | Vencimientos de carnets de conducir y habilitaciones |
+| `grupos_biblioteca` / secciones | Estructura y documentos de la Biblioteca Virtual |
+| `auditoria` | Log inmutable de acciones del sistema |
 
 ---
 
 ## Patrones de desarrollo
 
-### Firebase
+### Firebase y Caché de Catálogos
 
 ```ts
 import { db, auth, storage } from "../app/firebase-config";
 ```
 
-No hay capa de servicios separada: Firestore se consume directamente desde los componentes.
+Para reducir lecturas redundantes en Firestore durante la sesión, los catálogos frecuentes de guardia (`unidades`, `elementos_medicos`, `hospitales`) se consultan a través de la utilidad de caché en memoria:
+
+```ts
+import { getCatalogosGuardia, invalidarCacheCatalogos } from "../utils/cacheCatalogos";
+
+const { unidades, elementos, hospitales } = await getCatalogosGuardia();
+```
+
+### Componentes UI Reutilizables
+
+- **`Modal` (`src/components/Modal`)**: Componente global estandarizado para diálogos y formularios modales (tamaños `sm`, `md`, `lg`, `xl`, cierre con `Escape` y bloqueo de scroll).
+- **`SearchableSelect` (`src/components/SearchableSelect`)**: Selector desplegable con búsqueda predictiva, soporte de badges (p. ej. número de orden operativo) y subetiquetas.
 
 ### Notificaciones
 
+El cliente de escritorio utiliza `sonner` (con wrapper compatible en `src/utils/toast.tsx`):
+
 ```ts
-import { mostrarToast } from "../utils/toast";
-mostrarToast("Registro guardado", "success");
+import { toast } from "sonner";
+toast.success("Registro guardado correctamente");
 ```
 
 ### Auditoría
@@ -338,22 +357,22 @@ import { registrarAuditoria, buildOperador } from "../utils/auditoria";
 const operador = buildOperador(miembroActivo, user.rol);
 await registrarAuditoria({
   accion: "crear",
-  coleccion: "capacitaciones",
+  coleccion: "salidas_unidades",
   docId: id,
-  docResumen: "Descripción legible del documento",
+  docResumen: "Salida U-12 — 01-101 Fuego en vivienda",
   operador,
   detalles: { descripcion: "..." },
 });
 ```
 
-`buildOperador` toma el `miembroActivo` del contexto (no hace lookup a Firestore) y arma `{ uid, nombre, rol }` para el log.
+`buildOperador` toma el `miembroActivo` del contexto (sin lecturas adicionales a Firestore) y construye `{ uid, nombre, rol }` para el registro.
 
 ### Autenticación
 
 ```ts
 import { useUser } from "../context/UserContext";
 const { user, miembroActivo } = useUser();
-// user.rol → rol de acceso (admin, guardia, etc.)
+// user.rol → rol de acceso (admin, guardia, jefatura, etc.)
 // miembroActivo.nombre / miembroActivo.apellido → identidad de la persona en turno
 ```
 
@@ -363,7 +382,7 @@ const { user, miembroActivo } = useUser();
 
 ### Publicación de una nueva versión (Auto-Updater)
 
-El monorepo cuenta con un flujo de lanzamiento completamente automatizado:
+El monorepo cuenta con un flujo de lanzamiento automatizado:
 
 ```bash
 # Lanzar una nueva versión con el asistente interactivo (desde la raíz o apps/escritorio)
@@ -371,7 +390,7 @@ npm run release
 
 # O directamente especificando el incremento y notas:
 npm run release patch -m "Correcciones en dashboard de guardia"
-npm run release minor -m "Nuevo módulo de legajos"
+npm run release minor -m "Nuevo módulo de Libro de Guardia"
 ```
 
 El script actualiza las versiones en `tauri.conf.json`, `package.json` y `Cargo.toml`, crea el commit y el tag Git `vX.Y.Z`, y lo pushea a GitHub. **GitHub Actions** compila la app Windows, la firma, crea la Release y actualiza automáticamente `docs/latest.json` en `main` para que GitHub Pages lo distribuya a los clientes.
@@ -394,7 +413,9 @@ npm run deploy
 
 ## Estado del proyecto
 
-En desarrollo activo. Módulos funcionales: unidades, revisiones (web), combustible, guardia (dashboard, novedades, elementos médicos, capacitaciones), legajos, biblioteca, áreas protegidas, vencimientos y administración. En construcción: control de intervenciones, mantenimiento y estadísticas de bomberos.
+En desarrollo activo (v0.4.0).
+- **Módulos operativos**: Unidades, Revisiones (web y escritorio), Control de Combustible, Generador de Informes PDF, Guardia (Dashboard en tiempo real, Despacho de Salidas Activas, Libro de Guardia con exportación a Excel, Novedades, Elementos Médicos en Hospitales, Clima), Choferes por categoría, Áreas Protegidas, Legajos (con exportación PDF), Vencimientos, Biblioteca Virtual y Panel Ejecutivo de Administración (con KPIs, Auditoría y Backup JSON).
+- **En construcción**: Panel de estadísticas personales para bomberos (`/mis-estadisticas`).
 
 ---
 

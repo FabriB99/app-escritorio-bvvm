@@ -7,6 +7,7 @@ import { Plus, Trash2, Building2, MapPin, User, Phone } from "lucide-react";
 import { toast } from "sonner";
 import "./AgregarEditarArea.css";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import { useUser } from "../../context/UserContext";
 import { registrarAuditoria, buildOperador, calcularDiff } from "../../utils/auditoria";
 
@@ -165,9 +166,7 @@ const AgregarEditarArea: React.FC = () => {
 
       <div className="aae-page-inner">
         {cargandoDatos ? (
-          <div className="aae-card aae-loading-card">
-            <p className="aae-loading-text">Cargando datos del área...</p>
-          </div>
+          <PageLoader texto="Cargando datos del área..." />
         ) : (
           <form className="aae-card" onSubmit={handleSubmit}>
             {/* 1. Datos Principales */}

@@ -1,6 +1,7 @@
 // src/pages/Guardia/Dashboard/DashboardGuardia.tsx
 import React from 'react';
 import Header from '../../../components/Header';
+import WidgetSalidasActivas from './WidgetSalidasActivas';
 import WidgetNovedades from './WidgetNovedades';
 import WidgetElementosPendientes from './WidgetElementosPendientes';
 import WidgetClima from './WidgetClima';
@@ -13,6 +14,7 @@ const DashboardGuardia: React.FC = () => {
       
       <div className="dashboard-container">
         <div className="dashboard-col-main">
+          <WidgetSalidasActivas />
           <WidgetNovedades />
         </div>
         <div className="dashboard-col-side">

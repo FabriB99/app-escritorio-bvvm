@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from "../../../utils/auditoria";
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface Ascenso {
   id: string;
@@ -200,7 +201,7 @@ const AscensosTab: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Cargando ascensos...</p>;
+  if (loading) return <PageLoader texto="Cargando ascensos..." />;
 
   return (
     <div className="tab-container">

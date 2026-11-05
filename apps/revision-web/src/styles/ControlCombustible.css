@@ -3,29 +3,98 @@
     box-sizing: border-box;
 }
 
-.controlcombustible-logo {
-    width: 180px;
-    height: auto;
-    margin-bottom: 10px;
+/* Barra superior con Volver e Identidad Institucional */
+.combustible-top-bar {
     display: flex;
-    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    width: 100%;
+    gap: 12px;
+}
+
+.btn-volver-combustible {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+}
+
+.btn-volver-combustible:hover {
+    color: #1e293b;
+    border-color: #cbd5e1;
+    background-color: #f1f5f9;
+}
+
+.btn-volver-combustible:active {
+    transform: scale(0.97);
+}
+
+.brand-header-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.brand-logo-compact {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+}
+
+.brand-text-compact {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 420px) {
+    .brand-text-compact {
+        font-size: 13px;
+    }
 }
 
 /* Contenedor principal */
 .combustible-control-container {
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
-    padding: 24px 16px;
-    font-family: "Poppins";
-    color: #333;
+    padding: 12px 10px;
+    font-family: 'Poppins', sans-serif;
+    color: #1e293b;
 }
 
-/* Título principal */
-.combustible-control-title {
+/* Cabecera de títulos */
+.combustible-header-titles {
+    margin-bottom: 20px;
     text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 10px;
+}
+
+.combustible-control-title {
+    font-size: clamp(22px, 4vw, 26px);
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+}
+
+.combustible-control-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
 }
 
 /* Tarjeta de cada unidad */
@@ -141,29 +210,31 @@
 
 .btn-1-4.activo {
     background-color: #d12c2c;
-    /* Rojo claro */
 }
 
 .btn-2-4.activo {
     background-color: #f0870f;
-    /* Naranja claro */
 }
 
 .btn-3-4.activo {
     background-color: #f5e025;
-    /* Amarillo claro */
+    color: #1e293b;
 }
 
 .btn-4-4.activo {
     background-color: #329635;
-    /* Verde claro */
 }
 
 /* Botón activo (seleccionado) */
 .combustible-btn.activo {
-    font-weight: bold;
+    font-weight: 700;
+    color: #ffffff;
     outline: 1px solid #000000;
     box-shadow: 0 2px 5px rgba(48, 87, 141, 0.25);
+}
+
+.combustible-btn.btn-3-4.activo {
+    color: #1e293b;
 }
 
 /* Botón de guardar */
@@ -184,62 +255,4 @@
 
 .combustible-guardar-btn:hover {
     background-color: #457b9d;
-}
-
-/* Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: white;
-    padding: 10px;
-    border-radius: 12px;
-    max-width: 350px;
-    width: 100%;
-    text-align: center;
-    font-family: 'Poppins';
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.modal-contenido h2 {
-    font-size: 18px;
-    margin-bottom: 5px;
-    color: #75a2e2;
-}
-
-.modal-button {
-    background-color: #30578d;
-    color: white;
-    padding: 10px 16px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.modal-button:hover {
-    background-color: #2980b9;
-}
-
-/* Estilo para los toasts */
-.Toastify__toast {
-  background-color: #2c3e50 !important;
-  color: white !important;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.Toastify__progress-bar {
-  background: white !important;
 }

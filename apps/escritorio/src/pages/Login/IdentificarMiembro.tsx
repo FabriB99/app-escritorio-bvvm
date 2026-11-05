@@ -47,6 +47,7 @@ const IdentificarMiembro: React.FC = () => {
         apellido: docData.apellido,
         categoria: docData.categoria,
         roles: docData.roles || [],
+        ordenOperativo: docData.ordenOperativo,
         pin: docData.pin,
         rol: docData.rol
       };

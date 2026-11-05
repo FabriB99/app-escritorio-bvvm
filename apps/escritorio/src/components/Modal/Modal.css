@@ -240,6 +240,33 @@ textarea.input-solido {
   background-color: #0f172a;
 }
 
+.btn-solido-cancel {
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #475569;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-solido-cancel:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.btn-solido-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-solido-secondary {
   width: 100%;
   padding: 12px 18px;

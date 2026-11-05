@@ -8,6 +8,7 @@ import { useUser } from '../../../context/UserContext';
 import { Plus, Settings, CheckCircle, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '../../../components/Header';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 import { registrarAuditoria, buildOperador } from '../../../utils/auditoria';
 
 import Modal from '../../../components/Modal';
@@ -324,7 +325,7 @@ const ListadoElementosMedicos: React.FC = () => {
 
         {/* Tabla */}
         {cargando ? (
-          <p className="estado-carga">Cargando...</p>
+          <PageLoader texto="Cargando elementos médicos..." />
         ) : registrosFiltrados.length === 0 ? (
           <p className="estado-vacio">No hay registros{filtroEstado !== 'todos' ? ` con estado "${filtroEstado}"` : ''}.</p>
         ) : (

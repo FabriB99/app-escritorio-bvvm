@@ -294,7 +294,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.apla-loading-text,
 .apla-no-results {
   text-align: center;
   font-size: var(--font-size-sm);

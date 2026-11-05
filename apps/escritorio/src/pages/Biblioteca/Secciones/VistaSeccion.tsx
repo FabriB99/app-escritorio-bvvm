@@ -17,6 +17,7 @@ import logo from '/logo-bomberos.png';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useUsuarioBiblioteca } from '../../../context/UsuarioBibliotecaContext';
+import PageLoader from '../../../components/PageLoader/PageLoader';
 
 interface Archivo {
   nombre: string;
@@ -256,10 +257,7 @@ const VistaSeccion: React.FC = () => {
 
       <main className="vista-container">
         {loading ? (
-          <div className="vista-spinner-container">
-            <div className="vista-spinner" />
-            <p>Cargando sección...</p>
-          </div>
+          <PageLoader texto="Cargando sección..." />
         ) : (
           <>
             <section className="vista-titulo">

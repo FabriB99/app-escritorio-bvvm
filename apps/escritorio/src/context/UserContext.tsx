@@ -16,6 +16,7 @@ export interface MiembroActivo {
   apellido: string;
   categoria: string;
   roles: string[];
+  ordenOperativo?: number | string;
   pin?: string; // Opcional para no obligar a guardarlo en localStorage
 }
 

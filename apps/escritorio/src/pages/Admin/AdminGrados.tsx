@@ -15,6 +15,7 @@ import {
   Award,
 } from "lucide-react";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import { toast } from "sonner";
 import { CATEGORIAS_ORDEN, Miembro } from "./identidadesConstants";
 import "./AdminGrados.css";
@@ -296,7 +297,7 @@ const AdminGrados: React.FC = () => {
 
           {/* Tabla de grados */}
           {cargando ? (
-            <div className="grados-cargando">Cargando datos...</div>
+            <PageLoader texto="Cargando grados..." />
           ) : gradosCategoriaActiva.length === 0 ? (
             <div className="grados-vacio">
               <Award size={36} />

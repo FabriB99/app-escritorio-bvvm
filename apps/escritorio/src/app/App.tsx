@@ -2,23 +2,21 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import MainLayout from '../components/MainLayout/MainLayout';
+import PageLoader from '../components/PageLoader/PageLoader';
 import Inicio from '../pages/Inicio/Inicio';
 import InicioBombero from '../pages/Inicio/InicioBombero';
 import Login from '../pages/Login/Login';
 import LoginBiblioteca from '../pages/Login/LoginBiblioteca';
 
-// Carga diferida (Code Splitting / Lazy Loading) para páginas secundarias y pesadas
 const Biblioteca = lazy(() => import('../pages/Biblioteca/Biblioteca'));
 const VistaSeccion = lazy(() => import('../pages/Biblioteca/Secciones/VistaSeccion'));
 const VistaPreviaArchivo = lazy(() => import('../pages/Biblioteca/Secciones/VistaPreviaArchivo'));
+const AdminBiblioteca = lazy(() => import('../pages/Biblioteca/AdminBiblioteca'));
 const EnConstruccion = lazy(() => import('../pages/EnConstruccion/EnConstruccion'));
 
 import RutaProtegida from '../routes/RutaProtegida';
 import AuthRedirect from '../routes/AuthRedirect';
 import { rutasProtegidas } from '../routes/routesConfig';
-
-import { useUser } from '../context/UserContext';
-import LoadingScreen from '../pages/LoadingScreen/LoadingScreen';
 
 import { UsuarioBibliotecaProvider } from '../context/UsuarioBibliotecaContext';
 import { Toaster } from 'sonner';
@@ -27,12 +25,6 @@ import './styles/variables.css';
 import './App.css';
 
 const App: React.FC = () => {
-  const { user } = useUser();
-
-  if (user === undefined) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="App">
       <Toaster
@@ -45,56 +37,77 @@ const App: React.FC = () => {
         }}
       />
       <AuthRedirect>
-        <Suspense fallback={<LoadingScreen />}>
-          <Routes>
-            <Route path="/" element={<Inicio />} />
-            <Route path="/login" element={<Login />} />
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/login" element={<Login />} />
 
-            {/* Biblioteca Virtual */}
-            <Route
-              path="/biblioteca-login"
-              element={
-                <UsuarioBibliotecaProvider>
-                  <LoginBiblioteca />
-                </UsuarioBibliotecaProvider>
-              }
-            />
-            <Route
-              path="/biblioteca"
-              element={
-                <UsuarioBibliotecaProvider>
+          {/* Biblioteca Virtual (Vista Pública) */}
+          <Route
+            path="/biblioteca-login"
+            element={
+              <UsuarioBibliotecaProvider>
+                <LoginBiblioteca />
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca"
+            element={
+              <UsuarioBibliotecaProvider>
+                <Suspense fallback={<PageLoader />}>
                   <Biblioteca />
-                </UsuarioBibliotecaProvider>
-              }
-            />
-            <Route
-              path="/biblioteca/seccion/:ruta"
-              element={
-                <UsuarioBibliotecaProvider>
+                </Suspense>
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca/seccion/:ruta"
+            element={
+              <UsuarioBibliotecaProvider>
+                <Suspense fallback={<PageLoader />}>
                   <VistaSeccion />
-                </UsuarioBibliotecaProvider>
+                </Suspense>
+              </UsuarioBibliotecaProvider>
+            }
+          />
+          <Route
+            path="/biblioteca/previsualizar/:rutaSeccion/:archivoIndex"
+            element={
+              <UsuarioBibliotecaProvider>
+                <Suspense fallback={<PageLoader />}>
+                  <VistaPreviaArchivo />
+                </Suspense>
+              </UsuarioBibliotecaProvider>
+            }
+          />
+
+          {/* Layout Principal persistente con Sidebar fijo y <Suspense fallback={<PageLoader />}> sobre <Outlet /> */}
+          <Route element={<MainLayout />}>
+            <Route
+              path="/editar-biblioteca"
+              element={
+                <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
+                  <AdminBiblioteca />
+                </RutaProtegida>
               }
             />
             <Route
-              path="/biblioteca/previsualizar/:rutaSeccion/:archivoIndex"
+              path="/editar-biblioteca/secciones"
               element={
-                <UsuarioBibliotecaProvider>
-                  <VistaPreviaArchivo />
-                </UsuarioBibliotecaProvider>
+                <RutaProtegida rolesPermitidos={['admin', 'jefatura', 'graduados']}>
+                  <AdminBiblioteca />
+                </RutaProtegida>
               }
             />
 
-            {/* Página en Construcción */}
             <Route
               path="/mis-estadisticas"
               element={
                 <RutaProtegida rolesPermitidos={['bombero']}>
-                  <MainLayout>
-                    <EnConstruccion 
-                      titulo="Mis Estadísticas" 
-                      mensaje="Estamos preparando tu panel de estadísticas. Pronto estará disponible." 
-                    />
-                  </MainLayout>
+                  <EnConstruccion
+                    titulo="Mis Estadísticas"
+                    mensaje="Estamos preparando tu panel de estadísticas. Pronto estará disponible."
+                  />
                 </RutaProtegida>
               }
             />
@@ -105,7 +118,7 @@ const App: React.FC = () => {
                 path={path}
                 element={
                   <RutaProtegida rolesPermitidos={roles}>
-                    <MainLayout>{element}</MainLayout>
+                    {element}
                   </RutaProtegida>
                 }
               />
@@ -115,17 +128,15 @@ const App: React.FC = () => {
               path="/inicio-bombero"
               element={
                 <RutaProtegida rolesPermitidos={['bombero']}>
-                  <MainLayout>
-                    <InicioBombero />
-                  </MainLayout>
+                  <InicioBombero />
                 </RutaProtegida>
               }
             />
+          </Route>
 
-            {/* Ruta fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+          {/* Ruta fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AuthRedirect>
     </div>
   );

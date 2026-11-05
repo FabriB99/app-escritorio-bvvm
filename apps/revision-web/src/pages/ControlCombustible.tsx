@@ -2,8 +2,8 @@ import "../styles/ControlCombustible.css";
 import { useState, useEffect } from "react";
 import { getUnidades, updateCombustibleUnidad } from "../firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import { Unidad } from "../../../shared/types/Unidad";
 
 export default function ControlCombustible() {
@@ -16,8 +16,8 @@ export default function ControlCombustible() {
   useEffect(() => {
     getUnidades().then((data: Unidad[]) => {
       const unidadesOrdenadas = data.sort((a, b) => {
-        const numA = parseInt(a.nombre.split(" ")[1], 10);
-        const numB = parseInt(b.nombre.split(" ")[1], 10);
+        const numA = parseInt(a.nombre.replace(/\D/g, ""), 10) || 0;
+        const numB = parseInt(b.nombre.replace(/\D/g, ""), 10) || 0;
         return numA - numB;
       });
 
@@ -55,10 +55,10 @@ export default function ControlCombustible() {
     }
 
     setGuardando(false);
-    toast.success("✅ Control guardado con éxito", {
-      autoClose: 1000,
-      onClose: () => navigate("/"),
-    });
+    toast.success("Control guardado con éxito");
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
   };
 
   const getBordeColor = (nivel: string) => {
@@ -73,10 +73,21 @@ export default function ControlCombustible() {
 
   return (
     <div className="combustible-control-container">
-      <Link to="/" style={{ display: "flex", justifyContent: "center" }}>
-        <img src="/logo-bomberos.png" alt="Logo" className="controlcombustible-logo" />
-      </Link>
-      <h1 className="combustible-control-title">Control de Combustible</h1>
+      <div className="combustible-top-bar">
+        <Link to="/" className="btn-volver-combustible">
+          <ArrowLeft size={18} />
+          <span>Volver</span>
+        </Link>
+        <div className="brand-header-compact">
+          <img src="/logo-bomberos.png" alt="Escudo" className="brand-logo-compact" />
+          <span className="brand-text-compact">Bomberos Villa María</span>
+        </div>
+      </div>
+
+      <div className="combustible-header-titles">
+        <h1 className="combustible-control-title">Control de Combustible</h1>
+        <p className="combustible-control-subtitle">Registro de niveles de combustible</p>
+      </div>
 
       <div className="combustible-unidades-container">
         {unidades.map((unidad) => {
@@ -118,7 +129,6 @@ export default function ControlCombustible() {
         {guardando ? "Guardando..." : "Guardar Control"}
       </button>
 
-      <ToastContainer position="top-center" />
     </div>
   );
 }

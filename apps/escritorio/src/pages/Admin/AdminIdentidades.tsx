@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import {
   Miembro,
   CATEGORIAS_ORDEN,
@@ -308,9 +309,7 @@ const AdminIdentidades: React.FC = () => {
       </section>
 
       {cargando ? (
-        <div className="identidades-cargando">
-          <p>Cargando identidades...</p>
-        </div>
+        <PageLoader texto="Cargando identidades..." />
       ) : miembrosFiltrados.length === 0 ? (
         <div className="tabla-vacia">
           <div className="tabla-vacia-icon"><Search size={22} /></div>

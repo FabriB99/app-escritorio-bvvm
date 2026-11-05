@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import "./LegajoDetalle.css";
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 
 import AscensosTab from "./Tabs/AscensosTab";
 import CondecoracionesTab from "./Tabs/CondecoracionesTab";
@@ -279,7 +280,7 @@ const LegajoDetalle: React.FC = () => {
     return (
       <div className="legajo-detalle-container">
         <Header title="Detalle de Legajo" onBack={() => navigate("/legajos")} />
-        <p className="legajo-loading-state">Cargando legajo...</p>
+        <PageLoader texto="Cargando legajo..." />
       </div>
     );
   }

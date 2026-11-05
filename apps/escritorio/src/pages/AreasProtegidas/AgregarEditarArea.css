@@ -32,19 +32,6 @@
   box-sizing: border-box;
 }
 
-.aae-loading-card {
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-}
-
-.aae-loading-text {
-  margin: 0;
-  font-size: 14px;
-  color: #64748b;
-  font-weight: 500;
-}
-
 /* ─── Campos del Formulario ───────────────────────────────────────────────── */
 .aae-field {
   display: flex;

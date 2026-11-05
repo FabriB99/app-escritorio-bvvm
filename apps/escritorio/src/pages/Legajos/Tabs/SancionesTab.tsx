@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import "./TabsGeneral.css";
 import { useUser } from "../../../context/UserContext";
 import { registrarAuditoria } from "../../../utils/auditoria";
+import PageLoader from "../../../components/PageLoader/PageLoader";
 
 interface Sancion {
   id: string;
@@ -209,7 +210,7 @@ const SancionesTab: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Cargando sanciones...</p>;
+  if (loading) return <PageLoader texto="Cargando sanciones..." />;
 
   return (
     <div className="tab-container">

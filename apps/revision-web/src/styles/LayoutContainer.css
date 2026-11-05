@@ -1,10 +1,11 @@
 /* src/styles/LayoutContainer.css */
 
 .layout-container {
-    max-width: 480px;
+    width: 100%;
+    max-width: 680px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f4f4;
+    padding: clamp(12px, 3.5vw, 24px) clamp(10px, 3vw, 20px);
+    background-color: #f8fafc;
     min-height: 100vh;
     box-sizing: border-box;
     display: flex;
@@ -12,5 +13,5 @@
     justify-content: flex-start;
     align-items: stretch;
     font-family: 'Poppins', sans-serif;
-    color: #2c3e50;
+    color: #1e293b;
 }

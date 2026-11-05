@@ -1,0 +1,540 @@
+/* src/pages/Guardia/Dashboard/WidgetSalidasActivas.css */
+
+/* ==========================================================================
+   1. CABECERA & CONTADOR DE SALIDAS
+   ========================================================================== */
+.widget-salidas-card {
+  border-top-color: #ef4444; /* Borde superior de emergencia */
+}
+
+.siren-icon-activa {
+  color: #ef4444;
+  animation: pulseSiren 1.5s infinite;
+}
+
+.siren-icon-inactiva {
+  color: #64748b;
+}
+
+@keyframes pulseSiren {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(239, 68, 68, 0));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(239, 68, 68, 0));
+  }
+}
+
+.counter-badge-alerta {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  animation: pulseBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseBadge {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+  }
+}
+
+.btn-nueva-salida-widget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.btn-nueva-salida-widget:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+}
+
+/* ==========================================================================
+   2. ESTADO VACÍO
+   ========================================================================== */
+.widget-salidas-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+  gap: 12px;
+}
+
+.salidas-empty-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #ecfdf5;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.salidas-empty-text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* ==========================================================================
+   3. ESTADO CON SALIDAS ACTIVAS / INCIDENTES
+   ========================================================================== */
+.widget-salidas-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.incidente-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #ef4444;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.incidente-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.incidente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.incidente-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.incidente-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-incidente-alerta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.incidente-pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #dc2626;
+  border-radius: 50%;
+  animation: pulseDot 1s infinite alternate;
+}
+
+@keyframes pulseDot {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+.badge-incidente-codigo {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.badge-incidente-tipo {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-parte-mini {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.incidente-direccion-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.incidente-pin-icon {
+  color: #ef4444;
+  flex-shrink: 0;
+}
+
+.incidente-direccion-text {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.incidente-barrio-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  background-color: #f8fafc;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.incidente-nota-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #475569;
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.incidente-nota-icon {
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+.btn-sumar-unidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-sumar-unidad:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* ==========================================================================
+   4. LISTA DE UNIDADES ASIGNADAS
+   ========================================================================== */
+.incidente-unidades-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unidad-activa-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 12px;
+  transition: background-color 0.15s;
+}
+
+.unidad-activa-row:hover {
+  background-color: #f1f5f9;
+}
+
+.unidad-activa-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.unidad-nombre-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.unidad-truck-icon {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.unidad-nombre-txt {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.unidad-subdatos-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.unidad-chofer-txt strong {
+  color: #334155;
+}
+
+.unidad-separador {
+  color: #cbd5e1;
+}
+
+.unidad-hora-salida {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.unidad-activa-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Badges de estado de arribo */
+.badge-arribo-lugar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.unidad-arribo-pendiente-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-en-camino {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.radio-pulse {
+  animation: pulseRadio 1.2s infinite;
+}
+
+@keyframes pulseRadio {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0.5; }
+}
+
+.btn-marcar-arribo-mini {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0284c7;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-marcar-arribo-mini:hover:not(:disabled) {
+  background-color: #f0f9ff;
+  border-color: #0284c7;
+}
+
+.btn-marcar-arribo-mini:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botón Registrar Regreso */
+.btn-registrar-regreso {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #ffffff;
+  color: #059669;
+  border: 1px solid #10b981;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-registrar-regreso:hover {
+  background-color: #10b981;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+}
+
+/* ==========================================================================
+   5. FOOTER DEL WIDGET
+   ========================================================================== */
+.widget-salidas-footer {
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   6. ESTILOS DE MODAL REGRESO
+   ========================================================================== */
+.regreso-resumen-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.regreso-resumen-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resumen-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resumen-val {
+  font-size: 13px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.box-km-calculados {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 4px;
+}
+
+.km-calculados-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.km-calculados-valor {
+  font-size: 18px;
+  font-weight: 800;
+  color: #047857;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.error-aviso-km {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   7. MODAL DESPACHO / INTERVENCIÓN
+   ========================================================================== */
+.modal-despacho-intervencion .modal-solido-body {
+  padding: 24px !important;
+  gap: 16px !important;
+}
+
+.form-despacho-intervencion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+

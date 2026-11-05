@@ -9,6 +9,7 @@ import { registrarAuditoria, buildOperador, calcularDiff } from "../../utils/aud
 import { useUser } from "../../context/UserContext";
 import imageCompression from "browser-image-compression";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 
 interface Hijo { nombre: string; fechaNacimiento: string; dni: string; localidad: string; }
 interface Legajo {
@@ -265,7 +266,7 @@ const EditarLegajo: React.FC = () => {
     } catch (error) { console.error(error); }
 };
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <PageLoader texto="Cargando legajo..." />;
 
   return (
     <div className="editar-legajo-container">

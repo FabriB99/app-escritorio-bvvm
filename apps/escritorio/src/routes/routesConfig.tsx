@@ -1,46 +1,40 @@
-import { ReactNode, lazy } from 'react';
+import { ReactNode } from 'react';
 
-// Páginas de acceso frecuente / inicio (Carga directa para renderizado instantáneo)
-import DashboardGuardia from '../pages/Guardia/Dashboard/DashboardGuardia';
-import Unidades from '../pages/Unidades/Unidades';
-
-// Páginas secundarias y de uso específico (Carga diferida / Lazy loading)
-// Unidades & Revisiones
-const EditarUnidad = lazy(() => import('../pages/EditarUnidad/EditarUnidad'));
-const UnidadDetalle = lazy(() => import('../pages/UnidadDetalle/UnidadDetalle'));
-const HistorialRevisiones = lazy(() => import('../pages/HistorialRevisiones/HistorialRevisiones'));
-const SeleccionarUnidadRevision = lazy(() => import('../pages/SeleccionarUnidadRevision/SeleccionarUnidadRevision'));
-const CombustibleLista = lazy(() => import('../pages/CombustibleLista/CombustibleLista'));
-const GeneradorInforme = lazy(() => import('../pages/GeneradorInforme/GeneradorInforme'));
-const Vencimientos = lazy(() => import('../pages/Vencimientos/Vencimientos'));
-
+// Importación directa de todas las páginas para transiciones instantáneas sin pantallas de carga intermedias
 // Guardia & Operaciones
-const Choferes = lazy(() => import('../pages/Choferes/VistaChoferes'));
-const AreasProtegidasLista = lazy(() => import('../pages/AreasProtegidas/AreasProtegidasLista'));
-const AgregarEditarArea = lazy(() => import('../pages/AreasProtegidas/AgregarEditarArea'));
-const ListadoNovedadesGuardia = lazy(() => import('../pages/Guardia/Dashboard/ListadoNovedadesGuardia'));
-const ListadoElementosMedicos = lazy(() => import('../pages/Guardia/ElementosMedicosHospital/ListadoElementosMedicos'));
+import DashboardGuardia from '../pages/Guardia/Dashboard/DashboardGuardia';
+import ListadoNovedadesGuardia from '../pages/Guardia/Dashboard/ListadoNovedadesGuardia';
+import ListadoElementosMedicos from '../pages/Guardia/ElementosMedicosHospital/ListadoElementosMedicos';
+import LibroGuardia from '../pages/Guardia/LibroGuardia/LibroGuardia';
+import Choferes from '../pages/Choferes/VistaChoferes';
+import AreasProtegidasLista from '../pages/AreasProtegidas/AreasProtegidasLista';
+import AgregarEditarArea from '../pages/AreasProtegidas/AgregarEditarArea';
+
+// Unidades & Revisiones
+import Unidades from '../pages/Unidades/Unidades';
+import EditarUnidad from '../pages/EditarUnidad/EditarUnidad';
+import UnidadDetalle from '../pages/UnidadDetalle/UnidadDetalle';
+import HistorialRevisiones from '../pages/HistorialRevisiones/HistorialRevisiones';
+import SeleccionarUnidadRevision from '../pages/SeleccionarUnidadRevision/SeleccionarUnidadRevision';
+import CombustibleLista from '../pages/CombustibleLista/CombustibleLista';
+import GeneradorInforme from '../pages/GeneradorInforme/GeneradorInforme';
+import Vencimientos from '../pages/Vencimientos/Vencimientos';
 
 // Admin
-const AdminPanel = lazy(() => import('../pages/Admin/PanelAdmin'));
-const AdminIdentidades = lazy(() => import('../pages/Admin/AdminIdentidades'));
-const AdminGrados = lazy(() => import('../pages/Admin/AdminGrados'));
-const AdminFormIdentidad = lazy(() => import('../pages/Admin/AdminFormIdentidad'));
-const AuditoriaLista = lazy(() => import('../pages/Admin/AuditoriaLista'));
+import AdminPanel from '../pages/Admin/PanelAdmin';
+import AdminIdentidades from '../pages/Admin/AdminIdentidades';
+import AdminGrados from '../pages/Admin/AdminGrados';
+import AdminFormIdentidad from '../pages/Admin/AdminFormIdentidad';
+import AuditoriaLista from '../pages/Admin/AuditoriaLista';
 
-// Biblioteca (administración)
-const EditarBiblioteca = lazy(() => import('../pages/Biblioteca/EditarBiblioteca'));
-const NuevaSeccion = lazy(() => import('../pages/Biblioteca/NuevaSeccion'));
-const EditarSeccion = lazy(() => import('../pages/Biblioteca/EditarSeccion'));
-const ListadoSecciones = lazy(() => import('../pages/Biblioteca/ListadoSecciones'));
-const GruposBiblioteca = lazy(() => import('../pages/Biblioteca/GruposBiblioteca'));
-const RegistroAccesos = lazy(() => import('../pages/Biblioteca/RegistroAccesos'));
+// Biblioteca (administración unificada Master-Detail)
+import AdminBiblioteca from '../pages/Biblioteca/AdminBiblioteca';
 
 // Legajos
-const Legajos = lazy(() => import('../pages/Legajos/LegajosLista'));
-const AgregarLegajo = lazy(() => import('../pages/Legajos/AgregarLegajo'));
-const LegajoDetalle = lazy(() => import('../pages/Legajos/LegajoDetalle'));
-const EditarLegajo = lazy(() => import('../pages/Legajos/EditarLegajo'));
+import Legajos from '../pages/Legajos/LegajosLista';
+import AgregarLegajo from '../pages/Legajos/AgregarLegajo';
+import LegajoDetalle from '../pages/Legajos/LegajoDetalle';
+import EditarLegajo from '../pages/Legajos/EditarLegajo';
 
 export interface RutaProtegidaConfig {
   path: string;
@@ -51,6 +45,8 @@ export interface RutaProtegidaConfig {
 export const rutasProtegidas: RutaProtegidaConfig[] = [
   { path: '/dashboard-guardia', element: <DashboardGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/guardia', element: <DashboardGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/guardia/libro-guardia', element: <LibroGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
+  { path: '/libro-guardia', element: <LibroGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/guardia/novedades-historial', element: <ListadoNovedadesGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/novedades-historial', element: <ListadoNovedadesGuardia />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
   { path: '/elementos-medicos', element: <ListadoElementosMedicos />, roles: ['admin', 'jefatura', 'guardia', 'graduados'] },
@@ -72,12 +68,13 @@ export const rutasProtegidas: RutaProtegidaConfig[] = [
   { path: '/agregar-legajo', element: <AgregarLegajo />, roles: ['admin', 'legajo', 'jefatura'] },
   { path: '/legajo/:id', element: <LegajoDetalle />, roles: ['admin', 'jefatura', 'legajo', 'bombero', 'graduados'] },
   { path: '/editar-legajo/:id', element: <EditarLegajo />, roles: ['admin', 'legajo', 'jefatura'] },
-  { path: '/editar-biblioteca', element: <EditarBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
-  { path: '/editar-biblioteca/secciones/nueva', element: <NuevaSeccion />, roles: ['admin', 'jefatura', 'graduados'] },
-  { path: '/editar-seccion/:id', element: <EditarSeccion />, roles: ['admin', 'jefatura', 'graduados'] },
-  { path: '/editar-biblioteca/secciones', element: <ListadoSecciones />, roles: ['admin', 'jefatura', 'graduados'] },
-  { path: '/editar-biblioteca/grupos', element: <GruposBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
-  { path: '/editar-biblioteca/registro', element: <RegistroAccesos />, roles: ['admin'] },
+  { path: '/editar-biblioteca', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/admin-biblioteca', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/editar-biblioteca/secciones', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/editar-biblioteca/secciones/nueva', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/editar-seccion/:id', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/editar-biblioteca/grupos', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
+  { path: '/editar-biblioteca/registro', element: <AdminBiblioteca />, roles: ['admin', 'jefatura', 'graduados'] },
   { path: '/admin', element: <AdminPanel />, roles: ['admin'] },
   { path: '/admin/identidades', element: <AdminIdentidades />, roles: ['admin'] },
   { path: '/admin/grados', element: <AdminGrados />, roles: ['admin'] },

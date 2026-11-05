@@ -1,45 +1,444 @@
 .home-container {
-    padding: 15px 30px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.home-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: clamp(20px, 4vw, 32px);
     text-align: center;
 }
 
 .home-logo {
-    width: 220px;
+    width: clamp(130px, 26vw, 175px);
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+    transition: transform 0.2s ease;
 }
 
 .home-title {
-    font-size: 32px;
-    margin-bottom: 20px;
-    color: #2c3e50;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0 0;
 }
 
-.home-buttons {
+.home-subtitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222e42;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Panel de Salidas Activas & Navegación GPS en Vivo
+   ========================================================================== */
+
+.salidas-activas-seccion {
+    width: 100%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    max-width: 300px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
-.home-button {
-    background-color: #1d3557;
-    color: white;
-    border: none;
-    padding: 14px 20px;
+.tarjeta-incidente-activo {
+    background-color: #ffffff;
+    border: 1px solid #fecaca;
+    border-left: 5px solid #dc2626;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+
+.tarjeta-incidente-activo:hover {
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.12), 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.incidente-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.incidente-alerta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #dc2626;
+}
+
+.pulse-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #dc2626;
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.pulse-indicator::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid #dc2626;
+    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.6);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.6);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+.incidente-tipo-badge {
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #fca5a5;
+    white-space: nowrap;
+}
+
+.incidente-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.incidente-direccion-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.incidente-map-icon {
+    color: #dc2626;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.incidente-direccion {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.incidente-barrio {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-left: 28px;
+}
+
+.incidente-nota {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border-left: 3px solid #94a3b8;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.4;
+}
+
+.btn-gps-maps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 16px;
+    background-color: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-gps-maps:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.btn-gps-maps:active {
+    transform: scale(0.99);
+}
+
+.incidente-unidades-lista {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+}
+
+.incidente-unidades-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.unidad-salida-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 16px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+.unidad-salida-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.unidad-salida-icon {
+    color: #475569;
+    flex-shrink: 0;
+}
+
+.unidad-salida-nombre {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.unidad-salida-accion {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.badge-en-lugar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: default;
+    user-select: none;
+}
+
+.btn-marcar-arribo {
+    min-height: 38px;
+    padding: 6px 14px;
+    background-color: #ea580c;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-marcar-arribo:hover {
+    background-color: #c2410c;
+}
+
+.btn-marcar-arribo:active {
+    transform: scale(0.98);
+}
+
+.confirmacion-arribo-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #ffffff;
+    border: 1px solid #fdba74;
+    border-radius: 8px;
+    padding: 8px 10px;
+    width: 100%;
+    margin-top: 4px;
+    box-sizing: border-box;
+}
+
+.confirmacion-texto {
+    font-size: 13px;
+    color: #9a3412;
+    text-align: center;
+}
+
+.confirmacion-botones {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-cancelar-arribo {
+    padding: 6px 12px;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.home-button:hover {
-    background-color: #457b9d;
-    transform: scale(1.02);
+.btn-cancelar-arribo:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-confirmar-arribo {
+    padding: 6px 14px;
+    background-color: #16a34a;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-confirmar-arribo:hover:not(:disabled) {
+    background-color: #15803d;
+}
+
+.btn-confirmar-arribo:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.home-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.home-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.home-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.home-card:active {
+    transform: scale(0.99);
+}
+
+.home-card-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.home-card-icon-wrapper.icon-blue {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+}
+
+.home-card-icon-wrapper.icon-amber {
+    background-color: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fef3c7;
+}
+
+.home-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.home-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+}
+
+.home-card-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.home-card-arrow {
+    color: #94a3b8;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.home-card:hover .home-card-arrow {
+    color: #475569;
+    transform: translateX(3px);
 }

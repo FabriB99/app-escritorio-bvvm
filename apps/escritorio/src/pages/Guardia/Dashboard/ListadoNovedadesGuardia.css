@@ -353,7 +353,6 @@
   border-color: #ef4444;
 }
 
-.listado-novedades-wrapper .estado-carga,
 .listado-novedades-wrapper .estado-vacio {
   text-align: center;
   color: var(--color-text-muted, #64748b);

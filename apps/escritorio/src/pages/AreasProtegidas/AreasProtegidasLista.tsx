@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import "./AreasProtegidasLista.css";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 import ModalDetalleArea from "./ModalDetalleArea";
 import { registrarAuditoria, buildOperador } from "../../utils/auditoria";
 
@@ -183,118 +184,121 @@ const AreasProtegidasLista: React.FC = () => {
         </span>
       </div>
 
-      <div className="cards-container">
-        {areasFiltradas.map((area) => {
-          const direcciones = Array.isArray(area.direcciones) ? area.direcciones : [];
-          const menuAbierto = menuAbiertoId === area.id;
+      {loading ? (
+        <PageLoader texto="Cargando áreas protegidas..." />
+      ) : (
+        <div className="cards-container">
+          {areasFiltradas.map((area) => {
+            const direcciones = Array.isArray(area.direcciones) ? area.direcciones : [];
+            const menuAbierto = menuAbiertoId === area.id;
 
-          return (
-            <div
-              key={area.id}
-              className={`card ${menuAbierto ? "card--menu-open" : ""}`}
-              role="button"
-              tabIndex={0}
-              onClick={() => setAreaSeleccionada(area)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setAreaSeleccionada(area);
-                }
-              }}
-            >
-              <div className="apla-card-head">
-                <span className="apla-building-box">
-                  <Building2 size={18} />
-                </span>
-                <h3 className="apla-card-title">{area.nombre}</h3>
-              </div>
+            return (
+              <div
+                key={area.id}
+                className={`card ${menuAbierto ? "card--menu-open" : ""}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => setAreaSeleccionada(area)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setAreaSeleccionada(area);
+                  }
+                }}
+              >
+                <div className="apla-card-head">
+                  <span className="apla-building-box">
+                    <Building2 size={18} />
+                  </span>
+                  <h3 className="apla-card-title">{area.nombre}</h3>
+                </div>
 
-              {puedeEditar && (
-                <div
-                  className="apla-menu-wrapper"
-                  ref={menuAbierto ? menuRef : undefined}
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                >
-                  <button
-                    type="button"
-                    className={`apla-menu-trigger ${menuAbierto ? "is-active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setMenuAbiertoId(menuAbierto ? null : area.id);
-                    }}
-                    aria-label="Más opciones"
-                    aria-haspopup="menu"
-                    aria-expanded={menuAbierto}
+                {puedeEditar && (
+                  <div
+                    className="apla-menu-wrapper"
+                    ref={menuAbierto ? menuRef : undefined}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
                   >
-                    <MoreVertical size={16} />
-                  </button>
+                    <button
+                      type="button"
+                      className={`apla-menu-trigger ${menuAbierto ? "is-active" : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuAbiertoId(menuAbierto ? null : area.id);
+                      }}
+                      aria-label="Más opciones"
+                      aria-haspopup="menu"
+                      aria-expanded={menuAbierto}
+                    >
+                      <MoreVertical size={16} />
+                    </button>
 
-                  {menuAbierto && (
-                    <div className="apla-dropdown-menu" role="menu">
-                      <button
-                        type="button"
-                        role="menuitem"
-                        className="apla-dropdown-item"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMenuAbiertoId(null);
-                          navigate(`/editar-area/${area.id}`);
-                        }}
-                      >
-                        <Pencil size={14} />
-                        Editar
-                      </button>
-                      <button
-                        type="button"
-                        role="menuitem"
-                        className="apla-dropdown-item apla-dropdown-item--danger"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMenuAbiertoId(null);
-                          setAreaAEliminar(area);
-                        }}
-                      >
-                        <Trash2 size={14} />
-                        Eliminar
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="apla-card-body">
-                <div className="apla-card-detail">
-                  <MapPin size={14} />
-                  <p>{direcciones[0] || "Sin dirección registrada"}</p>
-                  {direcciones.length > 1 && (
-                    <span className="apla-mas-badge">+{direcciones.length - 1} más</span>
-                  )}
-                </div>
-
-                {area.responsable && (
-                  <div className="apla-card-detail">
-                    <User size={14} />
-                    <p>{area.responsable}</p>
+                    {menuAbierto && (
+                      <div className="apla-dropdown-menu" role="menu">
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className="apla-dropdown-item"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuAbiertoId(null);
+                            navigate(`/editar-area/${area.id}`);
+                          }}
+                        >
+                          <Pencil size={14} />
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className="apla-dropdown-item apla-dropdown-item--danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuAbiertoId(null);
+                            setAreaAEliminar(area);
+                          }}
+                        >
+                          <Trash2 size={14} />
+                          Eliminar
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                <div className="apla-card-detail">
-                  <Phone size={14} />
-                  <p className={!area.telefono ? "apla-muted" : ""}>
-                    {area.telefono || "Sin teléfono"}
-                  </p>
+                <div className="apla-card-body">
+                  <div className="apla-card-detail">
+                    <MapPin size={14} />
+                    <p>{direcciones[0] || "Sin dirección registrada"}</p>
+                    {direcciones.length > 1 && (
+                      <span className="apla-mas-badge">+{direcciones.length - 1} más</span>
+                    )}
+                  </div>
+
+                  {area.responsable && (
+                    <div className="apla-card-detail">
+                      <User size={14} />
+                      <p>{area.responsable}</p>
+                    </div>
+                  )}
+
+                  <div className="apla-card-detail">
+                    <Phone size={14} />
+                    <p className={!area.telefono ? "apla-muted" : ""}>
+                      {area.telefono || "Sin teléfono"}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
-        {loading && <p className="apla-loading-text">Cargando áreas...</p>}
-        {!loading && areasFiltradas.length === 0 && (
-          <p className="apla-no-results">No se encontraron áreas protegidas.</p>
-        )}
-      </div>
+          {areasFiltradas.length === 0 && (
+            <p className="apla-no-results">No se encontraron áreas protegidas.</p>
+          )}
+        </div>
+      )}
 
       {/* Modal Detalle */}
       {areaSeleccionada && (

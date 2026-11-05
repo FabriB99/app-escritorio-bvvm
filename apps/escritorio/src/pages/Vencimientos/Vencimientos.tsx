@@ -518,7 +518,7 @@ const Vencimientos: React.FC = () => {
 
     try {
       if (selected?.id) {
-        await updateDoc(doc(db, 'vencimientos', selected.id), datos);
+        await updateDoc(doc(db, 'vencimientos', selected.id), datos as Record<string, any>);
         toast.success(tab === 'carnet' ? 'Carnet actualizado correctamente.' : 'VTV actualizada correctamente.');
       } else {
         await addDoc(collection(db, 'vencimientos'), datos);

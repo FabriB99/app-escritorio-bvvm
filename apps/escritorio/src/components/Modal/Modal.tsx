@@ -11,6 +11,7 @@ export interface ModalProps {
   className?: string;
   headerAction?: React.ReactNode;
   children: React.ReactNode;
+  closeOnBackdropClick?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -22,6 +23,7 @@ export const Modal: React.FC<ModalProps> = ({
   className,
   headerAction,
   children,
+  closeOnBackdropClick = false,
 }) => {
   // Manejo de la tecla Escape para cerrar el modal
   useEffect(() => {
@@ -40,7 +42,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
+    if (closeOnBackdropClick && e.target === e.currentTarget) {
       onClose();
     }
   };
@@ -56,6 +58,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         className={`modal-solido-container ${className || ''}`.trim()}
         style={{ maxWidth }}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-solido-header">
           <h3 className="modal-solido-title">{title}</h3>

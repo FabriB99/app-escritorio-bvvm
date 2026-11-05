@@ -224,13 +224,6 @@
     cursor: not-allowed;
   }
   
-  .form-cargando {
-    text-align: center;
-    padding: 50px 20px;
-    font-size: 0.88rem;
-    color: #718096;
-  }
-  
   /* RESPONSIVE */
   @media (max-width: 600px) {
     .form-grid-campos {

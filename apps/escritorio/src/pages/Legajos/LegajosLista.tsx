@@ -9,6 +9,7 @@ import "./LegajosLista.css";
 import { registrarAuditoria, buildOperador } from "../../utils/auditoria";
 import { toast } from "sonner";
 import Header from "../../components/Header";
+import PageLoader from "../../components/PageLoader/PageLoader";
 
 interface Legajo {
   id: string;
@@ -185,7 +186,7 @@ const LegajosLista: React.FC = () => {
             )}
           </div>
         ))}
-        {loading && <p className="legajos-loading">Cargando...</p>}
+        {loading && <PageLoader texto="Cargando legajos..." />}
         {!loading && legajosFiltrados.length === 0 && (
           <p className="legajos-empty">No se encontraron legajos.</p>
         )}

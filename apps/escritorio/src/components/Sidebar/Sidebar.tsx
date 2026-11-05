@@ -88,6 +88,7 @@ const SECCIONES = [
     icon: <Shield size={16} />,
     links: [
       { text: "Novedades", to: "/dashboard-guardia" },
+      { text: "Libro de Guardia", to: "/guardia/libro-guardia" },
       { text: "Choferes", to: "/choferes" },
       { text: "Áreas Protegidas", to: "/areas-protegidas" },
     ],
@@ -127,6 +128,11 @@ const isLinkActive = (to: string, currentPath: string): boolean => {
       currentPath.startsWith("/editar-legajo") ||
       currentPath.startsWith("/legajo/")
     );
+  }
+
+  // Libro de Guardia
+  if (to === "/guardia/libro-guardia") {
+    return currentPath === "/guardia/libro-guardia" || currentPath === "/libro-guardia";
   }
 
   // Guardia / Novedades y sus historiales / elementos médicos
