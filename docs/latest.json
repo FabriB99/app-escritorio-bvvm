@@ -1,11 +1,11 @@
 {
-  "version": "0.5.0",
-  "notes": "chore: release v0.5.0 - Refactor integral de Libro de Guardia con restricción de eliminación para admin, nuevo panel unificado de Biblioteca Virtual con drag & drop, rediseño de Control de Combustible en grilla con selector de vista y PageLoader global",
-  "pub_date": "2026-11-05T04:23:45.601Z",
+  "version": "0.5.1",
+  "notes": "chore: release v0.5.1 - Migración de instalador a NSIS (.exe) en modo usuario",
+  "pub_date": "2026-11-19T18:17:41.473Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDJzR2FCNTZFRmFPMy9randIZ1BNanhDYTBCTnlLTzZPMGMyM2RyeDNwVUZNUTlhb1BRMlhYWDRJUHlMdGdRRHpZL1NaYy9kaWM4S2QyOGFTWkZtSWcwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzODUyNjIwCWZpbGU6Q29udHJvbC1CVlZNXzAuNS4wX3g2NF9lbi1VUy5tc2kKM1FzK25ub0pZaGpESHEwT3BCd3R2OVZNTzhFeEVNZnBzV2xVeWZLMFF6UVc5Yll2eXZIWU9WM1p4V0N5eHRGdjRTUm42eTdMWWp6Rzk1ZEFkV0IrQVE9PQo=",
-      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.5.0/Control-BVVM_0.5.0_x64_en-US.msi"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTaWNZWmp5dE9jSDBteUxQWXJQZVpBNFhCcmgvTjBKNlR3TVhnL1UxK3lndVEvUTlPRzNrYWJSbjVjcVJETGdxcVAxZGp5RGpFTUNGcmQvS1FaRTJob011eXhpSFZGa2dFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk1MTEyMjUxCWZpbGU6Q29udHJvbCBCVlZNXzAuNS4xX3g2NC1zZXR1cC5leGUKS2Y4bGtaanJ6Y3A2RkhHVGpiVHczT1B0WEt3YzNaeE9ZYUdkTVQwSndmN2xpcGZyczA1a1JuTnIxYXZ0V0pKcElXcVl0dHJzcTg3UTN2d1NIZFRURHc9PQo=",
+      "url": "https://github.com/FabriB99/app-escritorio-bvvm/releases/download/v0.5.1/Control.BVVM_0.5.1_x64-setup.exe"
     }
   }
 }
