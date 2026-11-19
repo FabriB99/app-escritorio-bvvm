@@ -56,6 +56,8 @@ jobs:
 
       - name: Actualizar docs/latest.json automáticamente
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -69,18 +71,32 @@ jobs:
             const tauriConf = JSON.parse(fs.readFileSync("apps/escritorio/src-tauri/tauri.conf.json", "utf8"));
             const version = tauriConf.version;
 
-            const msiDir = "apps/escritorio/src-tauri/target/release/bundle/msi";
-            const files = fs.readdirSync(msiDir);
-            const sigFile = files.find(f => f.endsWith(".msi.sig"));
-            const msiFile = files.find(f => f.endsWith(".msi") && !f.endsWith(".msi.sig"));
+            const nsisDir = "apps/escritorio/src-tauri/target/release/bundle/nsis";
+            const files = fs.readdirSync(nsisDir);
+            const sigFile = files.find(f => f.endsWith("-setup.exe.sig"));
+            const exeFile = files.find(f => f.endsWith("-setup.exe") && !f.endsWith(".sig"));
 
-            if (!sigFile || !msiFile) {
-              console.error("No se encontraron los archivos .msi o .msi.sig en", msiDir);
+            if (!sigFile || !exeFile) {
+              console.error("No se encontraron los archivos *-setup.exe o *-setup.exe.sig en", nsisDir);
               process.exit(1);
             }
 
-            const signature = fs.readFileSync(path.join(msiDir, sigFile), "utf8").trim();
-            const url = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases/download/v${version}/${msiFile}`;
+            const signature = fs.readFileSync(path.join(nsisDir, sigFile), "utf8").trim();
+
+            let url = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases/download/v${version}/${exeFile.replace(/ /g, ".")}`;
+            try {
+              const releaseJson = execSync(`gh release view v${version} --json assets`, { encoding: "utf8" });
+              const releaseData = JSON.parse(releaseJson);
+              const setupAsset = (releaseData.assets || []).find(a => a.name && a.name.endsWith("-setup.exe"));
+              if (setupAsset && setupAsset.url) {
+                url = setupAsset.url;
+                console.log("URL real obtenida desde GitHub Releases:", url);
+              } else {
+                console.warn("Asset -setup.exe no encontrado en gh release view, usando URL fallback:", url);
+              }
+            } catch (err) {
+              console.warn("No se pudo consultar gh release view, usando URL fallback:", url, err.message);
+            }
 
             let notes = "Actualización automática del sistema Control BVVM.";
             try {
